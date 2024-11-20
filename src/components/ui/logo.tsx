@@ -10,7 +10,6 @@ import Image from 'next/image';
 
 const Logo: React.FC<React.AnchorHTMLAttributes<{}>> = ({
   className,
-  ...props
 }) => {
   const [miniSidebar,_] = useAtom(miniSidebarInitialValue);
   const {width} = useWindowSize();

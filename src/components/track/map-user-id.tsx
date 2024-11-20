@@ -1,35 +1,30 @@
-//@ts-nocheck
-import React, { useEffect, useMemo, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React,{useEffect,useState} from 'react'
 import {
   GoogleMap,
   useLoadScript,
   MarkerF,
   CircleF,
-  Polyline,
   GroundOverlay,
   InfoWindowF,
 } from '@react-google-maps/api'
 import Loader from '@/components/ui/loader/loader'
 import Router from 'next/router'
-import { Tooltip } from 'react-tooltip'
+import {Tooltip} from 'react-tooltip'
 
 import {
   useTrackQuerywhitParams,
-  useUserByIdWithouTrackingQuery,
   useUserQuery,
 } from '@/data/user'
 import Select from '../select/select'
-import { DatePicker } from '../ui/date-picker'
-import { Controller } from 'react-hook-form'
-import { LATITUDE, LONGITUDE } from '@/utils/constants'
+import {DatePicker} from '../ui/date-picker'
 import Image from 'next/image'
-import { User } from '@/types/suggestions'
-import { addMonths, isBefore, startOfDay } from 'date-fns'
-import { capitalizeWords } from '@/utils/functions'
-import { useTranslation } from 'react-i18next'
-import Input from '../ui/input'
-import { es } from 'date-fns/locale'
-import { format } from 'date-fns'
+import {User} from '@/types/suggestions'
+import {addMonths,isBefore,startOfDay} from 'date-fns'
+import {capitalizeWords} from '@/utils/functions'
+import {useTranslation} from 'react-i18next'
+import {es} from 'date-fns/locale'
+import {format} from 'date-fns'
 
 const containerStyle = {
   width: '1000px',
@@ -49,7 +44,7 @@ const initialMapCenter = {
   lng: 0,
 }
 
-function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
+function MapTrackComponentUserId({latitud,longitud,userId}: IProps) {
   // const mapCenter = useMemo(
   //   () => ({
   //     lat: latitud !== 0 ? latitud : LATITUDE,
@@ -57,63 +52,54 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
   //   }),
   //   [latitud, longitud]
   // )
-  const { t } = useTranslation()
 
-  const [selectStartTimeFormat, setselectStartTimeFormat] = useState<string>('')
-  const [selectEndtTimeFormat, setselectEndTimeFormat] = useState<string>('')
+  const [selectStartTimeFormat,setselectStartTimeFormat] = useState<string>('')
+  const [selectEndtTimeFormat,setselectEndTimeFormat] = useState<string>('')
 
-  const [selectStartTime, setselectStartTime] = useState<string>(null)
-  const [selectEndtTime, setselectEndTime] = useState<string>(null)
+  const [selectStartTime,setselectStartTime] = useState<string>('')
+  const [selectEndtTime,setselectEndTime] = useState<string>('')
 
-  const [selectedDate, setSelectedDate] = useState(null)
-  const [selectedDateEnd, setSelectedDateEnd] = useState(null)
-  const [selectedDateFilter, setSelectedDateFilter] = useState(null)
+  const [selectedDate,setSelectedDate] = useState(null)
 
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(
+  const [mapCenter,setMapCenter] = useState<{lat: number; lng: number}>(
     initialMapCenter
   )
 
-  const [filteredItems, setFilteredItems] = useState([])
+  const [filteredItems,setFilteredItems] = useState([])
 
   useEffect(() => {
     setMapCenter({
       lat: latitud,
       lng: longitud,
     })
-  }, [latitud, longitud])
+  },[latitud,longitud])
   // const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
   //   lat: latitud === 0 ? LATITUDE : latitud,
   //   lng: longitud === 0 ? LONGITUDE : longitud,
   // })
-  const { id } = Router.query
+  const {id} = Router.query
 
-  const { user } = useUserQuery({
-    id: Number(id),
-  })
+  const {user} = useUserQuery(id.to)
 
-  const { isLoaded } = useLoadScript({
+  const {isLoaded} = useLoadScript({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY || '',
   })
 
-  const [map, setMap] = React.useState<any>(null)
-  const [selectedOption, setSelectedOption] = useState<string>('')
+  const [map,setMap] = React.useState<any>(null)
+  const [selectedOption,setSelectedOption] = useState<string>('')
 
-  const [isCheckedUser, setIsCheckedUser] = useState(false)
-  const [historicalOverlay, setHistoricalOverlay] =
+  const [isCheckedUser,setIsCheckedUser] = useState(false)
+  const [historicalOverlay,setHistoricalOverlay] =
     useState<google.maps.GroundOverlay | null>(null)
-  const [flightPath, setFlightPath] = useState<google.maps.Polyline | null>(
+  const [flightPath,setFlightPath] = useState<google.maps.Polyline | null>(
     null
   )
 
-  const [expiredDocuments, setExpiredDocuments] = useState([])
-  const [soonToExpireDocuments, setSoonToExpireDocuments] = useState([])
+  const [expiredDocuments,setExpiredDocuments] = useState([])
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUser,setSelectedUser] = useState<User | null>(null)
 
-  const [disabled, setDisabaled] = useState(true)
-  const [disabledDate, setDisabaledDate] = useState(false)
-  const [disabledDateEnd, setDisabaledDateEnd] = useState(true)
   const imageSize = 0.001
 
   let imageBounds = {
@@ -144,22 +130,22 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
     [mapCenter]
   )
 
-  const { data, loading, error } = useTrackQuerywhitParams({
+  const {data} = useTrackQuerywhitParams({
     id: Number(id),
-    date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
+    date: selectedDate ? format(selectedDate,'yyyy-MM-dd') : '',
     startTime: selectStartTimeFormat,
     endTime: selectEndtTimeFormat,
   })
 
   useEffect(() => {
     if (data) {
-      const newFilteredItems = data.map((item) => ({
+      const newFilteredItems = data.map((item: any) => ({
         lat: item.latitude,
         lng: item.longitude,
       }))
       setFilteredItems(newFilteredItems)
     }
-  }, [data]) // Se ejecuta cada vez que 'data' cambia
+  },[data]) // Se ejecuta cada vez que 'data' cambia
 
   const handleSelectChange = (selectedOption: any) => {
     if (selectedOption) {
@@ -172,18 +158,18 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
 
       if (selectedOption.id === 1) {
         const padding = 0.0005
-        imageBounds = calculateBounds(23.1626, -109.7176, imageSize, padding) //terminal 1
-        setMapCenter({ lat: 23.1626, lng: -109.7176 })
+        imageBounds = calculateBounds(23.1626,-109.7176,imageSize,padding) //terminal 1
+        setMapCenter({lat: 23.1626,lng: -109.7176})
       } else if (selectedOption.id === 2) {
         const padding = 0.0009
-        imageBounds = calculateBounds(23.1569, -109.71673, imageSize, padding) //terminal 2
-        setMapCenter({ lat: 23.1574, lng: -109.71685 })
+        imageBounds = calculateBounds(23.1569,-109.71673,imageSize,padding) //terminal 2
+        setMapCenter({lat: 23.1574,lng: -109.71685})
       } else if (selectedOption.id === 3) {
         // const padding = 0.0006
         // imageBounds = calculateBounds(23.1577, -109.71678, imageSize, padding) //terminal 3
         const padding = 0.0007
-        imageBounds = calculateBounds(23.158, -109.7171, imageSize, padding) //terminal 2
-        setMapCenter({ lat: 23.1568, lng: -109.7169 })
+        imageBounds = calculateBounds(23.158,-109.7171,imageSize,padding) //terminal 2
+        setMapCenter({lat: 23.1568,lng: -109.7169})
       }
 
       // Crear un nuevo GroundOverlay
@@ -329,7 +315,7 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
       }))
   }
 
-  const [showInfoWindow, setShowInfoWindow] = useState(false)
+  const [showInfoWindow,setShowInfoWindow] = useState(false)
 
   const userDetails = (id: any) => {
     Router.push('/users/' + id)
@@ -337,27 +323,27 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
 
   const categorizeDocuments = (documents: any) => {
     const now = new Date() // Fecha actual
-    const oneMonthFromNow = addMonths(startOfDay(now), 1)
+    const oneMonthFromNow = addMonths(startOfDay(now),1)
     const expiredDocuments: any[] = []
     const soonToExpireDocuments: any[] = []
 
     documents?.forEach((document: any) => {
       const validUntilDate = startOfDay(new Date(document.validUntil))
 
-      if (isBefore(validUntilDate, now)) {
+      if (isBefore(validUntilDate,now)) {
         expiredDocuments.push(document)
-      } else if (isBefore(validUntilDate, oneMonthFromNow)) {
+      } else if (isBefore(validUntilDate,oneMonthFromNow)) {
         soonToExpireDocuments.push(document)
       }
     })
 
-    return { expiredDocuments, soonToExpireDocuments }
+    return {expiredDocuments,soonToExpireDocuments}
   }
 
   const handleMarkerClick = (user: any) => {
     setSelectedUser(user)
 
-    const { expiredDocuments, soonToExpireDocuments } = categorizeDocuments(
+    const {expiredDocuments,soonToExpireDocuments} = categorizeDocuments(
       user?.documents
     )
 
@@ -567,11 +553,11 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
               icon={{
                 //@ts-ignore
                 url: '/' + user?.icon,
-                scaledSize: new window.google.maps.Size(48, 48),
+                scaledSize: new window.google.maps.Size(48,48),
               }}
               //@ts-ignore
               onClick={() => handleMarkerClick(user)}
-              position={{ lat: latitud, lng: longitud }}
+              position={{lat: latitud,lng: longitud}}
               onLoad={() => console.log('Marker Loaded')}
             />
             <>
@@ -585,13 +571,12 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
                 >
                   <div className="w-[20em] ">
                     <div
-                      className={`flex p-3 rounded-md ${
-                        selectedUser.documents.length ===
-                          selectedUser.jobPosition.requireDocuments.length &&
+                      className={`flex p-3 rounded-md ${selectedUser.documents.length ===
+                        selectedUser.jobPosition.requireDocuments.length &&
                         expiredDocuments.length === 0
-                          ? 'bg-green-100'
-                          : 'bg-yellow-100'
-                      }`}
+                        ? 'bg-green-100'
+                        : 'bg-yellow-100'
+                        }`}
                     >
                       <Image
                         className="rounded-full"
@@ -625,44 +610,19 @@ function MapTrackComponentUserId({ latitud, longitud, userId }: IProps) {
                       </div>
                     </div>
 
-                    <div className=" p-3 rounded-md mt-3 bg-blue-100 text-gray-800">
-                      <span className="font-bold text-sm">
-                        {soonToExpireDocuments.length > 0
-                          ? 'Documentos por vencer:'
-                          : 'Sin Documentos por vencer'}
-                      </span>
-                      {soonToExpireDocuments.map((document) => (
-                        <div className="block text-center">
-                          <span>{document.documentType.name}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className=" p-3 rounded-md mt-3 bg-red-100 text-gray-800">
-                      <span className="font-bold text-sm">
-                        {expiredDocuments.length > 0
-                          ? 'Documentos vencidos:'
-                          : 'Sin Documentos vencidos'}
-                      </span>
-                      {expiredDocuments.map((document) => (
-                        <div className="block text-center">
-                          <span>{document.documentType.name}</span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </InfoWindowF>
               )}
 
-              {[0.3, 0.01].map((radius, idx) => (
+              {[0.3,0.01].map((radius,idx) => (
                 <CircleF
                   key={idx}
-                  center={{ lat: latitud, lng: longitud }}
+                  center={{lat: latitud,lng: longitud}}
                   radius={radius}
                   options={{
                     fillColor:
                       user?.documents.length ===
-                      user?.jobPosition?.requireDocuments.length
+                        user?.jobPosition?.requireDocuments.length
                         ? 'green'
                         : 'yellow',
                     strokeOpacity: 0.2,

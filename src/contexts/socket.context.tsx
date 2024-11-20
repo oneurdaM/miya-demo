@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React,{createContext,useContext,useEffect,useState,useCallback} from 'react';
 import useSocket from '@/hooks/useSocket';
+import {toast} from 'react-toastify';
 
 interface SocketContextType {
   online: boolean;
@@ -228,6 +230,13 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
       });
     };
 
+    const handleNewAlert = (data: any) => {
+      const message = `Nueva alerta recibida ${data.content}`;
+      toast.error(message,{
+        autoClose: 5000,
+      });
+    }
+
 
     socket.on('connect',handleConnect);
     socket.on('disconnect',handleDisconnect);
@@ -236,6 +245,8 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
     socket.on('user_list',handleUserList);
     socket.on('online_users_with_location',handleOnlineUsersWithLocation);
     socket.on('realtime_user_list',handleNewLocation);
+    socket.on('new_alert',handleNewAlert);
+
     socket.on('user_track',(data: any) => {
       console.log('Usuario rastreado:',data);
       setSocketContext((prev) => ({...prev,user_track: data}));
@@ -249,6 +260,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
       socket.off('user_list',handleUserList);
       socket.off('online_users_with_location',handleOnlineUsersWithLocation);
       socket.off('realtime_user_list',handleNewLocation);
+      socket.off('new_alert',handleNewAlert);
       socket.off('user_track');
     };
   },[

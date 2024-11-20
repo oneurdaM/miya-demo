@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useState} from 'react'
 import {GetServerSideProps} from 'next'
 import {format} from 'date-fns'
@@ -95,7 +96,7 @@ export default function Alerts() {
           <div className="w-full md:w-1/3">
             <DatePicker
               selected={selectedDate}
-              onChange={(date) => handleDateChange(date)}
+              onChange={(date: any) => handleDateChange(date)}
               timeIntervals={30}
               dateFormat="yyyy-MM-dd"
               placeholderText="Selecciona una fecha"

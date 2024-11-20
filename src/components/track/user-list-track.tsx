@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import cn from 'classnames'
 import Scrollbar from '@/components/ui/scrollbar'
 import Image from 'next/image'
@@ -53,7 +54,7 @@ function UserCard({user}: IUserCard) {
             {user?.firstName} {user?.lastName}
           </h4>
           <p className="text-[13px] text-body  bg-white text-center rounded-b-md ">
-            <strong className="ml-1">{user?.jobPosition.name}</strong>
+            <strong className="ml-1">{user?.jobPosition?.name}</strong>
           </p>
         </div>
       </div>

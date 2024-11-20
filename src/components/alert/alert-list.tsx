@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useEffect} from 'react'
 import {AlignType} from 'rc-table/lib/interface'
 import {useRouter} from 'next/router'
@@ -63,7 +64,7 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
           {image ? (
             <div>
               <a data-fancybox="gallery" href={image}>
-                <Image src={image} alt="Imagen" width={40} />
+                <Image src={image} alt="Imagen" width={40} height={40} />
               </a>
             </div>
           ) : (

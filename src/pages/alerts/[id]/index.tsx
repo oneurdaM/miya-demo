@@ -1,55 +1,56 @@
-import { useRouter } from 'next/router'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {useRouter} from 'next/router'
+import {serverSideTranslations} from 'next-i18next/serverSideTranslations'
 import AppLayout from '@/components/layout/app'
-import { useAlertEditMutation, useAlertQuery } from '@/data/alert'
+import {useAlertEditMutation,useAlertQuery} from '@/data/alert'
 import Loader from '@/components/ui/loader/loader'
 import ErrorMessage from '@/components/ui/error-message'
 import Card from '@/components/common/card'
 import StickerCard from '@/components/widgets/sticker-card'
-import { PinMap } from '@/components/icons/sidebar/pin-map-icon'
-import { TagIcon, UsersIcon } from '@/components/icons/sidebar'
+import {PinMap} from '@/components/icons/sidebar/pin-map-icon'
+import {TagIcon,UsersIcon} from '@/components/icons/sidebar'
 import GoogleMap from '@/components/map/googlemap'
-import { useEffect, useState } from 'react'
-import { Routes } from '@/config/routes'
+import {useEffect,useState} from 'react'
+import {Routes} from '@/config/routes'
 import Label from '@/components/ui/label'
-import { AlertStatus, AlertStatusArray } from '@/types/alerts'
-import { useTranslation } from 'react-i18next'
+import {AlertStatus,AlertStatusArray} from '@/types/alerts'
+import {useTranslation} from 'react-i18next'
 import Select from '@/components/select/select'
-import { useMeQuery } from '@/data/user'
-import { getAlertStatus } from '@/utils/alert-status'
+import {useMeQuery} from '@/data/user'
+import {getAlertStatus} from '@/utils/alert-status'
 import Button from '@/components/ui/button'
-import { Fancybox } from '@fancyapps/ui'
-import { formatDateCabos } from '@/utils/format-date'
+import {Fancybox} from '@fancyapps/ui'
+import {formatDateCabos} from '@/utils/format-date'
+import Image from 'next/image'
 export default function AlertDetail() {
-  const { t } = useTranslation()
+  const {t} = useTranslation()
   const router = useRouter()
   const {
-    query: { id },
+    query: {id},
   } = router
 
   useEffect(() => {
-    Fancybox.bind('[data-fancybox="gallery"]', {})
-  }, [])
+    Fancybox.bind('[data-fancybox="gallery"]',{})
+  },[])
 
-  const { alert, error, loading } = useAlertQuery({
+  const {alert,error,loading} = useAlertQuery({
     id: Number(id),
   })
 
-  const { data: me, loading: meLoading } = useMeQuery()
+  const {data: me} = useMeQuery()
 
-  const { mutate: editAlert, isLoading: editing } = useAlertEditMutation()
-  const [center, setCenter] = useState<google.maps.LatLngLiteral>({
+  const {mutate: editAlert,isLoading: editing} = useAlertEditMutation()
+  const [center,setCenter] = useState<google.maps.LatLngLiteral>({
     lat: alert?.latitude ?? 37.78746222,
     lng: alert?.longitude ?? -122.412923,
   })
 
-  const [zoom, setZoom] = useState<number>(15)
+  const [zoom,setZoom] = useState<number>(15)
 
   if (loading) return <Loader />
 
   if (error) return <ErrorMessage message={'error'} />
 
-  const onMarkerClick = (_payload: any) => {}
 
   const onIdle = (map: google.maps.Map) => {
     setZoom(map.getZoom()!)
@@ -82,8 +83,7 @@ export default function AlertDetail() {
           <Label className="border rounded-md p-3">
             {
               formatDateCabos(
-                //@ts-ignore
-                alert?.createdAt
+                alert?.createdAt ?? ''
               ).label
             }
           </Label>
@@ -110,7 +110,7 @@ export default function AlertDetail() {
               titleTransKey={t('common:alert-status-following')}
               subtitleTransKey={t('common:alert-following-status')}
               icon={<PinMap className="h-7 w-7" color="#00a29e" />}
-              iconBgStyle={{ backgroundColor: '#00a29e' }}
+              iconBgStyle={{backgroundColor: '#00a29e'}}
               status={alert?.status ?? AlertStatus.Created}
             />
           </div>
@@ -119,7 +119,7 @@ export default function AlertDetail() {
               titleTransKey={t('common:geolocation-of-alert')}
               subtitleTransKey={t('common:alert-location')}
               icon={<PinMap className="h-7 w-7" color="#00a29e" />}
-              iconBgStyle={{ backgroundColor: '#a7f3d0' }}
+              iconBgStyle={{backgroundColor: '#a7f3d0'}}
               linkText={t('common:view-on-google-maps')}
               link={`https://www.google.com/maps/search/?api=1&query=${alert?.latitude},${alert?.longitude}`}
             />
@@ -129,7 +129,7 @@ export default function AlertDetail() {
               titleTransKey={t('common:who-generated-alert')}
               subtitleTransKey={t('common:information-displayed')}
               icon={<UsersIcon className="h-7 w-7" color="#d60000" />}
-              iconBgStyle={{ backgroundColor: '#ffafaf' }}
+              iconBgStyle={{backgroundColor: '#ffafaf'}}
               price={alert?.user?.name}
               className="w-full border-2 border-gray-200"
               link={Routes.users.details({
@@ -144,41 +144,40 @@ export default function AlertDetail() {
           <StickerCard
             subtitleTransKey={t('common:alert-location')}
             icon={<TagIcon className="h-7 w-7" color="#d60000" />}
-            iconBgStyle={{ backgroundColor: '#a7f3d0' }}
+            iconBgStyle={{backgroundColor: '#a7f3d0'}}
             linkText={t('common:view-on-google-maps')}
-            children={
-              <div className="mt-2 flex justify-center ">
-                {alert?.image ? (
-                  <div className="w-3/4 flex justify-center">
-                    <div>
-                      <a data-fancybox="gallery" href={alert?.image}>
-                        <img src={alert?.image} alt="Imagen" width={200} />
-                      </a>
-                    </div>
+          >
+            <div className="mt-2 flex justify-center ">
+              {alert?.image ? (
+                <div className="w-3/4 flex justify-center">
+                  <div>
+                    <a data-fancybox="gallery" href={alert?.image}>
+                      <Image src={alert?.image} alt="Imagen" width={200} />
+                    </a>
                   </div>
-                ) : null}
-
-                <div className="w-2/4 h-full ">
-                  <StickerCard
-                    titleTransKey="Contenido"
-                    subtitleTransKey={t('common:information-displayed')}
-                    icon={<UsersIcon className="h-7 w-7" color="#d60000" />}
-                    iconBgStyle={{ backgroundColor: '#ffafaf' }}
-                    price={
-                      <div className="text-justify text-sm">
-                        {alert?.content}
-                      </div>
-                    }
-                    className="w-full border-2 border-gray-200"
-                    link={Routes.users.details({
-                      id: alert?.user?.id?.toString() ?? '',
-                    })}
-                    linkText={t('common:view-user-information')}
-                  />
                 </div>
+              ) : null}
+
+              <div className="w-2/4 h-full ">
+                <StickerCard
+                  titleTransKey="Contenido"
+                  subtitleTransKey={t('common:information-displayed')}
+                  icon={<UsersIcon className="h-7 w-7" color="#d60000" />}
+                  iconBgStyle={{backgroundColor: '#ffafaf'}}
+                  price={
+                    <div className="text-justify text-sm">
+                      {alert?.content}
+                    </div>
+                  }
+                  className="w-full border-2 border-gray-200"
+                  link={Routes.users.details({
+                    id: alert?.user?.id?.toString() ?? '',
+                  })}
+                  linkText={t('common:view-user-information')}
+                />
               </div>
-            }
-          />
+            </div>
+          </StickerCard>
         </div>
 
         <div className="mb-4">
@@ -194,7 +193,7 @@ export default function AlertDetail() {
               zoom={zoom}
               marker={alert}
               onIdle={onIdle}
-              onMarkerClick={onMarkerClick}
+              onMarkerClick={() => { }}
               highlightedMarkerId={alert?.id.toString()}
             />
           ) : (
@@ -212,8 +211,8 @@ export default function AlertDetail() {
 
 AlertDetail.Layout = AppLayout
 
-export const getServerSideProps = async ({ locale }: any) => ({
+export const getServerSideProps = async ({locale}: any) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'form', 'table'])),
+    ...(await serverSideTranslations(locale,['common','form','table'])),
   },
 })

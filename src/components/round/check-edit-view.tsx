@@ -1,71 +1,30 @@
-import { useState } from 'react'
-import Image from 'next/image'
-import { useForm } from 'react-hook-form'
-
-import { siteSettings } from '@/settings/site.settings'
-import TextArea from '../ui/text-area'
-import Button from '../ui/button'
-import { useTranslation } from 'react-i18next'
-import { useModalState } from '../ui/modal/modal.context'
-import { useAlertEditMutation, useAlertQuery } from '@/data/alert'
-import Label from '../ui/label'
-import Select from '../ui/select/select'
-import { AlertStatus, AlertStatusArray } from '@/types/alerts'
-import Loader from '../ui/loader/loader'
-import { useMeQuery } from '@/data/user'
-import { getAlertStatus } from '@/utils/alert-status'
-import { MapPin } from '../icons/map-pin'
-import { useCheckpointByIQuery, useRoundQueryId } from '@/data/round'
-import Input from '../ui/input'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Avatar from '../common/avatar'
-import StickerCard from '../widgets/sticker-card'
-import { ChecklistIcon } from '../icons/summary/checklist'
+
 import Card from '../common/card'
 import Table from 'rc-table'
-import { AlignType } from 'rc-table/lib/interface'
-import { UsersResponse } from '@/types/users'
-import { useUsersQuery } from '@/data/users'
-import TitleWithSort from '../ui/title-with-sort'
+import {AlignType} from 'rc-table/lib/interface'
+import {UsersResponse} from '@/types/users'
+import {useUsersQuery} from '@/data/users'
 import Badge from '../ui/badge/badge'
 import LinkButton from '../ui/link-button'
 
 const CheckChangeStatus = () => {
-  const { t } = useTranslation()
-  const { data } = useModalState()
-  // const {closeModal} = useModalAction();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({})
-
-  const { round, loading, error } = useRoundQueryId({
-    id: Number(data),
-  })
-
-  const { users } = useUsersQuery({
+  const {users} = useUsersQuery({
     limit: 100,
     page: 1,
     search: '',
     jobPosition: '',
   })
-  //@ts-ignore
 
-  let idsObjeto2 = round?.user_roundParticipants?.map((item) => item.id)
-
-  // Filtrar objeto1.datos basado en los IDs de objeto2
-  //@ts-ignore
-  let nuevoArreglo = users?.filter((item) => !idsObjeto2?.includes(item.id))
-
-  const onSubmit = (data: any) => {}
-  const columns = [
+  const columns: any = [
     {
       title: <span className="px-16 ">Imagén</span>,
       dataIndex: 'image',
       key: 'image',
       align: 'center' as AlignType,
-      render: (_data: any, { firstName, image, email }: UsersResponse) => (
+      render: (_data: unknown,{firstName,image,email}: UsersResponse) => (
         <div className="flex items-center">
           <Avatar name={firstName} src={image ?? ''} />
           <div className="flex flex-col whitespace-nowrap font-medium ms-2">
@@ -127,7 +86,6 @@ const CheckChangeStatus = () => {
       <Card className="mb-8 flex w-full items-center md:flex-row">
         <div className="flex justify-center w-full">
           <Table
-            //@ts-ignore
             columns={columns}
             data={users}
             className="w-full h-1/2"

@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React,{useMemo} from "react";
 export interface State {
   settings: any;
 }
 
 const initialState = {
-  siteTitle: "Trablisa Dashboard",
+  siteTitle: "Miyaa Dashboard",
   siteSubtitle: "Dashboard",
   currencyOptions: {
     formation: "en-US",

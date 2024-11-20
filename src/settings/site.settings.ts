@@ -6,7 +6,7 @@ export const siteSettings = {
   description: 'Dashboard',
   logo: {
     url: '/images/logo.png',
-    alt: 'Trablisa',
+    alt: 'Miyaa',
     href: '/',
     width: 128,
     height: 60,
@@ -55,12 +55,6 @@ export const siteSettings = {
             label: 'sidebar-nav-item-dashboard',
             icon: 'DashboardIcon',
           },
-
-          // {
-          //   href: Routes.analitycs,
-          //   label: 'sidebar-nav-item-stadisticts',
-          //   icon: 'DiaryIcon',
-          // },
         ]
       },
       alerts: {
@@ -145,36 +139,7 @@ export const siteSettings = {
                 label: 'text-attendances',
                 icon: 'MyShopIcon',
               },
-              {
-                href: Routes.documents.list,
-                label: 'text-documents',
-              },
             ],
-          },
-          {
-            href: '',
-            label: 'Roles',
-            icon: 'TypesIcon',
-            childMenu: [
-
-              {
-                href: Routes.roles.list,
-                label: 'Posicion de trabajo',
-                icon: 'TypesIcon',
-
-              },
-              {
-                href: Routes.documents.list,
-                label: 'Documentos',
-                icon: 'TypesIcon',
-
-              },
-            ]
-          },
-          {
-            href: Routes.Rondines.list,
-            label: 'text-Round',
-            icon: 'WithdrawIcon',
           },
           {
             href: Routes.sectores.list,
