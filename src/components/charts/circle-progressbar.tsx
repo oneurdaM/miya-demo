@@ -1,3 +1,5 @@
+'use client';
+
 import React,{useEffect,useRef,useState} from 'react';
 import cn from 'classnames';
 
@@ -72,7 +74,7 @@ export default function CircleProgressBar({
 	// Safari browser transform css issue with foreignObject
 	const [isSafari,setSafari] = useState(false);
 	useEffect(() => {
-		const isBrowserSafari = /^((?!chrome|android).)*safari/i.test(
+		let isBrowserSafari = /^((?!chrome|android).)*safari/i.test(
 			navigator.userAgent
 		);
 		setSafari(() => isBrowserSafari);

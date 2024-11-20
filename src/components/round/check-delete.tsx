@@ -1,14 +1,15 @@
+import { useAlertDeleteMutation } from '@/data/alert'
 import ConfirmationCard from '../common/confirmation-card'
-import {useModalAction,useModalState} from '../ui/modal/modal.context'
-import {useCheckpointDeleteMutation} from '@/data/round'
+import { useModalAction, useModalState } from '../ui/modal/modal.context'
+import { useCheckpointDeleteMutation } from '@/data/round'
 
 const CheckpointDelete = () => {
-  const {data} = useModalState()
-  const {closeModal} = useModalAction()
-  const {mutate: deleteCheck,isLoading} = useCheckpointDeleteMutation()
+  const { data } = useModalState()
+  const { closeModal } = useModalAction()
+  const { mutate: deleteCheck, isLoading } = useCheckpointDeleteMutation()
 
   async function handleDelete() {
-    deleteCheck({id: data})
+    deleteCheck({ id: data })
     closeModal()
   }
   return (

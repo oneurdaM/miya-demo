@@ -3,7 +3,7 @@ import Logo from '@/components/ui/logo'
 
 export default function AuthPageLayout({
   children,
-}: React.PropsWithChildren) {
+}: React.PropsWithChildren<{}>) {
   return (
     <div
       className="flex h-screen items-center justify-center bg-light sm:bg-gray-100"

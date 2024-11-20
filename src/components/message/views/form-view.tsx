@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useEffect,useState} from 'react'
 import {useRouter} from 'next/router'
 import {useForm} from 'react-hook-form'
@@ -20,7 +19,7 @@ interface Props {
   onNewMessage: (message: any) => void; // Nueva prop para manejar mensajes
 }
 
-const CreateMessageForm = ({onNewMessage}: Props) => {
+const CreateMessageForm = ({className,user,onNewMessage,...rest}: Props) => {
   const {register,handleSubmit,setFocus,reset} = useForm<FormValues>();
   const [base64,setBase64] = useState('');
   const [urlImage,setImageUrl] = useState('');
@@ -72,6 +71,7 @@ const CreateMessageForm = ({onNewMessage}: Props) => {
   return (
     <div className="mt-10">
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        {/* Manejo de archivos y vista de mensaje */}
         <div className="flex justify-around items-center">
           <TextArea
             className="overflow-y-auto overflow-x-hidden ml-11 mr-11 shadow-chatBox w-full"

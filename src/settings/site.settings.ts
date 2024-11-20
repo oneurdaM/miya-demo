@@ -55,6 +55,7 @@ export const siteSettings = {
             label: 'sidebar-nav-item-dashboard',
             icon: 'DashboardIcon',
           },
+
         ]
       },
       alerts: {
@@ -142,9 +143,18 @@ export const siteSettings = {
             ],
           },
           {
-            href: Routes.sectores.list,
-            label: 'text-Sectors',
-            icon: 'MaintenanceIcon',
+            href: '',
+            label: 'Roles',
+            icon: 'TypesIcon',
+            childMenu: [
+
+              {
+                href: Routes.roles.list,
+                label: 'Posicion de trabajo',
+                icon: 'TypesIcon',
+
+              },
+            ]
           },
           {
             href: Routes.suggestions.list,

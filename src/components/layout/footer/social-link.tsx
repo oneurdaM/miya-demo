@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React,{Fragment} from 'react';
 import * as socialIcons from '@/components/icons/social';
 import {getIcon} from '@/utils/get-icon';

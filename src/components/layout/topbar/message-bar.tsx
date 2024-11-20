@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useTranslation} from 'next-i18next';
-import {useConversationsQuery} from '@/data/conversations';
+import {useRouter} from 'next/router';
+import {useConversationsQuery,useMessageSeen} from '@/data/conversations';
 // import { useNotifyLogAllReadMutation } from '@/data/notify-logs';
 import {Menu,Transition} from '@headlessui/react';
 import cn from 'classnames';
@@ -10,6 +10,7 @@ import {Fragment,useEffect,useState} from 'react';
 import {isEmpty} from 'lodash';
 import {SortOrder} from '@/types';
 import dayjs from 'dayjs';
+import {adminOnly,getAuthCredentials,hasAccess} from '@/utils/auth-utils';
 import {Routes} from '@/config/routes';
 import {MessageAvatarPlaceholderIcon} from '@/components/icons/message-avatar-placeholder-icon';
 import {toast} from 'react-toastify';
@@ -23,8 +24,14 @@ type IProps = {
 
 const MessageBar = ({user}: IProps) => {
   const {t} = useTranslation();
+  const [notice,setNotice] = useState([]);
+  let allNotice: any = [];
+  const router = useRouter();
   const [conversationsOpen,setConversationsOpen] = useState(false);
-  const {conversations} = useConversationsQuery({
+  const {permissions} = getAuthCredentials();
+  let permission = hasAccess(adminOnly,permissions);
+  const {mutate: createSeenMessage} = useMessageSeen();
+  let {conversations} = useConversationsQuery({
     limit: 5,
     sortedBy: SortOrder.Desc,
     orderBy: 'updated_at',
@@ -46,6 +53,9 @@ const MessageBar = ({user}: IProps) => {
       const channel = PusherConfig.subscribe(channelName);
 
       channel.bind(`${process.env.NEXT_PUBLIC_MESSAGE_EVENT}`,(data: any) => {
+        allNotice.push(data);
+        //@ts-ignore
+        setNotice(allNotice);
         toast.success(data?.message,{
           toastId: 'messageSuccess',
         });
@@ -57,7 +67,7 @@ const MessageBar = ({user}: IProps) => {
     } else {
       PusherConfig.disconnect();
     }
-  },[user?.id]);
+  },[notice]);
 
   // here messages will be passed as a props in eventData. to keep the useEffect track of having a new message
   return (
@@ -74,6 +84,14 @@ const MessageBar = ({user}: IProps) => {
             onClick={() => setConversationsOpen(!conversationsOpen)}
           />
         </Menu.Button>
+
+        {/* <MessageBox
+          eventName={`${process.env.NEXT_PUBLIC_MESSAGE_EVENT}`}
+          eventChannel={`${process.env.NEXT_PUBLIC_MESSAGE_CHANNEL_PRIVATE}`}
+          eventData={conversations}
+          user={user}
+          title={t('text-messages')}
+        /> */}
 
         <Transition
           as={Fragment}
@@ -106,7 +124,10 @@ const MessageBar = ({user}: IProps) => {
                 <div className="py-0">
                   {conversations?.length ? (
                     conversations?.map((item: any) => {
-                      Routes?.message?.details(item?.id)
+                      const routes = permission
+                        ? Routes?.message?.details(item?.id)
+                        : Routes?.environments?.details(item?.id);
+
                       const seenMessage = (unseen: boolean) => {
                         if (unseen) {
                           // createSeenMessage({
@@ -124,7 +145,7 @@ const MessageBar = ({user}: IProps) => {
                               'flex gap-2 rounded-md py-3.5 px-5 text-sm font-semibold capitalize transition duration-200 hover:text-accent group-hover:bg-gray-100/70'
                             )}
                             onClick={() => {
-                              // router.push(`${routes}`);
+                              router.push(`${routes}`);
                               seenMessage(Boolean(item?.unseen));
                             }}
                           >
@@ -137,6 +158,7 @@ const MessageBar = ({user}: IProps) => {
                                 )}
                                 {!isEmpty(item?.shop?.logo?.thumbnail) ? (
                                   <Image
+                                    // @ts-ignore
                                     src={item?.shop?.logo?.thumbnail}
                                     alt={String(item?.shop?.name)}
                                     fill

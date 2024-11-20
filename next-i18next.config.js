@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 /** @type {import('next-i18next').UserConfig} */
 
 const invariant = require('tiny-invariant');

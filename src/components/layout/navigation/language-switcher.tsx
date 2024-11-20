@@ -12,16 +12,16 @@ export default function LanguageSwitcher() {
   const router = useRouter();
   const {asPath,locale,locales} = router;
 
-  const filterItem = languageMenu?.filter((element) =>
+  let filterItem = languageMenu?.filter((element) =>
     locales?.includes(element?.id)
   );
 
   const currentSelectedItem = locale
-    ? filterItem?.find((o) => o?.value === locale) || filterItem[0]
+    ? filterItem?.find((o) => o?.value === locale)!
     : filterItem[2];
-  const [selectedItem,setSelectedItem] = useState<{value: string; icon: JSX.Element; name: string}>(currentSelectedItem);
+  const [selectedItem,setSelectedItem] = useState(currentSelectedItem);
 
-  function handleItemClick(values: {value: string; icon: JSX.Element; name: string}) {
+  function handleItemClick(values: any) {
     Cookies.set("NEXT_LOCALE",values?.value,{expires: 365});
     setSelectedItem(values);
     router.push(asPath,undefined,{

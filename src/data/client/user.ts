@@ -10,13 +10,13 @@ import {
   UserQueryOTrackptions,
   VerifyForgetPasswordTokenInput,
 } from '@/types/index'
-import {DocumentsByIdResponse, DocumentsData, UserPagination,UserRegistration,UserTracker,UsersResponse} from '@/types/users'
+import {DocumentsByIdResponse,DocumentsData,UserPagination,UserRegistration,UserTracker,UsersResponse} from '@/types/users'
 import {API_ENDPOINTS} from './api-endpoints'
 import {HttpClient} from './http-client'
 import {crudFactory} from './crud-factory'
 import {User} from '@/types/suggestions'
 import {QueryOptions} from 'react-query'
-import { DocumentsPagination } from '@/types/documents'
+import {DocumentsPagination} from '@/types/documents'
 
 export const userClient = {
   ...crudFactory<User,QueryOptions,any>(API_ENDPOINTS.USERS),
@@ -38,15 +38,15 @@ export const userClient = {
   },
 
 
-  fetchTracker: ({ id, ...params }: Partial<UserQueryOTrackptions>) => {
-    return HttpClient.get<UserPagination>(`${API_ENDPOINTS.TRACK}/${id}`, {
+  fetchTracker: ({id,...params}: Partial<UserQueryOTrackptions>) => {
+    return HttpClient.get<UserPagination>(`${API_ENDPOINTS.TRACK}/${id}`,{
       ...params,
     });
   },
   trackUser: (variables: {id: number}) => {
     return HttpClient.get(`${API_ENDPOINTS.TRACK_USER}/${variables.id}`)
   },
-  userJob: (id:any) => {
+  userJob: (id: any) => {
     return HttpClient.get(`${API_ENDPOINTS.USERJOB}/${id}`)
   },
   verifyForgetPasswordToken: (variables: VerifyForgetPasswordTokenInput) => {
@@ -116,7 +116,7 @@ export const userClient = {
     return HttpClient.get<UsersResponse>(`${API_ENDPOINTS.USERS}/round/${id}`)
   },
 
-  documentByUser: ({ ...params}: Partial<DocumentsQueryOptions> ) => {
+  documentByUser: ({...params}: Partial<DocumentsQueryOptions>) => {
     return HttpClient.get<DocumentsPagination>(`${API_ENDPOINTS.DOCUMENTSBYIDUSER}/${params.id}`,{
       ...params
     })
@@ -125,7 +125,7 @@ export const userClient = {
   documentById: ({id}: {id: number}) => {
     return HttpClient.get<DocumentsData>(`${API_ENDPOINTS.DOCUMENTS}/${id}`)
   },
-  documentByIdUpdate: (id: any, data: any) => {
+  documentByIdUpdate: (id: any,data: any) => {
     return HttpClient.put(
       `${API_ENDPOINTS.DOCUMENTS}/documents/${id}`,
       data
@@ -141,5 +141,9 @@ export const userClient = {
   userInConversation: ({id}: {id: number}) => {
     return HttpClient.get<DocumentsData>(`${API_ENDPOINTS.USERS}/userInConversations/${id}`)
   },
+
+  fetchJobPositions: () => {
+    return HttpClient.get<any>(API_ENDPOINTS.JOB_POSITION)
+  }
 
 }

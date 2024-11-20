@@ -1,21 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 
 import Pagination from '../ui/pagination'
-import {MappedPaginatorInfo} from '@/types'
-import {AlignType,Table} from '@/components/ui/table'
+import { MappedPaginatorInfo } from '@/types'
+import { AlignType, Table } from '@/components/ui/table'
 import TitleWithSort from '../ui/title-with-sort'
 
 type BiometricsListProps = {
-  biometrics: Array<{id: number; image: string; title: string; content: string; is_approved: boolean}>
+  biometrics: any
   paginatorInfo: MappedPaginatorInfo | null
   onPagination: (page: number) => void
 }
 
 const BiometricsList = ({
+  biometrics,
   paginatorInfo,
   onPagination,
 }: BiometricsListProps) => {
+  const { t } = useTranslation()
+  // const {mutate: update,isLoading} = useUpdateBiometricMutation();
+  function changeStatus(biometric: any, status: boolean) {
+    // update({
+    // 	id: biometric.id.toString(),
+    // 	is_approved: status,
+    // })
+  }
 
   const columns: any = [
     {
@@ -83,7 +92,7 @@ const BiometricsList = ({
       <div className="mb-6 overflow-hidden rounded shadow">
         <Table
           rowKey="id"
-          scroll={{x: 900}}
+          scroll={{ x: 900 }}
           columns={columns}
           emptyText="No hay biometrias creadas"
           data={[]}

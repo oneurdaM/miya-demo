@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import cn from 'classnames'
 import Scrollbar from '@/components/ui/scrollbar'
 import Image from 'next/image'

@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {FC,useEffect,useRef} from "react";
-import {Portal} from "@headlessui/react";
-import {motion,AnimatePresence} from "framer-motion";
+import { FC, useEffect, useRef } from "react";
+import Portal from "@reach/portal";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   disableBodyScroll,
   enableBodyScroll,
   clearAllBodyScrollLocks,
 } from "body-scroll-lock";
 import cn from "classnames";
-import {fadeInRight} from "@/utils/motion/fade-in-right";
-import {fadeInLeft} from "@/utils/motion/fade-in-left";
-import {fadeInOut} from "@/utils/motion/fade-in-out";
+import { fadeInRight } from "@/utils/motion/fade-in-right";
+import { fadeInLeft } from "@/utils/motion/fade-in-left";
+import { fadeInOut } from "@/utils/motion/fade-in-out";
 
 interface SidebarProps {
   children: any;
@@ -40,7 +39,7 @@ const Drawer: FC<SidebarProps> = ({
     return () => {
       clearAllBodyScrollLocks();
     };
-  },[open]);
+  }, [open]);
 
   return (
     <Portal>

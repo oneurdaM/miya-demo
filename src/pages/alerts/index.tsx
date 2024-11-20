@@ -1,43 +1,42 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {useState} from 'react'
-import {GetServerSideProps} from 'next'
-import {format} from 'date-fns'
 import Layout from '@/components/layout/admin'
 import Card from '@/components/common/card'
-import {serverSideTranslations} from 'next-i18next/serverSideTranslations'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import AlertList from '@/components/alert/alert-list'
+import { useState } from 'react'
 import Loader from '@/components/ui/loader/loader'
 import ErrorMessage from '@/components/ui/error-message'
-import {useAlertsQuery} from '@/data/alert'
+import { useAlertsQuery } from '@/data/alert'
 import Search from '@/components/common/search'
-import {LIMIT} from '@/utils/constants'
-import {DatePicker} from '@/components/ui/date-picker'
-import {es} from 'date-fns/locale'
+import { LIMIT } from '@/utils/constants'
+import { DatePicker } from '@/components/ui/date-picker'
+import { es } from 'date-fns/locale'
+import { format } from 'date-fns'
 import Select from '@/components/select/select'
-import {getAlertStatus} from '@/utils/alert-status'
-import {AlertStatusArray} from '@/types/alerts'
-import {useTranslation} from 'react-i18next'
-import {GeneratePdf} from '@/utils/generatePdfIncident'
-import {getFormattedDateInLosCabos} from '@/utils/format-date'
+import { getAlertStatus } from '@/utils/alert-status'
+import { AlertStatusArray } from '@/types/alerts'
+import { useTranslation } from 'react-i18next'
+import { GeneratePdf } from '@/utils/generatePdfIncident'
+import { getFormattedDateInLosCabos } from '@/utils/format-date'
+import { GetServerSideProps } from 'next'
 import {
   allowedRoles,
   getAuthCredentials,
   hasAccess,
   isAuthenticated,
 } from '@/utils/auth-utils'
-import {Routes} from '@/config/routes'
+import { Routes } from '@/config/routes'
 
 export default function Alerts() {
-  const {t} = useTranslation()
-  const [searchTerm,setSearchTerm] = useState('')
-  const [page,setPage] = useState(1)
-  const [selectedDate,setSelectedDate] = useState(null)
-  const [selectStatus,setSelectedstatus] = useState('')
-  const [selectedDateString,setSelectedDateString] = useState('')
+  const { t } = useTranslation()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [page, setPage] = useState(1)
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectStatus, setSelectedstatus] = useState('')
+  const [selectedDateString, setSelectedDateString] = useState('')
 
   const todayCabosDate = getFormattedDateInLosCabos()
 
-  const {alerts,loading,error,paginatorInfo} = useAlertsQuery({
+  const { alerts, loading, error, paginatorInfo } = useAlertsQuery({
     limit: LIMIT,
     page,
     search: searchTerm,
@@ -49,7 +48,7 @@ export default function Alerts() {
 
   if (error) return <ErrorMessage message={error.message} />
 
-  function handleSearch({searchText}: {searchText: string}) {
+  function handleSearch({ searchText }: { searchText: string }) {
     setSearchTerm(searchText)
     setPage(1)
   }
@@ -61,7 +60,7 @@ export default function Alerts() {
   const handleDateChange = (date: any) => {
     if (date) {
       setSelectedDate(date)
-      const formattedDate = format(date,'yyyy-MM-dd')
+      const formattedDate = format(date, 'yyyy-MM-dd')
       setSelectedDateString(formattedDate)
     } else {
       setSelectedDateString('')
@@ -96,7 +95,7 @@ export default function Alerts() {
           <div className="w-full md:w-1/3">
             <DatePicker
               selected={selectedDate}
-              onChange={(date: any) => handleDateChange(date)}
+              onChange={(date) => handleDateChange(date)}
               timeIntervals={30}
               dateFormat="yyyy-MM-dd"
               placeholderText="Selecciona una fecha"
@@ -110,6 +109,9 @@ export default function Alerts() {
           </div>
 
           <div className="w-full border-red-100 bg-red-200 md:w-auto border-2 py-2 px-3 rounded-full flex justify-center mb-4 md:mb-0 hover:bg-red-400 hover:transition-all ease-in-out hover:border-red-500 hover:cursor-pointer">
+            {/* <CSVLink data={alerts} filename={`export-alerts-${today}.csv`}>
+              <CsvIcon width={30} />
+            </CSVLink> */}
             <GeneratePdf
               date={selectedDateString ? selectedDateString : todayCabosDate}
             />
@@ -129,11 +131,11 @@ export default function Alerts() {
 Alerts.Layout = Layout
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {token,permissions} = getAuthCredentials(ctx)
+  const { token, permissions } = getAuthCredentials(ctx)
   const locale = ctx.locale || 'es'
   if (
-    !isAuthenticated({token,permissions}) ||
-    !hasAccess(allowedRoles,permissions)
+    !isAuthenticated({ token, permissions }) ||
+    !hasAccess(allowedRoles, permissions)
   ) {
     return {
       redirect: {
@@ -145,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       userPermissions: permissions,
-      ...(await serverSideTranslations(locale,['table','common','form'])),
+      ...(await serverSideTranslations(locale, ['table', 'common', 'form'])),
     },
   }
 }

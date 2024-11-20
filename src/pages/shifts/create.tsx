@@ -1,5 +1,5 @@
-import {useTranslation} from 'react-i18next'
-import {serverSideTranslations} from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import Layout from '@/components/layout/admin'
 import CreateOrUpdateShiftForm from '@/components/shifts/shift-form'
@@ -11,14 +11,14 @@ import {
   isAuthenticated,
 } from '@/utils/auth-utils'
 import DontView from '@/components/dontView/dont-view'
-import {Routes} from '@/config/routes'
-import {GetServerSideProps} from 'next'
+import { Routes } from '@/config/routes'
+import { GetServerSideProps } from 'next'
 
-const {permissions} = getAuthCredentials()
-const permission = hasAccess(adminOnly,permissions)
+const { permissions } = getAuthCredentials()
+let permission = hasAccess(adminOnly, permissions)
 
 export default function CreateShift() {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   return (
     <>
@@ -42,11 +42,11 @@ export default function CreateShift() {
 CreateShift.Layout = Layout
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {token,permissions} = getAuthCredentials(ctx)
+  const { token, permissions } = getAuthCredentials(ctx)
   const locale = ctx.locale || 'es'
   if (
-    !isAuthenticated({token,permissions}) ||
-    !hasAccess(allowedRoles,permissions)
+    !isAuthenticated({ token, permissions }) ||
+    !hasAccess(allowedRoles, permissions)
   ) {
     return {
       redirect: {
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       userPermissions: permissions,
-      ...(await serverSideTranslations(locale,['table','common','form'])),
+      ...(await serverSideTranslations(locale, ['table', 'common', 'form'])),
     },
   }
 }

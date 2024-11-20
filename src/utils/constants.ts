@@ -29,8 +29,8 @@ export const ROLES = [
 export const PERMISSIONS = 'permissions'
 export const AUTH_CRED = 'AUTH_CRED'
 export const EMAIL_VERIFIED = 'emailVerified'
-export const CART_KEY = 'trablisa-cart'
-export const CHECKOUT = 'trablisa-checkout'
+export const CART_KEY = 'miyaa-cart'
+export const CHECKOUT = 'miyaa-checkout'
 export const RESPONSIVE_WIDTH = 1024 as number
 export const MAINTENANCE_DETAILS = 'MAINTENANCE_DETAILS'
 export const MAXIMUM_WORD_COUNT_FOR_RICH_TEXT_EDITOR: number = 10000
@@ -39,7 +39,7 @@ export const MAXIMUM_WORD_COUNT_FOR_RICH_TEXT_EDITOR: number = 10000
 // export const LATITUDE = 23.15874
 // export const LONGITUDE = -109.71692
 
-export const LATITUDE =  23.1634033
+export const LATITUDE = 23.1634033
 export const LONGITUDE = -109.7176351
 
 export const ICON = 'iconos/inspector.png'

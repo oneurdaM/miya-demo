@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React,{createContext,useContext,useEffect,useState,useCallback} from 'react';
 import useSocket from '@/hooks/useSocket';
 import {toast} from 'react-toastify';

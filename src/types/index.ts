@@ -17,7 +17,7 @@ export interface StoreNoticeQueryOptions extends QueryOptions {
 ;[
   {
     id: 1,
-    name: 'Trablisa',
+    name: 'Miyaa',
     logo: null,
     active: false,
     primary_color: '#0097D9',
@@ -261,7 +261,7 @@ export type QueryOptionsTrakcer = {
 
 
 
-export type QueryOptionsTypeDocument= {
+export type QueryOptionsTypeDocument = {
   id?: string
   page?: number
   limit?: number

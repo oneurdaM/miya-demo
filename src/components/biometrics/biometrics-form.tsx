@@ -9,11 +9,11 @@ import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 
 type BiometricCreateFormProps = {
-	setCaptureVideo: (value: boolean) => void;
+	setCaptureVideo: any;
 	modelsLoaded: boolean;
 	captureVideo: boolean;
-	videoRef: React.RefObject<HTMLVideoElement>;
-	canvasRef: React.RefObject<HTMLCanvasElement>;
+	videoRef: any;
+	canvasRef: any;
 }
 
 const BiometricCreateForm = ({setCaptureVideo,captureVideo}: BiometricCreateFormProps) => {
@@ -30,7 +30,7 @@ const BiometricCreateForm = ({setCaptureVideo,captureVideo}: BiometricCreateForm
 		() => {
 			setCaptureVideo(true);
 		},
-		[setCaptureVideo]
+		[webcamRef]
 	);
 
 	const closeWebcam = () => {

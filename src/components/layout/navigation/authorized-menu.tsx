@@ -1,19 +1,24 @@
 import cn from 'classnames'
-import {Fragment} from 'react'
-import {Menu,Transition} from '@headlessui/react'
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
 import Avatar from '@/components/common/avatar'
 import Link from '@/components/ui/link'
-import {siteSettings} from '@/settings/site.settings'
-import {useTranslation} from 'next-i18next'
-import {useMeQuery} from '@/data/user'
-import {getIcon} from '@/utils/get-icon'
+import { siteSettings } from '@/settings/site.settings'
+import { useTranslation } from 'next-i18next'
+import { useMeQuery } from '@/data/user'
+import { getIcon } from '@/utils/get-icon'
 import * as sidebarIcons from '@/components/icons/sidebar'
-
+import { useRouter } from 'next/router'
+import { getAuthCredentials } from '@/utils/auth-utils'
 
 export default function AuthorizedMenu() {
-  const {data} = useMeQuery()
-  const {t} = useTranslation('common')
+  const { data } = useMeQuery()
+  const { t } = useTranslation('common')
+  const { pathname, query } = useRouter()
+  const slug = (pathname === '/[shop]' && query?.shop) || ''
+  const { permissions } = getAuthCredentials()
 
+  // Again, we're using framer-motion for the transition effect
   return (
     <Menu
       as="div"
@@ -70,12 +75,12 @@ export default function AuthorizedMenu() {
           </Menu.Item>
           <div className="space-y-0.5 py-2">
             {siteSettings?.authorizedLinks?.map(
-              ({href,labelTransKey,icon},index) => {
+              ({ href, labelTransKey, icon }, index) => {
                 return (
                   <Fragment key={index}>
                     {/* {hasPermission && ( */}
                     <Menu.Item key={`${href}${labelTransKey}`}>
-                      {({active}) => (
+                      {({ active }) => (
                         <>
                           <li
                             className={cn(

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useTranslation} from 'react-i18next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import dynamic from 'next/dynamic';

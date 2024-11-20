@@ -1,13 +1,13 @@
-import {TrashIcon} from "@/components/icons/trash";
+import { TrashIcon } from "@/components/icons/trash";
 import Button from "@/components/ui/button";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 import cn from "classnames";
 
 type ConfirmationCardProps = {
   onCancel: () => void;
   onDelete: () => void;
   title?: string;
-  icon?: React.ReactNode;
+  icon?: any;
   description?: string;
   cancelBtnClassName?: string;
   deleteBtnClassName?: string;
@@ -30,7 +30,7 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
   cancelBtnLoading,
   deleteBtnLoading,
 }) => {
-  const {t} = useTranslation("common");
+  const { t } = useTranslation("common");
   return (
     <div className="m-auto w-full max-w-sm rounded-md bg-light p-4 pb-6 sm:w-[24rem] md:rounded-xl">
       <div className="h-full w-full text-center">

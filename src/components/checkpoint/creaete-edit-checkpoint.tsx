@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useTranslation} from 'react-i18next'
-import {useForm} from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+;('lodash/pick')
+import { useForm } from 'react-hook-form'
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 import {
   checkpointRegisterMutation,
   useUpateCheckpointMutation,
@@ -23,23 +24,26 @@ type IProps = {
   initialValues?: CheckpointFormProps
 }
 
-export default function CheckpointCreate({initialValues}: IProps) {
-  const {t} = useTranslation()
+export default function CheckpointCreate({ initialValues }: IProps) {
+  const { t } = useTranslation()
 
   const router = useRouter()
   const {
-    query: {id},
+    query: { id },
   } = router
 
-  const {mutate: create,isLoading: createLoading} =
+  const { mutate: create, isLoading: createLoading } =
     checkpointRegisterMutation()
 
-  const {mutate: update,isLoading: updateLoading} =
+  const { mutate: update, isLoading: updateLoading } =
     useUpateCheckpointMutation()
 
   const {
     register,
+    control,
     handleSubmit,
+    reset,
+    formState: { errors },
   } = useForm<any>({
     defaultValues: initialValues,
   })
@@ -121,7 +125,7 @@ export default function CheckpointCreate({initialValues}: IProps) {
             >
               {t('form:form-button-back')}
             </Button>
-            <Button loading={createLoading} disabled={createLoading || updateLoading}>
+            <Button loading={createLoading} disabled={createLoading}>
               {initialValues ? 'Actualizar checkpoint' : 'Crear checkpoint'}
             </Button>
           </div>

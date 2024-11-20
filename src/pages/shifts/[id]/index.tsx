@@ -1,12 +1,16 @@
-import {useRouter} from 'next/router'
-import {serverSideTranslations} from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
+import ProfileUpdateOrCreateForm from '@/components/auth/profile-update-or-create-form'
+import AlertListSmall from '@/components/alert/alert-list-small'
 import Layout from '@/components/layout/admin'
+import ChatTable from '@/components/ui/chat-table'
 import ErrorMessage from '@/components/ui/error-message'
 import Loader from '@/components/ui/loader/loader'
-import {useShiftByIdQuery} from '@/data/shift'
-import {useTranslation} from 'react-i18next'
-import {GetServerSideProps} from 'next'
+import { useUserQuery } from '@/data/user'
+import { useShiftByIdQuery } from '@/data/shift'
+import { useTranslation } from 'react-i18next'
+import { GetServerSideProps } from 'next'
 import {
   adminOnly,
   allowedRoles,
@@ -14,22 +18,23 @@ import {
   hasAccess,
   isAuthenticated,
 } from '@/utils/auth-utils'
-import {Routes} from '@/config/routes'
+import { Routes } from '@/config/routes'
 import CreateOrUpdateShiftForm from '@/components/shifts/shift-form'
+import { DontAllowed } from '@/components/icons/dont-allowed'
 import DontView from '@/components/dontView/dont-view'
 
 export default function ShiftPage() {
   const router = useRouter()
   const {
-    query: {id},
+    query: { id },
   } = router
-  const {t} = useTranslation()
-  const {shift,loading,error} = useShiftByIdQuery({
+  const { t } = useTranslation()
+  const { shift, loading, error } = useShiftByIdQuery({
     id: Number(id),
   })
 
-  const {permissions} = getAuthCredentials()
-  const permission = hasAccess(adminOnly,permissions)
+  const { permissions } = getAuthCredentials()
+  let permission = hasAccess(adminOnly, permissions)
 
   if (loading) return <Loader />
 
@@ -56,10 +61,10 @@ export default function ShiftPage() {
 ShiftPage.Layout = Layout
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {token,permissions} = getAuthCredentials(ctx)
+  const { token, permissions } = getAuthCredentials(ctx)
   if (
-    !isAuthenticated({token,permissions}) ||
-    !hasAccess(allowedRoles,permissions)
+    !isAuthenticated({ token, permissions }) ||
+    !hasAccess(allowedRoles, permissions)
   ) {
     return {
       redirect: {
@@ -71,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       userPermissions: permissions,
-      ...(await serverSideTranslations(ctx.locale ?? 'es',[
+      ...(await serverSideTranslations(ctx.locale ?? 'es', [
         'table',
         'common',
         'form',

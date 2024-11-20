@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BanUser } from '@/components/icons/ban-user'
+import { EditIcon } from '@/components/icons/edit'
+import { TrashIcon } from '@/components/icons/trash'
+import { Eye } from '@/components/icons/eye-icon'
+import { CheckMarkCircle } from '@/components/icons/checkmark-circle'
+import { useModalAction } from '@/components/ui/modal/modal.context'
+import { CloseFillIcon } from '@/components/icons/close-fill'
+import { AdminIcon } from '@/components/icons/admin-icon'
 import Link from 'next/link'
-
-import {BanUser} from '@/components/icons/ban-user'
-import {EditIcon} from '@/components/icons/edit'
-import {TrashIcon} from '@/components/icons/trash'
-import {Eye} from '@/components/icons/eye-icon'
-import {CheckMarkCircle} from '@/components/icons/checkmark-circle'
-import {useModalAction} from '@/components/ui/modal/modal.context'
-import {CloseFillIcon} from '@/components/icons/close-fill'
-import {AdminIcon} from '@/components/icons/admin-icon'
-import {ChatIcon} from '@/components/icons/sidebar'
-import {CsvIcon} from '@/components/icons/csv-icon'
-import FolderIcon from '@/components/icons/folder-solid'
-import {CheckMark} from '@/components/icons/checkmark'
-import {AvatarIcon} from '@/components/icons/avatar-icon'
-import {SaveIcon} from '@/components/icons/save'
-
-import {Role} from '@/types/users'
+import { Role } from '@/types/users'
+import { ChatIcon, WithdrawIcon } from '../icons/sidebar'
+import { CsvIcon } from '../icons/csv-icon'
+import FolderIcon from '../icons/folder-solid'
+import { CheckMark } from '../icons/checkmark'
+import { UserIcon } from '../icons/user-icon'
+import { AvatarIcon } from '../icons/avatar-icon'
+import { SaveIcon } from '../icons/save'
 
 type CSV = {
   id: string
@@ -75,32 +74,34 @@ const ActionButtons = ({
   exportCsv,
   showDocuments,
 }: Props) => {
-  const {openModal} = useModalAction()
+  const { openModal } = useModalAction()
 
   function handleDelete() {
-    openModal(deleteModalView,id)
+    openModal(deleteModalView, id)
   }
 
-  function handleExportCsv() { }
+  function handleExportCsv(id: any) {}
 
   function handleEditModal() {
-    openModal(editModalView,id)
+    openModal(editModalView, id)
   }
 
   function handleShowCheckpoinstModal() {
-    openModal(showCheckpoints,id)
+    openModal(showCheckpoints, id)
   }
 
+  function handleShowDocuments() {}
 
   function handleUserStatus(banned: boolean) {
-    openModal('BAN_CUSTOMER',{id,banned})
+    openModal('BAN_CUSTOMER', { id, banned })
   }
 
-  function handleUserStatusAdmin() {
+  function handleUserStatusAdmin(banned: boolean) {
+    openModal('BAN_CUSTOMER_ADMIN', { id, banned })
   }
 
   function handleMakeAdmin() {
-    openModal('MAKE_ADMIN',{id,role})
+    openModal('MAKE_ADMIN', { id, role })
   }
 
   function handleShopStatus(status: boolean) {
@@ -112,18 +113,18 @@ const ActionButtons = ({
   }
 
   function handleShowContact() {
-    openModal('SHOW_CONTACT',id)
+    openModal('SHOW_CONTACT', id)
   }
 
   function handleReplyQuestion() {
-    openModal('REPLY_QUESTION',id)
+    openModal('REPLY_QUESTION', id)
   }
 
   return (
     <div className="inline-flex items-center w-auto gap-3">
       {exportCsv?.isEnable && (
         <button
-          onClick={() => handleExportCsv()}
+          onClick={() => handleExportCsv(exportCsv.id)}
           className="text-accent transition duration-200 hover:text-accent-hover focus:outline-none"
         >
           <CsvIcon width={20} />
@@ -218,7 +219,7 @@ const ActionButtons = ({
         <>
           {isUserActiveAdmin ? (
             <button
-              onClick={() => handleUserStatusAdmin()}
+              onClick={() => handleUserStatusAdmin(false)}
               className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
               title={'Bloquear'}
             >
@@ -226,7 +227,7 @@ const ActionButtons = ({
             </button>
           ) : (
             <button
-              onClick={() => handleUserStatusAdmin()}
+              onClick={() => handleUserStatusAdmin(true)}
               className="text-accent transition duration-200 hover:text-accent focus:outline-none"
               title={'Activar'}
             >

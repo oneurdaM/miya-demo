@@ -1,20 +1,68 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {SearchIcon} from '@/components/icons/search-icon';
+import {searchModalInitialValues} from '@/utils/constants';
 import Link from '@/components/ui/link';
 import Scrollbar from '@/components/ui/scrollbar';
+import {
+  getAuthCredentials,
+  hasAccess
+} from '@/utils/auth-utils';
+import {STAFF} from '@/utils/constants';
 import cn from 'classnames';
+import {useAtom} from 'jotai';
 import {isEmpty} from 'lodash';
 import {useTranslation} from 'next-i18next';
-import {Fragment,useState} from 'react';
+import {useRouter} from 'next/router';
+import {Fragment,useEffect,useState} from 'react';
 import {ChildMenu} from '@/utils/searched-url';
 import {TermsIcon} from '@/components/icons/sidebar/terms';
 
-const SearchBar: React.FC = () => {
+type IProps = {};
+
+const SearchBar: React.FC<IProps> = ({ }: IProps) => {
   const {t} = useTranslation();
   const initialItem: ChildMenu[] = [];
   const [searchText,setSearchText] = useState('');
   const [searchItem,setSearchItem] = useState(initialItem);
+  const [searchModal] = useAtom(searchModalInitialValues);
+  let {
+    query: {shop},
+  } = useRouter();
+  const {permissions: currentUserPermissions} = getAuthCredentials();
 
+  const getAuthorizedURL = (links: any[]): any[] => {
+    return [...links].filter((link) =>
+      hasAccess(link?.permissions!,currentUserPermissions)
+    );
+  };
+
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    if (!text || text.length < 1) {
+      setSearchItem([]);
+      return;
+    }
+
+    let searchAbleLinks = [];
+    let flattenShop = [];
+
+    if (hasAccess([STAFF],currentUserPermissions)) {
+      // shop = me?.managed_shop?.slug!;
+    }
+
+    switch (true) {
+      default:
+        searchAbleLinks = getAuthorizedURL(['/']);
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (searchText === '') {
+      setSearchItem(initialItem);
+    } else {
+      handleSearch(searchText);
+    }
+  },[searchText]);
 
   return (
     <Fragment>
@@ -29,6 +77,7 @@ const SearchBar: React.FC = () => {
           className="block w-full rounded-3xl border border-solid border-border-200 bg-gray-50 py-2 text-sm text-heading transition-[border] placeholder:text-gray-400 focus:border-accent focus:bg-white focus:outline-none focus:ring-0 ltr:pl-12 rtl:pr-12 sm:text-sm sm:leading-6"
           placeholder={t('text-top-bar-search-placeholder') ?? 'Buscar...'}
           value={searchText}
+          onChange={(e) => handleSearch(e?.target?.value)}
         />
         {!isEmpty(searchItem) && (
           <button
@@ -74,6 +123,7 @@ const SearchBar: React.FC = () => {
                       </span>
                       <div className="flex flex-col ltr:pl-3 rtl:pr-3">
                         <span className="whitespace-nowrap font-medium capitalize">
+                          {isEmpty(shop) ? t(item.customLabel!) : t(item.label) ?? 'No label'}
                         </span>
                         <span className="text-gray-500">{item?.href}</span>
                       </div>

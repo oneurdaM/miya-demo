@@ -1,13 +1,12 @@
-import {yupResolver} from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "next-i18next";
-
 import Button from "@/components/ui/button";
 import PasswordInput from "@/components/ui/password-input";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useTranslation } from "next-i18next";
 
 interface Props {
-  onSubmit: (values: {password: string}) => void;
+  onSubmit: (values: { password: string }) => void;
   loading: boolean;
 }
 
@@ -15,20 +14,20 @@ const schema = yup.object().shape({
   password: yup.string().required("form:error-password-required"),
 });
 
-const EnterNewPasswordView = ({onSubmit,loading}: Props) => {
-  const {t} = useTranslation();
+const EnterNewPasswordView = ({ onSubmit, loading }: Props) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
-    formState: {errors},
-  } = useForm<{password: string}>({resolver: yupResolver(schema)});
+    formState: { errors },
+  } = useForm<{ password: string }>({ resolver: yupResolver(schema) });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <PasswordInput
         label={t("form:input-label-password")}
         {...register("password")}
-        error={errors.password ? t(errors.password.message) : ""}
+        error={t(errors.password?.message!) ?? ""}
         variant="outline"
         className="mb-5"
       />

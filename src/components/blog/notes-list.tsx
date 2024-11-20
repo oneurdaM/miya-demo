@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {AlignType,Table} from '@/components/ui/table'
-import {Routes} from '@/config/routes'
-import {useUpdateNoteMutation} from '@/data/blog'
-import {Note} from '@/types/blog'
-import {MappedPaginatorInfo} from '@/types/index'
-import {Switch} from '@headlessui/react'
+import { AlignType, Table } from '@/components/ui/table'
+import { Routes } from '@/config/routes'
+import { useUpdateNoteMutation } from '@/data/blog'
+import { Note } from '@/types/blog'
+import { MappedPaginatorInfo } from '@/types/index'
+import { Switch } from '@headlessui/react'
 import Image from 'next/image'
 import Pagination from '../ui/pagination'
 import TitleWithSort from '../ui/title-with-sort'
 import ActionButtons from '../common/action-buttons'
-import {useTranslation} from 'react-i18next'
-import {useState} from 'react'
-import {getAuthCredentials,hasAccess,adminOnly} from '@/utils/auth-utils'
+import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import { getAuthCredentials, hasAccess, adminOnly } from '@/utils/auth-utils'
 
 type NotesListProps = {
   notes: Note[] | null | undefined
@@ -19,18 +18,18 @@ type NotesListProps = {
   onPagination: (page: number) => void
 }
 
-const NotesList = ({notes,paginatorInfo,onPagination}: NotesListProps) => {
-  const {t} = useTranslation()
-  const {mutate: update} = useUpdateNoteMutation()
-  function changeStatus(note: Note,status: boolean) {
+const NotesList = ({ notes, paginatorInfo, onPagination }: NotesListProps) => {
+  const { t } = useTranslation()
+  const { mutate: update, isLoading } = useUpdateNoteMutation()
+  function changeStatus(note: Note, status: boolean) {
     update({
       id: note.id.toString(),
       is_approved: !status,
     })
   }
 
-  const {permissions} = getAuthCredentials()
-  const permission = hasAccess(adminOnly,permissions)
+  const { permissions } = getAuthCredentials()
+  let permission = hasAccess(adminOnly, permissions)
 
   const columns: any = [
     {
@@ -75,25 +74,27 @@ const NotesList = ({notes,paginatorInfo,onPagination}: NotesListProps) => {
       key: 'is_approved',
       align: 'center' as AlignType,
 
-      render: function Render(is_approved: boolean,record: any) {
-        const [approved,setAproved] = useState(is_approved)
+      render: function Render(is_approved: boolean, record: any) {
+        const [approved, setAproved] = useState(is_approved)
 
         const handleSwitchChange = (checked: boolean) => {
           setAproved(checked)
 
-          changeStatus(record,approved)
+          changeStatus(record, approved)
         }
         return (
           <Switch
             checked={approved}
             onChange={handleSwitchChange}
             disabled={!permission ? true : false}
-            className={`${approved ? 'bg-accent' : 'bg-gray-300'
-              } relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none`}
+            className={`${
+              approved ? 'bg-accent' : 'bg-gray-300'
+            } relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none`}
           >
             <span
-              className={`${approved ? 'translate-x-6' : 'translate-x-1'
-                } inline-block h-4 w-4 transform rounded-full bg-light`}
+              className={`${
+                approved ? 'translate-x-6' : 'translate-x-1'
+              } inline-block h-4 w-4 transform rounded-full bg-light`}
             />
           </Switch>
         )
@@ -104,14 +105,14 @@ const NotesList = ({notes,paginatorInfo,onPagination}: NotesListProps) => {
       dataIndex: 'id',
       key: 'actions',
       align: 'center',
-      render: function Render(id: string,note: Note) {
+      render: function Render(id: string, note: Note) {
         return (
           <>
             <ActionButtons
               id={id}
               deleteModalView={permission ? 'DELETE_NOTE' : ''}
               detailsUrl={
-                permission ? Routes.blog.details({id: note.slug}) : ''
+                permission ? Routes.blog.details({ id: note.slug }) : ''
               }
             />
           </>
@@ -125,7 +126,7 @@ const NotesList = ({notes,paginatorInfo,onPagination}: NotesListProps) => {
       <div className="mb-6 overflow-hidden rounded shadow">
         <Table
           rowKey="id"
-          scroll={{x: 900}}
+          scroll={{ x: 900 }}
           columns={columns}
           emptyText="No hay notas creadas"
           data={notes ?? []}
@@ -136,7 +137,10 @@ const NotesList = ({notes,paginatorInfo,onPagination}: NotesListProps) => {
         <div className="flex items-center justify-end">
           <Pagination
             total={paginatorInfo.total}
-            current={paginatorInfo.currentPage}
+            current={
+              //@ts-ignore
+              parseInt(paginatorInfo.currentPage)
+            }
             pageSize={paginatorInfo.perPage}
             onChange={onPagination}
           />

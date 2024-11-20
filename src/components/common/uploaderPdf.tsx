@@ -1,25 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {useState} from 'react'
-import {useDropzone} from 'react-dropzone'
-import {useTranslation} from 'next-i18next'
+import { useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { useTranslation } from 'next-i18next'
 
-import {UploadIcon} from '@/components/icons/upload-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
 import Loader from '@/components/ui/loader/loader'
-import {useUploadMutation} from '@/data/upload'
-import Image from 'next/image'
+import { useUploadMutation } from '@/data/upload'
 
-interface UploaderProps {
-  onChange: (url: string) => void;
-  multiple: boolean;
-  helperText?: string;
-}
-
-export default function Uploader({onChange,multiple,helperText}: UploaderProps) {
-  const {t} = useTranslation()
-  const [pdf,setPdf] = useState<string>('')
-  const {mutate: upload,isLoading: loading} = useUploadMutation()
-  const [error,setError] = useState<string | null>(null)
-  const {getRootProps,getInputProps} = useDropzone({
+export default function Uploader({ onChange, multiple, helperText }: any) {
+  const { t } = useTranslation()
+  const [pdf, setPdf] = useState<string>('')
+  const { mutate: upload, isLoading: loading } = useUploadMutation()
+  const [error, setError] = useState<string | null>(null)
+  const { getRootProps, getInputProps } = useDropzone({
     multiple,
     accept: {
       'application/pdf': [], // Aceptar solo archivos PDF
@@ -30,12 +22,12 @@ export default function Uploader({onChange,multiple,helperText}: UploaderProps) 
         return
       }
       const formData = new FormData()
-      acceptedFiles.forEach((file: File) => {
-        formData.append('file',file)
+      acceptedFiles.forEach((file: any) => {
+        formData.append('file', file)
       })
       try {
-        upload(formData,{
-          onSuccess: (data: unknown) => {
+        upload(formData, {
+          onSuccess: (data: any) => {
             if (typeof data === 'string') {
               setPdf(data)
               onChange(data)
@@ -83,8 +75,9 @@ export default function Uploader({onChange,multiple,helperText}: UploaderProps) 
               className={`relative mt-2 inline-flex flex-col overflow-hidden rounded  me-2`}
             >
               <figure className="relative h-16 w-28">
-                <Image
-                  src="/pdf.png"
+                {/* Puedes mostrar un icono de vista previa para PDF si lo deseas */}
+                <img
+                  src="/pdf.png" // Asegúrate de tener una imagen de vista previa para PDF
                   alt={'PDF preview'}
                   className="object-contain h-full w-full"
                 />

@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image'
 
-import {Environment,MappedPaginatorInfo} from '@/types'
-import {AlignType,Table} from '../ui/table'
+import { Environment, MappedPaginatorInfo } from '@/types'
+import { AlignType, Table } from '../ui/table'
 import Pagination from '../ui/pagination'
-import {siteSettings} from '@/settings/site.settings'
+import { siteSettings } from '@/settings/site.settings'
 import ActionButtons from '../ui/action-buttons'
-import {useRouter} from 'next/router'
-import {getAuthCredentials,hasAccess,adminOnly} from '@/utils/auth-utils'
+import { useRouter } from 'next/router'
+import { getAuthCredentials, hasAccess, adminOnly } from '@/utils/auth-utils'
 
 type EnviromentListProps = {
   environments: Environment[]
@@ -20,8 +19,8 @@ const EnviromentList = ({
   paginatorInfo,
   onPagination,
 }: EnviromentListProps) => {
-  const {permissions} = getAuthCredentials()
-  const permission = hasAccess(adminOnly,permissions)
+  const { permissions } = getAuthCredentials()
+  let permission = hasAccess(adminOnly, permissions)
 
   const router = useRouter()
 

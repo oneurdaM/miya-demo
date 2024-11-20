@@ -1,4 +1,4 @@
-import Document,{
+import Document, {
   Html,
   Head,
   Main,
@@ -12,6 +12,8 @@ export default class CustomDocument extends Document {
     return Document.getInitialProps(ctx)
   }
   render() {
+    // const { locale } = this.props.__NEXT_DATA__;
+    // const dir = Config.getDirection(locale);
 
     return (
       <Html>

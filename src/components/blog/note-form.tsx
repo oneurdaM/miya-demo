@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {useCreateNoteMutation,useUpdateNoteMutation} from '@/data/blog'
-import {useMeQuery} from '@/data/users'
-import {Note} from '@/types/blog'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useRouter} from 'next/router'
-import {useForm} from 'react-hook-form'
+import { useCreateNoteMutation, useUpdateNoteMutation } from '@/data/blog'
+import { useMeQuery } from '@/data/users'
+import { Note } from '@/types/blog'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useRouter } from 'next/router'
+import { useForm } from 'react-hook-form'
 
 import Card from '../common/card'
 import Button from '../ui/button'
@@ -12,15 +11,15 @@ import Description from '../ui/description'
 import FileInput from '../ui/file-input'
 import Input from '../ui/input'
 import TextArea from '../ui/text-area'
-import {noteValidationSchema} from './note-validation-schema'
-import {slugglify} from '@/utils/slugglify'
-import {useCategoryQuery} from '@/data/category'
+import { noteValidationSchema } from './note-validation-schema'
+import { slugglify } from '@/utils/slugglify'
+import { useCategoryQuery } from '@/data/category'
 import Label from '../ui/label'
 import SelectInput from '../ui/select-input'
-import {getErrorMessage} from '@/utils/form-error'
+import { getErrorMessage } from '@/utils/form-error'
 import ValidationError from '../ui/form-validation-error'
-import {WarningCompoenent} from '../warning/warning'
-import {useTranslation} from 'react-i18next'
+import { WarningCompoenent } from '../warning/warning'
+import { useTranslation } from 'react-i18next'
 
 type FormValues = {
   id: number
@@ -30,31 +29,31 @@ type FormValues = {
   is_approved: boolean
   slug?: string
   image?: string
-  categoryId?: number
-  category_id?: {id: number; name: string}
+  categoryId?: any
+  category_id?: any
 }
 
 type IProps = {
   initialValues?: Note | null
 }
 
-export default function CreateOrUpdateNoteForm({initialValues}: IProps) {
-  const {categories,loading} = useCategoryQuery({
+export default function CreateOrUpdateNoteForm({ initialValues }: IProps) {
+  const { categories, loading } = useCategoryQuery({
     limit: 25,
     page: 1,
   })
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   const router = useRouter()
-  const {data} = useMeQuery()
+  const { data } = useMeQuery()
 
   const {
     register,
     handleSubmit,
     control,
     setError,
-    formState: {errors},
+    formState: { errors },
   } = useForm<any>({
     shouldUnregister: true,
     resolver: yupResolver(noteValidationSchema),
@@ -71,18 +70,18 @@ export default function CreateOrUpdateNoteForm({initialValues}: IProps) {
     }),
   })
 
-  const {mutate: updateNote,isLoading: updating} = useUpdateNoteMutation()
-  const {mutate: createNote,isLoading: creating} = useCreateNoteMutation()
+  const { mutate: updateNote, isLoading: updating } = useUpdateNoteMutation()
+  const { mutate: createNote, isLoading: creating } = useCreateNoteMutation()
 
   const onSubmit = async (values: FormValues) => {
-    const {title,content,image,category_id} = values
+    const { title, content, image, category_id } = values
     const input = {
       title,
       content,
       slug: slugglify(title),
       image: image?.toString() ?? initialValues?.image ?? '',
       createdBy: initialValues?.createdBy ?? data!.id, // Add userID admin here
-      category_id: category_id?.id ?? initialValues?.category_id ?? 1,
+      category_id: category_id.id ?? initialValues?.category_id ?? 1,
     }
 
     try {
@@ -103,7 +102,7 @@ export default function CreateOrUpdateNoteForm({initialValues}: IProps) {
     } catch (error) {
       const serverErrors = getErrorMessage(error)
       Object.keys(serverErrors?.validation).forEach((field: any) => {
-        setError(field.split('.')[1],{
+        setError(field.split('.')[1], {
           type: 'manual',
           message: serverErrors?.validation[field][0],
         })
@@ -176,7 +175,8 @@ export default function CreateOrUpdateNoteForm({initialValues}: IProps) {
               />
 
               <ValidationError
-                message={errors.category_id?.message?.toString() ?? ''}
+                //@ts-ignore
+                message={errors.category_id?.message}
               />
             </div>
           </Card>

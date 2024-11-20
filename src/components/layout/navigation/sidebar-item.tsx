@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useState,useCallback,useEffect,useMemo} from 'react';
 import {useRouter} from 'next/router';
 import {motion,AnimatePresence} from 'framer-motion';
@@ -49,9 +48,9 @@ function SidebarShortItem({
               <div key={index}>
                 <Link
                   passHref
-                  as={shop ? item?.href?.(shop?.toString() || '') : item?.href}
+                  as={shop ? item?.href(shop?.toString()!) : item?.href}
                   href={{
-                    pathname: `${shop ? item?.href?.(shop?.toString() || '') : item?.href
+                    pathname: `${shop ? item?.href(shop?.toString()!) : item?.href
                       }`,
                     query: {parents: label},
                   }}
@@ -59,7 +58,7 @@ function SidebarShortItem({
                     'relative flex w-full cursor-pointer items-center rounded-lg py-2 text-sm text-start focus:text-accent',
                     (
                       shop
-                        ? sanitizedPath === item?.href?.(shop?.toString() || '')
+                        ? sanitizedPath === item?.href(shop?.toString()!)
                         : sanitizedPath === item?.href
                     )
                       ? 'bg-transparent font-medium text-accent-hover'
@@ -114,6 +113,8 @@ const SidebarItem = ({
 
   const {
     query: {shop},
+    locale,
+    pathname,
   } = useRouter();
   const sanitizedPath = router?.asPath?.split('#')[0]?.split('?')[0];
 
@@ -122,7 +123,7 @@ const SidebarItem = ({
     if (isParents) {
       return isParents === label;
     }
-    const lastIndex = router?.asPath?.lastIndexOf('/');
+    let lastIndex = router?.asPath?.lastIndexOf('/');
     if (label !== 'Settings') {
       return (
         router?.asPath
@@ -233,19 +234,19 @@ const SidebarItem = ({
                         <Link
                           passHref
                           href={{
-                            pathname: `${shop ? item?.href?.(shop?.toString() || '') : item?.href
+                            pathname: `${shop ? item?.href(shop?.toString()!) : item?.href
                               }`,
                             query: {
                               parents: label,
                             },
                           }}
-                          as={shop ? item?.href?.(shop?.toString() || '') : item?.href}
+                          as={shop ? item?.href(shop?.toString()!) : item?.href}
                           className={cn(
                             'relative flex w-full cursor-pointer items-center rounded-lg py-2 px-5 text-sm text-start before:absolute before:-left-0.5 before:top-[18px] before:h-px before:w-3 before:border-t before:border-dashed before:border-gray-300 before:content-[""] focus:text-accent',
                             (
                               shop
                                 ? sanitizedPath ===
-                                item?.href(shop?.toString() || '')
+                                item?.href(shop?.toString()!)
                                 : sanitizedPath === item?.href
                             )
                               ? 'bg-transparent font-medium text-accent-hover'

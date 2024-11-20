@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React,{useEffect,useState,useCallback} from 'react';
 import Router from 'next/router'
 
@@ -8,6 +7,7 @@ import {
   MarkerF,
   InfoWindowF,
 } from '@react-google-maps/api';
+import {addMonths,isBefore,startOfDay} from 'date-fns'
 
 import Loader from '@/components/ui/loader/loader';
 import Image from 'next/image';
@@ -38,15 +38,16 @@ type MapTrackProps = {
 };
 
 function MapTrackComponent({defaultLat,defaultLng,users}: MapTrackProps) {
+  console.log('users',users)
   const {isLoaded} = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY || '',
   });
   const [map,setMap] = useState<any>(null)
-
   const [mapCenter,setMapCenter] = useState<{lat: number; lng: number}>({
     lat: defaultLat,
     lng: defaultLng,
   });
+
 
   const [selectedUser,setSelectedUser] = useState<any>(null);
   const [historicalOverlay,setHistoricalOverlay] =
@@ -212,6 +213,32 @@ function MapTrackComponent({defaultLat,defaultLng,users}: MapTrackProps) {
                     Ir a perfil
                   </span>
                 </div>
+              </div>
+
+              <div className=" p-3 rounded-md mt-3 bg-blue-100 text-gray-800">
+                <span className="font-bold text-sm">
+                  {selectedUser?.expiringDocuments.length > 0
+                    ? 'Documentos por vencer:'
+                    : 'Sin Documentos por vencer'}
+                </span>
+                {selectedUser?.expiringDocuments.map((document: any) => (
+                  <div className="block text-center">
+                    <span>{document.name}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className=" p-3 rounded-md mt-3 bg-red-100 text-gray-800">
+                <span className="font-bold text-sm">
+                  {selectedUser?.expiringDocuments.length > 0
+                    ? 'Documentos vencidos:'
+                    : 'Sin Documentos vencidos'}
+                </span>
+                {selectedUser?.expiredDocuments?.map((document: any) => (
+                  <div className="block text-center">
+                    <span>{document?.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </InfoWindowF>

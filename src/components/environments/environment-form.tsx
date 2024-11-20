@@ -1,32 +1,33 @@
-import {Environment,EnvironmentInput} from '@/types'
+import { useState } from 'react'
+import { Environment, EnvironmentInput } from '@/types'
 import Description from '../ui/description'
 import Card from '../common/card'
 import Input from '../ui/input'
 import Button from '../ui/button'
 import FileInput from '../ui/file-input'
-import {useForm} from 'react-hook-form'
-import {useCreateEnvMutation,useUpdateEnvMutation} from '@/data/enviroment'
+import { useForm } from 'react-hook-form'
+import { useCreateEnvMutation, useUpdateEnvMutation } from '@/data/enviroment'
 import TextArea from '../ui/text-area'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {environmentValidationSchema} from './environment-validation-schema'
-import {useRouter} from 'next/router'
-import {useTranslation} from 'react-i18next'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { environmentValidationSchema } from './environment-validation-schema'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
   initialValues?: Environment
 }
 
-export default function CreateOrUpdateEnvironment({initialValues}: Props) {
-  const {mutate: create,isLoading: creating} = useCreateEnvMutation()
-  const {mutate: update,isLoading: updating} = useUpdateEnvMutation()
+export default function CreateOrUpdateEnvironment({ initialValues }: Props) {
+  const { mutate: create, isLoading: creating } = useCreateEnvMutation()
+  const { mutate: update, isLoading: updating } = useUpdateEnvMutation()
   const router = useRouter()
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   const {
     register,
     handleSubmit,
     control,
-    formState: {errors},
+    formState: { errors },
   } = useForm<EnvironmentInput>({
     shouldUnregister: true,
     resolver: yupResolver(environmentValidationSchema),
@@ -66,8 +67,9 @@ export default function CreateOrUpdateEnvironment({initialValues}: Props) {
       <div className="my-5 flex flex-wrap sm:my-8">
         <Description
           title={'Información del entorno'}
-          details={`${initialValues ? 'Editar' : 'Crear'
-            } el entorno de tu aplicación, puedes crear varios entornos para tu aplicación y así poder cambiar el logo, colores y descripción de tu aplicación`}
+          details={`${
+            initialValues ? 'Editar' : 'Crear'
+          } el entorno de tu aplicación, puedes crear varios entornos para tu aplicación y así poder cambiar el logo, colores y descripción de tu aplicación`}
           className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5 "
         />
 

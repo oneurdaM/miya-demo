@@ -1,41 +1,133 @@
-import {SearchIcon} from '@/components/icons/search-icon'
+import { SearchIcon } from '@/components/icons/search-icon'
+import Alert from '@/components/ui/alert'
+import LinkButton from '@/components/ui/link-button'
+import Loader from '@/components/ui/loader/loader'
 import Logo from '@/components/ui/logo'
-import {Config} from '@/config'
-import {useUI} from '@/contexts/ui.context'
-
+import { useModalAction } from '@/components/ui/modal/modal.context'
+import { Config } from '@/config'
+import { useUI } from '@/contexts/ui.context'
+import { useSettingsQuery } from '@/data/settings'
 import {
+  adminAndOwnerOnly,
+  adminOnly,
+  getAuthCredentials,
+  hasAccess,
+} from '@/utils/auth-utils'
+import {
+  RESPONSIVE_WIDTH,
+  checkIsMaintenanceModeComing,
+  checkIsMaintenanceModeStart,
   miniSidebarInitialValue,
+  searchModalInitialValues,
 } from '@/utils/constants'
 import cn from 'classnames'
-import {motion} from 'framer-motion'
-import {useAtom} from 'jotai'
+import { eachDayOfInterval, isTomorrow } from 'date-fns'
+import { motion } from 'framer-motion'
+import { useAtom } from 'jotai'
+import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { useWindowSize } from 'react-use'
 import AuthorizedMenu from './authorized-menu'
 import SearchBar from '../topbar/search-bar'
+import VisitStore from '../topbar/visit-store'
+import RecentOrderBar from '../topbar/recent-order-bar'
+import MessageBar from '../topbar/message-bar'
+import StoreNoticeBar from '../topbar/store-notice-bar'
 import LanguageSwitcher from './language-switcher'
 
-export const isInArray = (array: Date[],value: Date) => {
+export const isInArray = (array: Date[], value: Date) => {
   return !!array?.find((item) => {
     return item?.getDate() == value?.getDate()
   })
 }
 
 const Navbar = () => {
-  const {toggleSidebar} = useUI()
-  const {enableMultiLang} = Config
-  const [miniSidebar,setMiniSidebar] = useAtom(miniSidebarInitialValue)
+  const { t } = useTranslation()
+  const { toggleSidebar } = useUI()
+  const { permissions } = getAuthCredentials()
+  const { enableMultiLang } = Config
+  const { locale } = useRouter()
+  const { openModal } = useModalAction()
+  const [searchModal, setSearchModal] = useAtom(searchModalInitialValues)
+  const [miniSidebar, setMiniSidebar] = useAtom(miniSidebarInitialValue)
+  const [isMaintenanceMode, setUnderMaintenance] = useAtom(
+    checkIsMaintenanceModeComing
+  )
+  const [isMaintenanceModeStart, setUnderMaintenanceStart] = useAtom(
+    checkIsMaintenanceModeStart
+  )
+  const { width } = useWindowSize()
+  const { settings, loading } = useSettingsQuery()
 
+  useEffect(() => {
+    if (
+      settings?.options?.maintenance?.start &&
+      settings?.options?.maintenance?.until
+    ) {
+      const dateInterVal = eachDayOfInterval({
+        start: new Date(settings?.options?.maintenance?.start as string),
+        end: new Date(settings?.options?.maintenance?.until as string),
+      })
+      const beforeDay = isTomorrow(
+        new Date(settings?.options?.maintenance?.start as string)
+      )
+      const checkIsMaintenance =
+        beforeDay && settings?.options?.isUnderMaintenance
+      const checkIsMaintenanceStart =
+        isInArray(dateInterVal, new Date()) &&
+        settings?.options?.isUnderMaintenance
+      setUnderMaintenance(checkIsMaintenance as boolean)
+      setUnderMaintenanceStart(checkIsMaintenanceStart as boolean)
+    }
+  }, [
+    settings?.options?.maintenance?.start,
+    settings?.options?.maintenance?.until,
+    settings?.options?.isUnderMaintenance,
+  ])
+
+  if (loading) {
+    return <Loader showText={false} />
+  }
+
+  const { options } = settings!
 
   function handleClick() {
     // openModal('SEARCH_VIEW');
+    setSearchModal(true)
   }
 
   return (
     <header className="fixed top-0 z-40 w-full bg-white shadow">
+      {/* {width >= RESPONSIVE_WIDTH && isMaintenanceMode ? (
+        <Alert
+          message={t('text-maintenance-mode-title')}
+          variant="info"
+          className="sticky top-0 left-0 z-50"
+          childClassName="flex justify-center items-center w-full gap-4 font-bold"
+        >
+          <CountdownTimer
+            date={new Date(options?.maintenance?.start)}
+            className="text-blue-600 [&>p]:bg-blue-200 [&>p]:p-2 [&>p]:text-xs [&>p]:text-blue-600"
+          />
+        </Alert>
+      ) : (
+        ''
+      )} */}
+      {width >= RESPONSIVE_WIDTH && isMaintenanceModeStart ? (
+        <Alert
+          message={t('text-maintenance-mode-start-title')}
+          className="py-[1.375rem]"
+          childClassName="text-center w-full font-bold"
+        />
+      ) : (
+        ''
+      )}
       <nav className="flex items-center px-5 md:px-8">
         <div className="relative flex w-full flex-1 items-center">
           <div className="flex items-center">
             <motion.button
-              whileTap={{scale: 0.88}}
+              whileTap={{ scale: 0.88 }}
               onClick={toggleSidebar}
               className="group flex h-5 w-5 shrink-0 cursor-pointer flex-col justify-center space-y-1 me-4 focus:text-accent focus:outline-none lg:hidden"
             >

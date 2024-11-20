@@ -20,5 +20,9 @@ export const documentClient = {
 	},
 	getTypes: () => {
 		return HttpClient.get<any>(API_ENDPOINTS.DOCUMENTTYPES)
+	},
+	getRequiredDocuments: (userId: string) => {
+		// documents/required/:id
+		return HttpClient.get<any>(`${API_ENDPOINTS.REQUIREDDOCUMENTS}/${userId}`)
 	}
 }

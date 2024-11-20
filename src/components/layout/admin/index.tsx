@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {miniSidebarInitialValue} from '@/utils/constants'
-import {siteSettings} from '@/settings/site.settings'
-import {useTranslation} from 'next-i18next'
-import {useRouter} from 'next/router'
-import {useAtom} from 'jotai'
+import { miniSidebarInitialValue } from '@/utils/constants'
+import { siteSettings } from '@/settings/site.settings'
+import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
+import { useAtom } from 'jotai'
 import cn from 'classnames'
 
 import Scrollbar from '@/components/ui/scrollbar'
-import {useWindowSize} from '@/utils/use-window-size'
-import {RESPONSIVE_WIDTH} from '@/utils/constants'
+import { useWindowSize } from '@/utils/use-window-size'
+import { RESPONSIVE_WIDTH } from '@/utils/constants'
 import {
   checkIsMaintenanceModeComing,
   checkIsMaintenanceModeStart,
@@ -31,11 +30,11 @@ interface MenuItemsProps {
   }
 }
 
-const SidebarItemMap = ({menuItems}: any) => {
-  const {t} = useTranslation()
-  const [miniSidebar] = useAtom(miniSidebarInitialValue)
-  const {childMenu} = menuItems
-  const {width} = useWindowSize()
+const SidebarItemMap = ({ menuItems }: any) => {
+  const { t } = useTranslation()
+  const [miniSidebar, _] = useAtom(miniSidebarInitialValue)
+  const { childMenu } = menuItems
+  const { width } = useWindowSize()
   return (
     <div className="space-y-2">
       {childMenu?.map(
@@ -65,15 +64,16 @@ const SidebarItemMap = ({menuItems}: any) => {
 }
 
 const SideBarGroup = () => {
-  const {t} = useTranslation()
-  const [miniSidebar] = useAtom(miniSidebarInitialValue)
+  const { t } = useTranslation()
+  // @ts-ignore
+  const [miniSidebar, _] = useAtom(miniSidebarInitialValue)
   const menuItems: MenuItemsProps = siteSettings?.sidebarLinks?.admin
   const menuKeys = Object.keys(menuItems)
-  const {width} = useWindowSize()
+  const { width } = useWindowSize()
 
   return (
     <>
-      {menuKeys?.map((menu,index) => (
+      {menuKeys?.map((menu, index) => (
         <div
           className={cn(
             'flex flex-col px-5',
@@ -98,16 +98,16 @@ const SideBarGroup = () => {
   )
 }
 
-const AdminLayout: React.FC<{children?: React.ReactNode}> = ({
+const AdminLayout: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
-  const {locale} = useRouter()
+  const { locale } = useRouter()
 
   const dir = locale === 'ar' || locale === 'he' ? 'rtl' : 'ltr'
-  const [miniSidebar] = useAtom(miniSidebarInitialValue)
+  const [miniSidebar, _] = useAtom(miniSidebarInitialValue)
   const [underMaintenance] = useAtom(checkIsMaintenanceModeComing)
   const [underMaintenanceStart] = useAtom(checkIsMaintenanceModeStart)
-  const {width} = useWindowSize()
+  const { width } = useWindowSize()
 
   return (
     <div

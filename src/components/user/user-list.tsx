@@ -1,38 +1,38 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useRouter } from 'next/router'
+import {useState} from 'react'
+import {useTranslation} from 'react-i18next'
+import {useRouter} from 'next/router'
 
 import TitleWithSort from '@/components/ui/title-with-sort'
 import Badge from '@/components/ui/badge/badge'
-import { AlignType, Table } from '@/components/ui/table'
+import {AlignType,Table} from '@/components/ui/table'
 import ActionButtons from '@/components/common/action-buttons'
 import Pagination from '@/components/ui/pagination'
 import Avatar from '@/components/common/avatar'
 
-import { JobPosition, Role, UsersResponse } from '@/types/users'
-import { MappedPaginatorInfo, SortOrder } from '@/types/index'
-import { Shift } from '@/types/suggestions'
-import { jobPositionFormat } from '@/utils/job-position-format'
-import { getAuthCredentials, hasAccess, adminOnly } from '@/utils/auth-utils'
-import { capitalizeWords } from '@/utils/functions'
+import {JobPosition,Role,UsersResponse} from '@/types/users'
+import {MappedPaginatorInfo,SortOrder} from '@/types/index'
+import {Shift} from '@/types/suggestions'
+import {jobPositionFormat} from '@/utils/job-position-format'
+import {getAuthCredentials,hasAccess,adminOnly} from '@/utils/auth-utils'
+import {capitalizeWords} from '@/utils/functions'
 
 type UserListProps = {
   users: UsersResponse[]
   paginatorInfo?: MappedPaginatorInfo | null
   onPagination?: (current: number) => void
 }
-const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
-  const { t } = useTranslation()
+const UserList = ({users,paginatorInfo,onPagination}: UserListProps) => {
+  const {t} = useTranslation()
   const router = useRouter()
-  const [sortingObj, setSortingObj] = useState<{
+  const [sortingObj,setSortingObj] = useState<{
     sort: SortOrder
     column: any | null
   }>({
     sort: SortOrder.Desc,
     column: null,
   })
-  const { permissions } = getAuthCredentials()
-  let permission = hasAccess(adminOnly, permissions)
+  const {permissions} = getAuthCredentials()
+  let permission = hasAccess(adminOnly,permissions)
 
   const onHeaderClick = (column: any | null) => ({
     onClick: () => {
@@ -69,7 +69,7 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
       key: 'jobPosition',
       align: 'center' as AlignType,
       render: (jobPosition: any) => (
-        <span>{capitalizeWords(jobPosition.name)}</span>
+        <span>{capitalizeWords(jobPosition?.name)}</span>
       ),
     },
     {
@@ -98,7 +98,7 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
       onHeaderCell: () => onHeaderClick('name'),
       render: (
         _data: any,
-        { firstName, lastName, image, email }: UsersResponse
+        {firstName,lastName,image,email}: UsersResponse
       ) => (
         <div className="flex items-center">
           <Avatar name={firstName} src={image ?? ''} />
@@ -116,7 +116,7 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
       dataIndex: 'permissions',
       key: 'permissions',
       align: 'center' as AlignType,
-      render: (_: any, user: any) => {
+      render: (_: any,user: any) => {
         return (
           <span key={user.id} className="rounded bg-gray-200/50 px-2.5 py-1">
             {user.role}
@@ -157,8 +157,8 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
       width: 250,
       key: 'id',
       align: 'center' as AlignType,
-      render: (id: string, user: UsersResponse) => {
-        const { banned, role } = user // Extraer las propiedades de user si necesitas utilizarlas
+      render: (id: string,user: UsersResponse) => {
+        const {banned,role} = user // Extraer las propiedades de user si necesitas utilizarlas
         return (
           <ActionButtons
             id={id}
@@ -168,8 +168,8 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
             detailsUrl={`${router.asPath}/${id}`}
             role={role as Role}
             showRounds={`${router.asPath}/rounds/${id}`}
-            exportCsv={{ id: id, isEnable: false }}
-            // showDocuments={`${router.asPath}/documents/${id}`}
+            exportCsv={{id: id,isEnable: false}}
+          // showDocuments={`${router.asPath}/documents/${id}`}
           />
         )
       },
@@ -182,7 +182,7 @@ const UserList = ({ users, paginatorInfo, onPagination }: UserListProps) => {
           columns={columns}
           data={users}
           rowKey={'id'}
-          scroll={{ x: 1000 }}
+          scroll={{x: 1000}}
         />
       </div>
       {!!paginatorInfo?.total && (

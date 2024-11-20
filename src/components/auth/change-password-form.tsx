@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useUpdatePasswordMutation} from '@/data/users'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useForm} from 'react-hook-form'
+import { useUpdatePasswordMutation } from '@/data/users'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
 import Card from '../common/card'
@@ -20,12 +20,12 @@ const changePasswordSchema = yup.object().shape({
   newPassword: yup.string().required('El campo es requerido'),
   passwordConfirmation: yup
     .string()
-    .oneOf([yup.ref('newPassword')],'La contraseña no coincide')
+    .oneOf([yup.ref('newPassword')], 'La contraseña no coincide')
     .required('El campo es requerido'),
 })
 
 const ChangePasswordForm = () => {
-  const {mutate: changePassword,isLoading: loading} =
+  const { mutate: changePassword, isLoading: loading } =
     useUpdatePasswordMutation()
 
   const {
@@ -33,7 +33,7 @@ const ChangePasswordForm = () => {
     handleSubmit,
     setError,
     reset,
-    formState: {errors},
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(changePasswordSchema),
   })
@@ -44,12 +44,12 @@ const ChangePasswordForm = () => {
         newPassword: values.newPassword,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           reset()
         },
         onError: (error: any) => {
           Object.keys(error?.response?.data).forEach((field: any) => {
-            setError(field,{
+            setError(field, {
               type: 'manual',
               message: error?.response?.data[field][0],
             })

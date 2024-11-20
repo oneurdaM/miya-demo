@@ -1,39 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
-import pick from 'lodash/pick'
-import { useForm } from 'react-hook-form'
-import { Switch } from '@headlessui/react'
-import { nanoid } from 'nanoid'
-import { addIcon } from '@/utils/addicon'
-
-import { useCreateUserMutation, useUpdateUserMutation } from '@/data/users'
-import { useShiftQuery } from '@/data/shift'
+import React,{useEffect} from 'react'
+import {useTranslation} from 'react-i18next'
+import {useForm} from 'react-hook-form'
 
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
-import FileInput from '@/components/ui/file-input'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
-import Label from '@/components/ui/label'
-import SelectInput from '@/components/ui/select-input'
-import WebcamComponent from '@/components/ui/webcam'
-import { CloseIcon } from '@/components/icons/close-icon'
 
-import { JobPosition, UsersResponse } from '@/types/users'
-import { Shift } from '@/types/suggestions'
-import { ROLES } from '@/utils/constants'
-import { formatDate, jobPosition } from '@/utils/format-date'
-import { useUploadMutation } from '@/data/upload'
-import router, { useRouter } from 'next/router'
-import { SectorReponse } from '@/types/sector'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  checkpointRegisterMutation,
-  useUpateCheckpointMutation,
-} from '@/data/round'
-import { useCreateJobPositionMutation } from '@/data/job-position'
+
+import {useRouter} from 'next/router'
+
 import {
   useCreateDocumentTypeMutation,
   useUpdateDocumentTypeMutation,
@@ -47,18 +24,18 @@ type IProps = {
   initialValues?: DocumentTypeFormProps
 }
 
-export default function CreateDocument({ initialValues }: IProps) {
-  const { t } = useTranslation()
+export default function CreateDocument({initialValues}: IProps) {
+  const {t} = useTranslation()
 
   const router = useRouter()
   const {
-    query: { id },
+    query: {id},
   } = router
 
-  const { mutate: create, isLoading: createLoading } =
+  const {mutate: create,isLoading: createLoading} =
     useCreateDocumentTypeMutation()
 
-  const { mutate: update, isLoading: updateLoading } =
+  const {mutate: update,isLoading: updateLoading} =
     useUpdateDocumentTypeMutation()
 
   const {
@@ -66,7 +43,7 @@ export default function CreateDocument({ initialValues }: IProps) {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<any>({
     defaultValues: {
       ...initialValues,
@@ -78,7 +55,7 @@ export default function CreateDocument({ initialValues }: IProps) {
     if (initialValues) {
       reset(initialValues)
     }
-  }, [initialValues, reset])
+  },[initialValues,reset])
 
   async function onSubmit(values: any) {
     if (initialValues !== undefined) {

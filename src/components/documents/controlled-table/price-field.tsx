@@ -1,5 +1,7 @@
-import {useEffect,useState} from 'react';
-import {Text,Input} from 'rizzui';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Text, Input } from 'rizzui';
 
 type PriceFieldTypes = {
   label?: string;
@@ -12,23 +14,23 @@ export default function PriceField({
   value,
   onChange,
 }: PriceFieldTypes) {
-  const [minPrice,setMinPrice] = useState(value[0] ?? '');
-  const [maxPrice,setMaxPrice] = useState(value[1] ?? '');
+  const [minPrice, setMinPrice] = useState(value[0] ?? '');
+  const [maxPrice, setMaxPrice] = useState(value[1] ?? '');
 
   function handleMinPrice(value: string) {
     setMinPrice(() => value);
-    onChange([value,maxPrice]);
+    onChange([value, maxPrice]);
   }
 
   function handleMaxPrice(value: string) {
     setMaxPrice(() => value);
-    onChange([minPrice,value]);
+    onChange([minPrice, value]);
   }
 
   useEffect(() => {
     setMinPrice(value[0]);
     setMaxPrice(value[1]);
-  },[value]);
+  }, [value]);
 
   return (
     <div className="price-field flex items-center">

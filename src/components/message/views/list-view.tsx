@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import cn from 'classnames';
 import {useRouter} from 'next/router';
@@ -13,6 +12,7 @@ import {Routes} from '@/config/routes';
 import CameraIconChat from '@/components/icons/camera-icon';
 import PDFIcon from '@/components/icons/pdf-solid';
 import {capitalizeWords} from '@/utils/functions';
+import {useSocketContext} from '@/contexts/socket.context';
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);

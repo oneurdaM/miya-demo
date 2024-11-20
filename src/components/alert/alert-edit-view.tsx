@@ -1,41 +1,40 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import {useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
+import { useForm } from 'react-hook-form'
 
-import TextArea from '@/components/ui/text-area'
-import Button from '@/components/ui/button'
-import {useModalState} from '@/components/ui/modal/modal.context'
-import Label from '@/components/ui/label'
-import Select from '@/components/ui/select/select'
-import Loader from '@/components/ui/loader/loader'
-import {MapPin} from '@/components/icons/map-pin'
-
-import {useMeQuery} from '@/data/user'
-import {useAlertEditMutation,useAlertQuery} from '@/data/alert'
-
-import {getAlertStatus} from '@/utils/alert-status'
-import {siteSettings} from '@/settings/site.settings'
-import {AlertStatus,AlertStatusArray} from '@/types/alerts'
+import { siteSettings } from '@/settings/site.settings'
+import TextArea from '../ui/text-area'
+import Button from '../ui/button'
+import { useTranslation } from 'react-i18next'
+import { useModalState } from '../ui/modal/modal.context'
+import { useAlertEditMutation, useAlertQuery } from '@/data/alert'
+import Label from '../ui/label'
+import Select from '../ui/select/select'
+import { AlertStatus, AlertStatusArray } from '@/types/alerts'
+import Loader from '../ui/loader/loader'
+import { useMeQuery } from '@/data/user'
+import { getAlertStatus } from '@/utils/alert-status'
+import { MapPin } from '../icons/map-pin'
 
 const AlertChangeStatus = () => {
-  const {t} = useTranslation()
-  const {data} = useModalState()
-  const {data: me} = useMeQuery()
-  const {mutate: editAlert,isLoading: editing} = useAlertEditMutation()
-  const {alert,loading} = useAlertQuery({
+  const { t } = useTranslation()
+  const { data } = useModalState()
+  const { data: me } = useMeQuery()
+  const { mutate: editAlert, isLoading: editing } = useAlertEditMutation()
+  const { alert, loading } = useAlertQuery({
     id: Number(data),
   })
   const {
     register,
     handleSubmit,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       ...alert,
     },
   })
 
-  const [status,setStatus] = useState('')
+  const [status, setStatus] = useState('')
 
   if (loading) return <Loader />
 

@@ -72,3 +72,21 @@ export const useDocumentTypesQuery = () => {
 		error,
 	}
 }
+
+
+
+// Get only required documents by userid endpoint documents/required/:id
+export const useRequiredDocumentsQuery = (id: string) => {
+	const {data,isLoading,error} = useQuery<any,Error>(
+		API_ENDPOINTS.REQUIREDDOCUMENTS,
+		() => documentClient.getRequiredDocuments(id),
+		{
+			keepPreviousData: true,
+		}
+	)
+	return {
+		requiredDocuments: data?.data,
+		loading: isLoading,
+		error,
+	}
+}

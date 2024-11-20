@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {useState} from 'react'
 import Image from 'next/image'
 import {useDropzone} from 'react-dropzone'
@@ -8,13 +7,7 @@ import {UploadIcon} from '@/components/icons/upload-icon'
 import Loader from '@/components/ui/loader/loader'
 import {useUploadMutation} from '@/data/upload'
 
-interface UploaderProps {
-  onChange: (url: string) => void;
-  multiple: boolean;
-  helperText?: string;
-}
-
-export default function Uploader({onChange,multiple,helperText}: UploaderProps) {
+export default function Uploader({onChange,multiple,helperText}: any) {
   const {t} = useTranslation()
   const [image,setImage] = useState<string>('')
   const {mutate: upload,isLoading: loading} = useUploadMutation()
@@ -34,12 +27,12 @@ export default function Uploader({onChange,multiple,helperText}: UploaderProps) 
         return
       }
       const formData = new FormData()
-      acceptedFiles.forEach((file: File) => {
+      acceptedFiles.forEach((file: any) => {
         formData.append('file',file)
       })
       try {
         upload(formData,{
-          onSuccess: (data: unknown) => {
+          onSuccess: (data: any) => {
             if (typeof data === 'string') {
               setImage(data)
               onChange(data)

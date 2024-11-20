@@ -1,69 +1,78 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useEffect,useState} from 'react'
-import {useTranslation} from 'react-i18next'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import {Controller,useForm} from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
-import {useUsersQuery} from '@/data/users'
+import { useModifyDocumentMutation, useUsersQuery } from '@/data/users'
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
 import Button from '@/components/ui/button'
 
-import {useRouter} from 'next/router'
+import { Router, useRouter } from 'next/router'
 import Select from '../select/select'
+import * as yup from 'yup'
 
-import {useAddUserToRound} from '@/data/round'
-import {UsersResponse} from '@/types/users'
+import { useAddUserToRound } from '@/data/round'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { UsersResponse } from '@/types/users'
 
 type IProps = {
   initialValues?: any
 }
 
-export default function AddUserToRound({initialValues}: IProps) {
-  const {t} = useTranslation()
+export default function AddUserToRound({ initialValues }: IProps) {
+  const { t } = useTranslation()
 
   const router = useRouter()
-  const [selectedUsers,setSelectedUsers] = useState([])
+  const [selectedUsers, setSelectedUsers] = useState([])
 
-  const [page,setPage] = useState(1)
-  const [userExistInRound,setUserExistInRound] = useState<UsersResponse[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchJob, setSearchJob] = useState('')
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [usersList, setUsersList] = useState([])
+  const [userExistInRound, setUserExistInRound] = useState<UsersResponse[]>([])
 
   const {
-    query: {id},
+    query: { id },
   } = router
 
-  const {users,loading,paginatorInfo} = useUsersQuery({
+  const { users, loading, error, paginatorInfo } = useUsersQuery({
     limit: 10,
     page,
-    search: '',
-    jobPosition: '',
+    search: searchTerm,
+    jobPosition: searchJob,
   })
 
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 100 && // Un pequeño margen
+          document.documentElement.offsetHeight - 100 && // Un pequeño margen
         !loading &&
-        false
+        hasMore
       ) {
       }
     }
 
-    window.addEventListener('scroll',handleScroll)
-    return () => window.removeEventListener('scroll',handleScroll)
-  },[loading])
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [loading, hasMore]) // Escucha cambios en loading y hasMore
 
   const {
     handleSubmit,
     control,
+    reset,
+    formState: { errors },
   } = useForm<any>({})
-  const {mutate: create} = useAddUserToRound()
+  const { mutate: create, isLoading: createLoading } = useAddUserToRound()
 
   async function onSubmit() {
     const data = {
       roundId: Number(id),
-      userIds: selectedUsers.map((e: any) => e.value),
+      //@ts-ignore
+      userIds: selectedUsers.map((e) => e.value),
     }
     create(data)
   }
@@ -76,10 +85,9 @@ export default function AddUserToRound({initialValues}: IProps) {
             (userB: any) => user.id === userB.id
           )
       )
-      setUserExistInRound((prev) => [...prev,...newUsers])
+      setUserExistInRound((prev) => [...prev, ...newUsers])
     }
-  },[users,initialValues?.user_roundParticipants])
-
+  }, [users])
   const handleSelectChange = (selectedOptions: any) => {
     setSelectedUsers(selectedOptions)
   }
@@ -105,7 +113,7 @@ export default function AddUserToRound({initialValues}: IProps) {
                 <Controller
                   control={control}
                   name="users"
-                  render={({field: {onChange,onBlur,value}}) => (
+                  render={({ field: { onChange, onBlur, value } }) => (
                     <Select
                       options={userExistInRound?.map((user) => ({
                         value: user.id,

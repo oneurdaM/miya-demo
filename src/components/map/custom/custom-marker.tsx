@@ -1,3 +1,4 @@
+import {useCallback} from 'react'
 import {motion} from 'framer-motion'
 import {Alert} from '@/types/alerts'
 import OverlayView from '@/components/overlay/OverlayView'
@@ -12,8 +13,12 @@ interface CustomMarkerProps {
 export default function CustomMarker({
   alert,
   map,
+  onClick,
   highlight,
 }: CustomMarkerProps) {
+  const handleClick = useCallback(() => {
+    onClick(alert)
+  },[onClick,alert])
 
   return (
     <>

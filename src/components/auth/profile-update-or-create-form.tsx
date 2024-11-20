@@ -8,7 +8,7 @@ import {Switch} from '@headlessui/react'
 import {nanoid} from 'nanoid'
 import {addIcon} from '@/utils/addicon'
 
-import {useCreateUserMutation,useUpdateUserMutation} from '@/data/users'
+import {useCreateUserMutation,useJobPositionsQuery,useUpdateUserMutation} from '@/data/users'
 import {useShiftQuery} from '@/data/shift'
 
 import Card from '@/components/common/card'
@@ -48,7 +48,7 @@ type FormValue = {
   jobPosition?: any
   password: string
   middleName: string
-  Sector?: Sector | null
+  sector?: Sector | null
 }
 
 export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
@@ -57,6 +57,12 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
 
   const [showCam,setShowCam] = useState(false)
   const {mutate: upload,isLoading: uploadLoading} = useUploadMutation()
+  const {jobPositions} = useJobPositionsQuery()
+
+  const jobPositionOptions = jobPositions?.map((position: any) => ({
+    value: position.id,
+    label: position.name,
+  }));
 
   const {sector} = userSectorListQuery({
     limit: 100000,
@@ -90,8 +96,8 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
   async function onSubmit(values: any) {
     values.username = values.email
     values.shift = values.shift.id
-    values.Sector = values.Sector.id
-    values.shiftId = values.shift.id
+    values.Sector = values.Sector?.id
+    values.shiftId = values.shift?.id
 
     const input: any = {
       id: initialValues?.id,
@@ -106,11 +112,11 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
           'username',
           'environmentId',
           'image',
-          'shift',
+          'shiftId',
           'password',
           'jobPosition',
           'middleName',
-          'Sector',
+          'sector',
         ]),
       },
     }
@@ -118,13 +124,14 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
     const icon = addIcon(input.input.jobPosition.value)
     input.input.icon = icon
 
+
     if (initialValues?.id !== undefined) {
       const updateData = {
         ...input.input,
         id: initialValues?.id,
         shiftId: values?.shift,
         sectorId: values.Sector,
-        jobPosition: values?.jobPosition.value,
+        jobPositionId: values?.jobPosition.value,
 
         registrationDate: initialValues?.registrationDate ?? new Date(),
       }
@@ -307,7 +314,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               'form:form-select-sector'
             )}`}</Label>
             <SelectInput
-              {...register('Sector')}
+              {...register('sector')}
               control={control}
               getOptionLabel={(option: any) => option.name}
               getOptionValue={(option: any) => option.id}
@@ -323,7 +330,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               control={control}
               getOptionValue={(option: any) => option.value}
               getOptionLabel={(option: any) => option.label}
-              options={jobPosition ?? []}
+              options={jobPositionOptions ?? []}
               isMulti={false}
             />
           </Card>

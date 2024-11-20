@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import cn from 'classnames'
 import {useRouter} from 'next/router'
 import isEmpty from 'lodash/isEmpty'
@@ -7,10 +6,11 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import ErrorMessage from '@/components/ui/error-message'
+import {useTranslation} from 'next-i18next'
 import Avatar from '@/components/common/avatar'
 import {siteSettings} from '@/settings/site.settings'
 import MessageNotFound from '@/components/message/views/no-message-found'
-import React,{useEffect,useRef} from 'react'
+import React,{useEffect,useState,useRef} from 'react'
 import {useWindowSize} from '@/utils/use-window-size'
 import {RESPONSIVE_WIDTH} from '@/utils/constants'
 import {
@@ -21,7 +21,8 @@ import {
   shift,
 } from '@floating-ui/react-dom-interactions'
 import {useMeQuery} from '@/data/user'
-
+import Image from 'next/image'
+import PDFIcon from '@/components/icons/pdf-solid'
 
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
@@ -44,6 +45,7 @@ interface Props {
 }
 
 const UserMessageView = ({
+  className,
   id,
   // listen,
   messages = [],
@@ -59,9 +61,10 @@ const UserMessageView = ({
 }: Props) => {
   const {query} = useRouter()
   const {width} = useWindowSize()
-  const {data,error: meError} = useMeQuery()
+  const [visible,setVisible] = useState(false)
+  const {data,loading: meLoading,error: meError} = useMeQuery()
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef(null)
   const {reference,update,refs} = useFloating({
     strategy: 'fixed',
     placement: 'bottom',
@@ -70,14 +73,15 @@ const UserMessageView = ({
 
   //default scroll to bottom
   const defaultScrollToBottom = () => {
+    //@ts-ignore
     messagesEndRef?.current?.scrollIntoView({behavior: 'smooth'})
   }
-  const firstMessage = messages ? messages[0]?.messages : null;
-  useEffect(defaultScrollToBottom,[firstMessage])
+  useEffect(defaultScrollToBottom,[messages ? messages[0]?.messages : null])
 
   // scroll to bottom
   useEffect(() => {
     const chatBody = document.getElementById('chatBody')
+    // @ts-ignore
     chatBody?.scrollTo({
       top: chatBody?.scrollHeight,
     })
@@ -87,14 +91,43 @@ const UserMessageView = ({
     return autoUpdate(refs.reference.current,refs.floating.current,update)
   },[query?.id,refs.reference,refs.floating,update])
 
+  useEffect(() => {
+    const chatBody = document.getElementById('chatBody')
+    const toggleVisible = () => {
+      if (
+        Number(
+          Number(chatBody?.scrollHeight) - Number(chatBody?.clientHeight)
+        ) !== Number(chatBody?.scrollTop) &&
+        Number(chatBody?.clientHeight) <= Number(chatBody?.scrollHeight)
+      ) {
+        setVisible(true)
+      } else {
+        setVisible(false)
+      }
+    }
+    chatBody?.addEventListener('scroll',toggleVisible)
+    return () => {
+      chatBody?.removeEventListener('scroll',toggleVisible)
+    }
+  },[])
 
-
+  // if (loading || meLoading)
+  //   return (
+  //     <Loader
+  //       className="!h-full flex-1"
+  //       text={t('common:text-loading') ?? ''}
+  //     />
+  //   )
   if (meError)
     return (
       <div className="!h-full flex-1">
         <ErrorMessage message={meError?.message} />
       </div>
     )
+
+  function openPdfInNewTab(url: string) {
+    window.open(url,'_blank')
+  }
 
 
   return (
@@ -125,6 +158,8 @@ const UserMessageView = ({
                     {checkUser ? null : (
                       <div className="w-10">
                         <Avatar
+                          //@ts-ignore
+                          // src={user.image ?? siteSettings?.avatar?.placeholder}
                           src={
                             item?.user?.image ??
                             siteSettings?.avatar?.placeholder
@@ -133,6 +168,7 @@ const UserMessageView = ({
                           name="avatar"
                           className={cn(
                             'relative h-full w-full border-0',
+                            //@ts-ignore
                             user.image
                               ? ''
                               : 'bg-muted-black text-base font-medium text-white'

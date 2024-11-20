@@ -1,37 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import Card from '../common/card'
+import Button from '../ui/button'
+import Description from '../ui/description'
+import Input from '../ui/input'
+import { useCreateCategoryMutation } from '@/data/category'
+import Label from '../ui/label'
+import FileInput from '../ui/file-input'
+import { slugglify } from '@/utils/slugglify'
+import SwitchInput from '../ui/switch-input'
+import { CreateCategoryInput } from '@/types/category'
 import Image from 'next/image'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useRouter} from 'next/router'
-import {useTranslation} from 'react-i18next'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { CategoriesSchema } from './schema-categories-validation'
+import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
 
-import Card from '@/components/common/card'
-import Button from '@/components/ui/button'
-import Description from '@/components/ui/description'
-import Input from '@/components/ui/input'
-import Label from '@/components/ui/label'
-import FileInput from '@/components/ui/file-input'
-import SwitchInput from '@/components/ui/switch-input'
+const CategoryForm = ({ defaultValues }: { defaultValues?: any }) => {
+  const { t } = useTranslation()
 
-import {slugglify} from '@/utils/slugglify'
-import {CreateCategoryInput} from '@/types/category'
-import {CategoriesSchema} from './schema-categories-validation'
-
-import {useCreateCategoryMutation} from '@/data/category'
-
-const CategoryForm = ({defaultValues}: {defaultValues?: Partial<CreateCategoryInput>}) => {
-  const {t} = useTranslation()
-
-  const {mutate: createCategory,isLoading: creating} =
+  const { mutate: createCategory, isLoading: creating } =
     useCreateCategoryMutation()
 
   const router = useRouter()
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     control,
-  } = useForm<any>({
+  } = useForm<CreateCategoryInput>({
     resolver: yupResolver(CategoriesSchema),
     defaultValues: defaultValues ?? {
       name: '',

@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
   UPLOAD_BIOMETRICS: '/auth/biometrics',
   SETTINGS: 'settings',
   RESET_PASSWORD: 'auth/reset-password',
+  JOB_POSITIONS: 'job-position',
   FORGOT_PASSWORD: 'auth/forgot-password',
   VERIFY_FORGET_PASSWORD_TOKEN: 'verify-forget-password-token',
   ANALYTICS: 'analyticsgoogle/report',
@@ -54,4 +55,6 @@ export const API_ENDPOINTS = {
 
   // Attendances
   ATTENDANCES: '/attendances',
+
+  REQUIREDDOCUMENTS: '/documents/required',
 }

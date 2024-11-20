@@ -1,9 +1,9 @@
-import {CloseIcon} from "@/components/icons/close-icon";
-import {SearchIcon} from "@/components/icons/search-icon";
+import { CloseIcon } from "@/components/icons/close-icon";
+import { SearchIcon } from "@/components/icons/search-icon";
 import cn from "classnames";
-import {useEffect} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "next-i18next";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "next-i18next";
 
 const classes = {
   root: "ps-10 pe-4 h-12 flex items-center w-full rounded appearance-none transition duration-300 ease-in-out text-heading text-sm focus:outline-none focus:ring-0",
@@ -41,20 +41,20 @@ const Search: React.FC<SearchProps> = ({
     watch,
     reset,
 
-    formState: {errors},
+    formState: { errors },
   } = useForm<SearchValue>({
     defaultValues: {
       searchText: "",
     },
   });
   const searchText = watch("searchText");
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!searchText) {
-      onSearch({searchText: ""});
+      onSearch({ searchText: "" });
     }
-  },[onSearch,searchText]);
+  }, [searchText]);
 
   const rootClassName = cn(
     classes.root,
@@ -71,13 +71,13 @@ const Search: React.FC<SearchProps> = ({
 
   function clear() {
     reset();
-    onSearch({searchText: ""});
+    onSearch({ searchText: "" });
   }
   return (
     <form
       noValidate
       role="search"
-      className={cn("relative flex w-full items-center",className)}
+      className={cn("relative flex w-full items-center", className)}
       onSubmit={handleSubmit(onSearch)}
     >
       <label htmlFor="search" className="sr-only">

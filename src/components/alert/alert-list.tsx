@@ -1,28 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {useEffect} from 'react'
-import {AlignType} from 'rc-table/lib/interface'
-import {useRouter} from 'next/router'
-import {useTranslation} from 'react-i18next'
-import {Fancybox} from '@fancyapps/ui'
-import Image from 'next/image'
-
-import {Table} from '@/components/ui/table'
-import Pagination from '@/components/ui/pagination'
-import ActionButtons from '@/components/ui/action-buttons'
-import {formatDateCabos} from '@/utils/format-date'
-import Button from '@/components/ui/button'
-import Badge from '@/components/ui/badge/badge'
-
-import {colorBadge} from '@/utils/colorBadge'
-import {getAuthCredentials,hasAccess,adminOnly} from '@/utils/auth-utils'
-import {getAlertStatus} from '@/utils/alert-status'
-import {capitalizeWords} from '@/utils/functions'
-
-import {Alert,AlertStatus} from '@/types/alerts'
-import {UsersResponse} from '@/types/users'
-import {MappedPaginatorInfo} from '@/types/index'
-
-import {Routes} from '@/config/routes'
+import { Table } from '../ui/table'
+import Pagination from '../ui/pagination'
+import { Alert } from '@/types/alerts'
+import { MappedPaginatorInfo } from '@/types/index'
+import ActionButtons from '../ui/action-buttons'
+import { AlignType } from 'rc-table/lib/interface'
+import { formatDateCabos } from '@/utils/format-date'
+import { Routes } from '@/config/routes'
+import { useEffect } from 'react'
+import Button from '../ui/button'
+import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
+import { getAuthCredentials, hasAccess, adminOnly } from '@/utils/auth-utils'
+import { UsersResponse } from '@/types/users'
+import { capitalizeWords } from '@/utils/functions'
+import { Fancybox } from '@fancyapps/ui'
+import Badge from '../ui/badge/badge'
+import { colorBadge } from '@/utils/colorBadge'
+import { getAlertStatus } from '@/utils/alert-status'
 
 type AlertListProps = {
   alerts: Alert[] | null | undefined
@@ -31,16 +25,16 @@ type AlertListProps = {
   seletedAlert?: (alert: Alert) => void
 }
 
-const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
-  const {t} = useTranslation()
+const AlertList = ({ alerts, paginatorInfo, onPagination }: AlertListProps) => {
+  const { t } = useTranslation()
   const router = useRouter()
 
   useEffect(() => {
-    Fancybox.bind('[data-fancybox="gallery"]',{})
-  },[])
+    Fancybox.bind('[data-fancybox="gallery"]', {})
+  }, [])
 
-  const {permissions} = getAuthCredentials()
-  const permission = hasAccess(adminOnly,permissions)
+  const { permissions } = getAuthCredentials()
+  let permission = hasAccess(adminOnly, permissions)
 
   const columns: any = [
     {
@@ -62,9 +56,13 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
       render: (image: string) => (
         <>
           {image ? (
+            // <div className="flex justify-center">
+            //   <Image src={image} alt="Avatar" width={40} height={40} />
+            // </div>
+
             <div>
               <a data-fancybox="gallery" href={image}>
-                <Image src={image} alt="Imagen" width={40} height={40} />
+                <img src={image} alt="Imagen" width={40} />
               </a>
             </div>
           ) : (
@@ -82,7 +80,7 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
         // Create a label clean ui component
         <div
           className="text-sm text-gray-600"
-          dangerouslySetInnerHTML={{__html: text}}
+          dangerouslySetInnerHTML={{ __html: text }}
         />
       ),
     },
@@ -105,7 +103,10 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
       align: 'center' as AlignType,
       render: (status: string) => (
         <Badge
-          textKey={getAlertStatus(status as AlertStatus)}
+          textKey={getAlertStatus(
+            //@ts-ignore
+            status
+          )}
           color={colorBadge(status)}
         />
       ),
@@ -121,7 +122,7 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
             id={id}
             editModalView={permission ? 'CHANGE_STATUS_ALERT' : ''}
             deleteModalView={permission ? 'ALERT_DELETE' : ''}
-            detailsUrl={Routes.alerts.details({id})}
+            detailsUrl={Routes.alerts.details({ id })}
           />
         )
       },
@@ -139,15 +140,18 @@ const AlertList = ({alerts,paginatorInfo,onPagination}: AlertListProps) => {
           columns={columns}
           data={alerts ?? []}
           rowKey={'id'}
-          scroll={{x: 800}}
+          scroll={{ x: 800 }}
         />
       </div>
       {!!paginatorInfo && (
         <div>
           <Pagination
-            total={parseInt(paginatorInfo.total.toString())}
-            current={parseInt(paginatorInfo.currentPage.toString())}
-            pageSize={parseInt(paginatorInfo.perPage.toString())}
+            //@ts-ignore
+            total={parseInt(paginatorInfo.total)}
+            //@ts-ignore
+            current={parseInt(paginatorInfo.currentPage)}
+            //@ts-ignore
+            pageSize={parseInt(paginatorInfo.perPage)}
             onChange={onPagination}
           />
         </div>

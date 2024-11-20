@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {Line} from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   LinearScale,
@@ -9,7 +8,7 @@ import {
   Legend,
   CategoryScale,
 } from 'chart.js'
-import {format} from 'date-fns'
+import { format } from 'date-fns'
 
 ChartJS.register(
   LinearScale,
@@ -20,16 +19,25 @@ ChartJS.register(
   CategoryScale
 )
 
-const SessionDurationChart = ({data}: any) => {
+const SessionDurationChart = ({ data }: any) => {
+  const formatAveragePageviews = (averagePageviews: any) => {
+    const totalMinutes = Math.floor(averagePageviews)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
 
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`
+    }
+    return `${minutes}m`
+  }
 
   const chartData = {
     labels: data.map((item: any) =>
       format(
         new Date(
-          item.date.substring(0,4),
-          item.date.substring(4,6) - 1,
-          item.date.substring(6,8)
+          item.date.substring(0, 4),
+          item.date.substring(4, 6) - 1,
+          item.date.substring(6, 8)
         ),
         'dd/MM/yyyy'
       )

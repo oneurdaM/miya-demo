@@ -1,12 +1,12 @@
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import {useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 
 interface Props {
-  onSubmit: (values: {token: string}) => void;
+  onSubmit: (values: { token: string }) => void;
   loading: boolean;
 }
 
@@ -14,13 +14,13 @@ const schema = yup.object().shape({
   token: yup.string().required("form:error-token-required"),
 });
 
-const EnterTokenView = ({onSubmit,loading}: Props) => {
-  const {t} = useTranslation();
+const EnterTokenView = ({ onSubmit, loading }: Props) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
-    formState: {errors},
-  } = useForm<{token: string}>({resolver: yupResolver(schema)});
+    formState: { errors },
+  } = useForm<{ token: string }>({ resolver: yupResolver(schema) });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -29,7 +29,7 @@ const EnterTokenView = ({onSubmit,loading}: Props) => {
         {...register("token")}
         variant="outline"
         className="mb-5"
-        error={errors.token?.message ? t(errors.token.message) : ""}
+        error={t(errors.token?.message!) ?? ""}
       />
       <Button className="h-11 w-full" loading={loading} disabled={loading}>
         {t("form:text-submit-token")}

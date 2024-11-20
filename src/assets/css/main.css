@@ -1,9 +1,6 @@
-@import './custom-plugins.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   :root {
@@ -306,4 +303,9 @@
   a {
     @apply no-underline;
   }
+
+  body {
+    @apply font-body;
+  }
 }
+@import './custom-plugins.css';

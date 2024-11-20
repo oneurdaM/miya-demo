@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image'
 import Pagination from '../ui/pagination'
-import {Table} from '../ui/table'
+import { Table } from '../ui/table'
 
-import {siteSettings} from '@/settings/site.settings'
-import {MappedPaginatorInfo} from '@/types'
-import {Category} from '@/types/category'
-import {formatDate} from '@/utils/format-date'
+import { siteSettings } from '@/settings/site.settings'
+import { MappedPaginatorInfo } from '@/types'
+import { Category } from '@/types/category'
+import { formatDate } from '@/utils/format-date'
 import ActionButtons from '../ui/action-buttons'
-import {Routes} from '@/config/routes'
-import {getAuthCredentials,hasAccess,adminOnly} from '@/utils/auth-utils'
+import { Routes } from '@/config/routes'
+import { getAuthCredentials, hasAccess, adminOnly } from '@/utils/auth-utils'
 
 type CategoryListProps = {
   categories: Category[]
@@ -21,9 +20,8 @@ const CategoryList = ({
   paginatorInfo,
   onPagination,
 }: CategoryListProps) => {
-  const {permissions} = getAuthCredentials()
-  const permission = hasAccess(adminOnly,permissions)
-
+  const { permissions } = getAuthCredentials()
+  let permission = hasAccess(adminOnly, permissions)
   const columns: any = [
     {
       title: 'ID',
@@ -72,7 +70,7 @@ const CategoryList = ({
         return (
           <ActionButtons
             id={id}
-            editUrl={permission ? Routes.categories.edit({id}) : ''}
+            editUrl={permission ? Routes.categories.edit({ id }) : ''}
             deleteModalView={permission ? 'MODAL_DELETE_CATEGORY_VIEW' : ''}
           />
         )

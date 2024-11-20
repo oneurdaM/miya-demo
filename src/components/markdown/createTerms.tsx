@@ -1,38 +1,60 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useState} from 'react'
-import {useTranslation} from 'react-i18next'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Image from 'next/image'
+import pick from 'lodash/pick'
+import { useForm } from 'react-hook-form'
+import { Switch } from '@headlessui/react'
+import { nanoid } from 'nanoid'
+import { addIcon } from '@/utils/addicon'
+
+import { useCreateUserMutation, useUpdateUserMutation } from '@/data/users'
+import { useShiftQuery } from '@/data/shift'
 
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
+import FileInput from '@/components/ui/file-input'
+import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import Label from '@/components/ui/label'
+import SelectInput from '@/components/ui/select-input'
+import WebcamComponent from '@/components/ui/webcam'
+import { CloseIcon } from '@/components/icons/close-icon'
 
+import { JobPosition, UsersResponse } from '@/types/users'
+import { Shift } from '@/types/suggestions'
+import { ROLES } from '@/utils/constants'
+import { formatDate, jobPosition } from '@/utils/format-date'
+import { useUploadMutation } from '@/data/upload'
 import TextArea from '../ui/text-area'
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 import {
   useCreateSettingsMutation,
   useSettingsQuery,
   useUpdateSettingsMutation,
 } from '@/data/settings'
 
-export default function ProfileUpdateOrCreateForm() {
-  const {t} = useTranslation()
+export default function ProfileUpdateOrCreateForm({ initialValues }: any) {
+  const { t } = useTranslation()
+  const { mutate: updateUser, isLoading: loading } = useUpdateUserMutation()
   const router = useRouter()
 
   const {
     mutate: updateMutation,
     isLoading: updating,
+    error: errorUpdating,
   } = useUpdateSettingsMutation()
   const {
     mutate: createMutation,
     isLoading: creating,
+    error: errorCreating,
   } = useCreateSettingsMutation()
 
-  const {settings} = useSettingsQuery()
+  const { settings } = useSettingsQuery()
 
-  const [content,setContent] = useState(settings.terms ? settings.terms : '')
+  const [content, setContent] = useState(settings.terms ? settings.terms : '')
 
-  async function onSubmit() {
+  async function onSubmit(values: any) {
     if (Object.keys(settings).length > 0) {
       const updateData = {
         id: settings.id,
@@ -64,14 +86,14 @@ export default function ProfileUpdateOrCreateForm() {
                 Guía de Markdown para terminos y condiciones
               </p>
               <div className=" border-2 rounded-t-md p-3">
-                Para utilizar encabezados usa &quot;# Encabezado&quot;: # Prueba
+                Para utilizar encabezados usa "# Encabezado": # Prueba
                 <div>
                   <span className="font-bold mr-2">Resultado:</span>
                   <span className="text-2xl font-bold">Prueba</span>
                 </div>
               </div>
               <div className=" border-2 p-3">
-                Texto en Negrita y Cursiva usa &quot;*Cursiva*&quot; o **Negritas**: -
+                Texto en Negrita y Cursiva usa "*Cursiva*" o **Negritas**: -
                 *Cursiva* - **Negritas**
                 <div>
                   <span className="font-bold mr-2">Resultado:</span>
@@ -80,7 +102,7 @@ export default function ProfileUpdateOrCreateForm() {
                 </div>
               </div>
               <div className=" border-2 p-3">
-                Enlaces usar &quot;[texto]&quot;(url): - [Ejemplo texto](url) <br />
+                Enlaces usar "[texto]"(url): - [Ejemplo texto](url) <br />
                 <div>
                   <span className="font-bold">Resultado:</span>
                   <span className="text-blue-500 underline cursor-pointer">
@@ -89,14 +111,14 @@ export default function ProfileUpdateOrCreateForm() {
                 </div>
               </div>
               <div className=" border-2 p-3">
-                Linea separadora usa esto &quot;---&quot;: ---
+                Linea separadora usa esto "---": ---
                 <div className="mb-2">
                   <span className="font-bold">Resultado: </span>
                   <div className="border-b border-gray-200"></div>
                 </div>
               </div>
               <div className=" border-2 p-3 rounded-b-md ">
-                Para listas usa esto &quot;-&quot;: - Ejemplo <br />
+                Para listas usa esto "-": - Ejemplo <br />
                 <div className="flex">
                   <span className="mr-2 font-bold">Resultado:</span>{' '}
                   <li>Ejemplo</li>
@@ -127,7 +149,7 @@ export default function ProfileUpdateOrCreateForm() {
 
           <Button
             onClick={onSubmit}
-            loading={updating || creating}
+            loading={loading || updating || creating}
             disabled={content.trim() === '' ? true : false}
           >
             {Object.keys(settings).length > 0

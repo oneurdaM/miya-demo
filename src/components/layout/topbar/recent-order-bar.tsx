@@ -1,15 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import cn from 'classnames';
 import {ShoppingBagIcon} from '@/components/icons/sidebar/shopping-bag';
 import {Menu,Transition} from '@headlessui/react';
 import {Fragment,useEffect,useState} from 'react';
+import {SortOrder} from '@/types';
 import Link from '@/components/ui/link';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import {useTranslation} from 'react-i18next';
 import dayjs from 'dayjs';
+import {adminOnly,getAuthCredentials,hasAccess} from '@/utils/auth-utils';
 import {toast} from 'react-toastify';
+import {Routes} from '@/config/routes';
+import {useRouter} from 'next/router';
 import {Config} from '@/config';
 import {PusherConfig} from '@/utils/pusher-config';
 
@@ -21,11 +24,59 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const NotifyLogItem = ({item}: any) => {
+  const {t} = useTranslation();
+  const {locale} = useRouter();
+  const {permissions} = getAuthCredentials();
+  const router = useRouter();
+
+  const handleClickOnNotification = (value: any) => {
+
+  };
+
+  return (
+    <>
+      <div
+        onClick={() => handleClickOnNotification(item)}
+        className={cn(
+          "relative flex gap-2 rounded-md py-3.5 px-6 text-sm font-semibold capitalize transition duration-200 before:absolute before:top-5 before:h-2 before:w-2 before:rounded-full before:bg-accent before:opacity-0 before:content-[''] before:start-2 hover:text-accent group-hover:bg-gray-100/70",
+          item?.is_read == false ? 'before:opacity-100' : null
+        )}
+      >
+        <div className="overflow-hidden">
+          <h3
+            className={cn(
+              'truncate text-sm font-medium',
+              item?.is_read ? 'text-[#666]' : ''
+            )}
+          >
+            {t('text-order')}:{' '}
+            <span className="inline-block font-bold hover:text-accent">
+              #{item?.notify_tracker}
+            </span>{' '}
+            {t('text-is-created')}.
+          </h3>
+          <span className="mt-2 block text-xs font-medium text-[#666666]">
+            {dayjs(item?.created_at).format('MMM DD, YYYY')} at{' '}
+            {dayjs(item?.created_at).format('hh:mm A')}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+};
 
 const RecentOrderBar = ({user}: IProps) => {
   const {t} = useTranslation();
   const [orderOpen,setOrderOpen] = useState(false);
+  const [order,setOrder] = useState([]);
+  const {permissions} = getAuthCredentials();
+  const permission = hasAccess(adminOnly,permissions);
+  let allOrder: any = [];
 
+  const markAllAsRead = () => {
+
+  };
 
   // const activeStatus = notifyLogs.filter((item) => {
   //   return Boolean(item?.is_read) === false;
@@ -42,6 +93,8 @@ const RecentOrderBar = ({user}: IProps) => {
       channel.bind(
         `${process.env.NEXT_PUBLIC_ORDER_CREATED_EVENT}`,
         function (data: any) {
+          allOrder.push(data);
+          setOrder(allOrder);
           toast.success(data?.message,{
             toastId: 'orderSuccess',
           });
@@ -53,7 +106,7 @@ const RecentOrderBar = ({user}: IProps) => {
     } else {
       PusherConfig.disconnect();
     }
-  },[user?.id]);
+  },[order]);
 
   return (
     <>

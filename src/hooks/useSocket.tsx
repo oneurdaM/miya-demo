@@ -20,8 +20,8 @@ const useSocket = (url: string): Socket | null => {
       },
       transports: ['websocket','polling'],
       reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
     });
 
     // Manejo de eventos de conexión

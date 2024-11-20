@@ -1,8 +1,9 @@
 import React from 'react'
-import {DontAllowed} from '../icons/dont-allowed'
+import { DontAllowed } from '../icons/dont-allowed'
 
+type Props = {}
 
-const DontView = () => {
+const DontView = (props: Props) => {
   return (
     <div className="relative flex items-center justify-center h-screen">
       <div className="absolute top-1/2 text-center lg:text-4xl text-gray-500 border-2 p-3 rounded-md">

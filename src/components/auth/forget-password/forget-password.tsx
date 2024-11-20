@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import Alert from "@/components/ui/alert";
 import {
   useForgetPasswordMutation,
@@ -7,24 +7,24 @@ import {
 } from "@/data/user";
 import dynamic from "next/dynamic";
 import Router from "next/router";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 
 const EnterEmailView = dynamic(() => import("./enter-email-view"));
 const EnterTokenView = dynamic(() => import("./enter-token-view"));
 const EnterNewPasswordView = dynamic(() => import("./enter-new-password-view"));
 
 const ForgotPassword = () => {
-  const {t} = useTranslation();
-  const {mutate: forgetPassword,isLoading} = useForgetPasswordMutation();
-  const {mutate: verifyToken,isLoading: verifying} =
+  const { t } = useTranslation();
+  const { mutate: forgetPassword, isLoading } = useForgetPasswordMutation();
+  const { mutate: verifyToken, isLoading: verifying } =
     useVerifyForgetPasswordTokenMutation();
-  const {mutate: resetPassword,isLoading: resetting} =
+  const { mutate: resetPassword, isLoading: resetting } =
     useResetPasswordMutation();
-  const [errorMsg,setErrorMsg] = useState<string | null | undefined>("");
-  const [verifiedEmail,setVerifiedEmail] = useState("");
-  const [verifiedToken,setVerifiedToken] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null | undefined>("");
+  const [verifiedEmail, setVerifiedEmail] = useState("");
+  const [verifiedToken, setVerifiedToken] = useState("");
 
-  function handleEmailSubmit({email}: {email: string}) {
+  function handleEmailSubmit({ email }: { email: string }) {
     forgetPassword(
       {
         email,
@@ -41,7 +41,7 @@ const ForgotPassword = () => {
     );
   }
 
-  function handleTokenSubmit({token}: {token: string}) {
+  function handleTokenSubmit({ token }: { token: string }) {
     verifyToken(
       {
         email: verifiedEmail,
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
     );
   }
 
-  function handleResetPassword({password}: {password: string}) {
+  function handleResetPassword({ password }: { password: string }) {
     resetPassword(
       {
         email: verifiedEmail,

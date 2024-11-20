@@ -8,9 +8,9 @@ import MetricInfo from './metric';
 
 const ExpandedContentDocuments = ({record}: any) => {
 	const {openModal} = useModalAction();
-	console.log('ExpandedContentDocuments:',record);
+
 	const handleCreateDocument = () => {
-		openModal('CREATE_DOCUMENT');
+		openModal('CREATE_DOCUMENT',{record});
 	};
 
 	const openFile = (filePath: string) => {

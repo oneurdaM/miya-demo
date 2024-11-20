@@ -47,7 +47,7 @@ export const useAdminsQuery = (params: Partial<QueryOptionsType>) => {
 }
 
 export const useUpdateUserMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -64,9 +64,26 @@ const {t} = useTranslation()
   })
 }
 
+// Get JOB POSITIONS
+export const useJobPositionsQuery = () => {
+  const {data,isLoading,error} = useQuery<any,Error>(
+    [API_ENDPOINTS.JOB_POSITIONS],
+    () => userClient.fetchJobPositions(),
+    {
+      keepPreviousData: true,
+    }
+  )
+
+  return {
+    jobPositions: data,
+    loading: isLoading,
+    error,
+  }
+}
+
 
 export const useModifyDocumentMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -78,13 +95,13 @@ const {t} = useTranslation()
       toast.success(t("common:successfully-validate-document"))
     },
     onSettled: () => {
-      queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS+"/documents")
+      queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS + "/documents")
     },
   });
 }
 
 export const useUpdatePasswordMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -100,7 +117,7 @@ const {t} = useTranslation()
 }
 
 export const useRegisterMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -115,7 +132,7 @@ const {t} = useTranslation()
 }
 
 export const useCreateUserMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -126,14 +143,14 @@ const {t} = useTranslation()
     onSettled: () => {
       queryClient.invalidateQueries(API_ENDPOINTS.CREATEUSER)
     },
-    onError(){
+    onError() {
       toast.warning(t('Usuario ya registrado'))
     }
   })
 }
 
 export const useUnblockUserMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -148,7 +165,7 @@ const {t} = useTranslation()
 }
 
 export const useBlockUserMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
@@ -165,43 +182,43 @@ const {t} = useTranslation()
 
 export const useUnblockUserAdminMutation = () => {
   const {t} = useTranslation()
-  
-    const queryClient = useQueryClient()
-  
-    return useMutation(userClient.unblock,{
-      onSuccess() {
-        toast.success(t('common:successfully-unblock'))
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(API_ENDPOINTS.USERADMINS)
-      },
-    })
-  }
-  
-  export const useBlockUserAdminMutation = () => {
+
+  const queryClient = useQueryClient()
+
+  return useMutation(userClient.unblock,{
+    onSuccess() {
+      toast.success(t('common:successfully-unblock'))
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(API_ENDPOINTS.USERADMINS)
+    },
+  })
+}
+
+export const useBlockUserAdminMutation = () => {
   const {t} = useTranslation()
-  
-    const queryClient = useQueryClient()
-  
-    return useMutation(userClient.block,{
-      onSuccess() {
-        toast.success(t('common:successfully-block'))
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(API_ENDPOINTS.USERADMINS)
-      },
-    })
-  }
+
+  const queryClient = useQueryClient()
+
+  return useMutation(userClient.block,{
+    onSuccess() {
+      toast.success(t('common:successfully-block'))
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(API_ENDPOINTS.USERADMINS)
+    },
+  })
+}
 
 export const useModifyRoleMutation = () => {
-const {t} = useTranslation()
+  const {t} = useTranslation()
 
   const queryClient = useQueryClient()
 
   return useMutation(userClient.modifyRole,{
     onSuccess() {
       toast.success(t('common:successfully-updated'))
- 
+
     },
     onSettled: () => {
       queryClient.invalidateQueries(API_ENDPOINTS.USERS)
@@ -214,7 +231,7 @@ export function useLogin() {
 }
 
 export const useMeQuery = () => {
-  const { data, isLoading, error } = useQuery<any, Error>(
+  const {data,isLoading,error} = useQuery<any,Error>(
     [API_ENDPOINTS.ME],
     () => userClient.me(),
     {
