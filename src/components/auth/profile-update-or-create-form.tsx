@@ -29,6 +29,7 @@ import {useUploadMutation} from '@/data/upload'
 import {
   userSectorListQuery,
 } from '@/data/analytics'
+import { capitalizeWords } from '@/utils/functions'
 
 type IProps = {
   initialValues?: UsersResponse
@@ -59,10 +60,14 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
   const {mutate: upload,isLoading: uploadLoading} = useUploadMutation()
   const {jobPositions} = useJobPositionsQuery()
 
-  const jobPositionOptions = jobPositions?.map((position: any) => ({
-    value: position.id,
-    label: position.name,
-  }));
+
+  const jobPositionOptions = Array.isArray(jobPositions)
+  ? jobPositions.map((doc: any) => ({
+      label: capitalizeWords(doc.name),
+      value: doc.id,
+    }))
+  : [];
+  
 
   const {sector} = userSectorListQuery({
     limit: 100000,
@@ -330,8 +335,9 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               control={control}
               getOptionValue={(option: any) => option.value}
               getOptionLabel={(option: any) => option.label}
-              options={jobPositionOptions ?? []}
+              options={jobPositionOptions}
               isMulti={false}
+              isLoading={jobPositionOptions.length > 0 ? false : true}
             />
           </Card>
 

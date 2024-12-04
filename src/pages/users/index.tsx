@@ -71,11 +71,12 @@ export default function Users() {
   const { permissions } = getAuthCredentials()
   let permission = hasAccess(adminOnly, permissions)
 
-  //@ts-ignore
-  const formattedJobposition = jobposition?.map((doc) => ({
-    label: capitalizeWords(doc.name),
-    value: doc.id,
-  }))
+  const formattedJobposition = Array.isArray(jobposition)
+  ? jobposition.map((doc: any) => ({
+      label: capitalizeWords(doc.name),
+      value: doc.id,
+    }))
+  : [];
 
   function handleSelect(value: any) {
     if (value) {
@@ -93,7 +94,8 @@ export default function Users() {
             <PageHeading title={t('form:input-label-customers')} />
           </div>
 
-          <div className="md:flex lg:flex gap-3 justify-between mb-4 sm:block">
+        
+          {/* <div className="md:flex lg:flex gap-3 justify-between mb-4 sm:block">
             {permission === true ? (
               <LinkButton
                 href={Routes.users.create}
@@ -111,7 +113,7 @@ export default function Users() {
             >
               <span>{t('form:button-label-document-show')}</span>
             </LinkButton>
-          </div>
+          </div> */}
         </div>
 
         <div className="lg:flex block md:flex md:flex-row md:items-center md:justify-between  md:space-x-4">
@@ -129,6 +131,17 @@ export default function Users() {
               isClearable
               onChange={handleSelect}
             />
+
+            {permission === true ? (
+              <LinkButton
+                href={Routes.users.create}
+                className=" rounded-md mb-4 md:mb-0"
+              >
+                <span className="flex">
+                  + Agregar usuario
+                </span>
+              </LinkButton>
+            ) : null}
 
             {users.length > 0 && (
               <div className="border-2 py-2 px-3 rounded-full mb-4 md:mb-0 flex justify-center">

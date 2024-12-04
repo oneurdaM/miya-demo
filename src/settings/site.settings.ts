@@ -154,6 +154,12 @@ export const siteSettings = {
                 icon: 'TypesIcon',
 
               },
+              {
+                href: Routes.documents.list,
+                label: 'Documentos',
+                icon: 'TypesIcon',
+
+              },
             ]
           },
           {

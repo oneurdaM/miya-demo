@@ -1,80 +1,137 @@
-import {useTranslation} from 'react-i18next';
-import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import dynamic from 'next/dynamic';
+import { useTranslation } from 'react-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import dynamic from 'next/dynamic'
 
-import Select from '@/components/ui/select/select';
-import {UsersResponse} from '@/types/users';
+import Select from '@/components/ui/select/select'
+import { UsersResponse } from '@/types/users'
 
-import Layout from '@/components/layout/admin';
-import Card from '@/components/common/card';
-import PageHeading from '@/components/common/page-heading';
+import Layout from '@/components/layout/admin'
+import Card from '@/components/common/card'
+import PageHeading from '@/components/common/page-heading'
 
-import {useSocketContext} from '@/contexts/socket.context';
-import {LATITUDE,LONGITUDE} from '@/utils/constants';
-import {useRouter} from 'next/router';
-import {useEffect,useState} from 'react';
-import {capitalizeWords} from '@/utils/functions';
-import {useJobPositionQuery} from '@/data/job-position';
-import {Routes} from '@/config/routes';
+import { useSocketContext } from '@/contexts/socket.context'
+import { LATITUDE, LONGITUDE } from '@/utils/constants'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { capitalizeWords } from '@/utils/functions'
+import { useJobPositionQuery } from '@/data/job-position'
+import { Routes } from '@/config/routes'
 import {
   getAuthCredentials,
   isAuthenticated,
   hasAccess,
   allowedRoles,
-} from '@/utils/auth-utils';
-import {GetServerSideProps} from 'next';
+} from '@/utils/auth-utils'
+import { GetServerSideProps } from 'next'
 
-const MapTrack = dynamic(() => import('@/components/track/map-track'),{
+const MapTrack = dynamic(() => import('@/components/track/map-track'), {
   ssr: false,
-});
+})
 const UsersListTrack = dynamic(
   () => import('@/components/track/user-list-track'),
-  {ssr: false}
-);
+  { ssr: false }
+)
+
+const SectorListTrack = dynamic(
+  () => import('@/components/track/sector-list-track'),
+  { ssr: false }
+)
 
 export default function TrackUser() {
-  const router = useRouter();
-  const [searchJob,setSearchJob] = useState<string | null>(null);
-  const [userFilter,setUserFilter] = useState<UsersResponse[]>([]);
-  const {all_users,online_users} = useSocketContext(); // Nuevos datos del contexto
-  const {t} = useTranslation();
-  const [formattedJobposition,setFormattedJobposition] = useState([]);
-  const {jobposition} = useJobPositionQuery();
+  const router = useRouter()
+  const [searchJob, setSearchJob] = useState<string | null>(null)
+  const [userFilter, setUserFilter] = useState<UsersResponse[]>([])
+  const { all_users, online_users } = useSocketContext() // Nuevos datos del contexto
+  const { t } = useTranslation()
+  const [formattedJobposition, setFormattedJobposition] = useState([])
+  const { jobposition } = useJobPositionQuery()
+  const [selectedSector, setSelectedSector] = useState<any | null>(null) // Estado para almacenar el sector seleccionado
 
-  // Formatear las posiciones de trabajo
+  const sector = [
+    {
+      id: 1,
+      name: 'Sector 1',
+      color: 'bg-blue-500/30',
+      location: { lat: 23.16333, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+
+    {
+      id: 2,
+      name: 'Sector 2',
+      color: 'bg-green-500/40',
+      location: { lat: 23.16319, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+    {
+      id: 3,
+      name: 'Sector 3',
+      color: 'bg-blue-500/30',
+      location: { lat: 23.16333, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+
+    {
+      id: 4,
+      name: 'Sector 4',
+      color: 'bg-green-500/40',
+      location: { lat: 23.16319, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+    {
+      id: 5,
+      name: 'Sector 5',
+      color: 'bg-blue-500/30',
+      location: { lat: 23.16333, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+
+    {
+      id: 6,
+      name: 'Sector 6',
+      color: 'bg-green-500/40',
+      location: { lat: 23.16319, lng: -109.71756 },
+      rotation: -27,
+      userCont: 10,
+    },
+  ]
+
   useEffect(() => {
     if (Array.isArray(jobposition)) {
       const formatted: any = jobposition.map((doc: any) => ({
         label: capitalizeWords(doc.name),
         value: doc.id,
-      }));
-      setFormattedJobposition(formatted);
+      }))
+      setFormattedJobposition(formatted)
     }
-  },[jobposition]);
+  }, [jobposition])
 
-
-  // Manejar selección de puesto de trabajo
   useEffect(() => {
     if (searchJob) {
-      const filteredUsers = all_users?.filter(
-        (user) => user.jobpositionId === searchJob
-      );
-
-      if (filteredUsers)
-        setUserFilter(filteredUsers);
+      const filteredUsers = all_users?.filter((user) => {
+        return user?.jobPosition?.name === searchJob; 
+      });
+  
+      if (filteredUsers) setUserFilter(filteredUsers);
     } else {
       setUserFilter([]);
     }
-  },[searchJob,all_users]);
+  }, [searchJob, all_users]);
+  
 
   const selectUser = () => {
     router.push({
       pathname: '/track',
-    });
-  };
+    })
+  }
 
   function handleSelect(value: any) {
-    setSearchJob(value ? value.value : null);
+    setSearchJob(value ? value.label : null)
   }
 
   return (
@@ -88,7 +145,6 @@ export default function TrackUser() {
         </div>
 
         <div className="block lg:flex">
-          {/* Mapa de usuarios rastreados */}
           <div className="md:w-11/12">
             <MapTrack
               userOnline={online_users}
@@ -96,10 +152,9 @@ export default function TrackUser() {
               longitude={LONGITUDE}
               className="lg:col-span-1 lg:col-start-1 lg:row-start-2 2xl:col-span-5 2xl:col-start-auto 2xl:row-start-auto 2xl:me-20"
               title="form:input-label-track-users"
+              sectores={selectedSector}
             />
           </div>
-
-          {/* Lista de usuarios */}
           <div className="mt-[60px] lg:w-1/2">
             <div className="flex gap-3 items-center">
               <button
@@ -135,31 +190,44 @@ export default function TrackUser() {
             />
           </div>
         </div>
+
+        <SectorListTrack
+          title={
+            <div className="flex items-center justify-between">
+              <span>Sectores</span>
+            </div>
+          }
+          className="lg:col-span-1 lg:col-start-2 lg:row-start-2 w-full 2xl:col-span-4 2xl:col-start-auto 2xl:row-start-auto"
+          users={sector}
+          onSelect={(sector) => {
+            setSelectedSector(sector)
+          }}
+        />
       </Card>
     </>
-  );
+  )
 }
 
-TrackUser.Layout = Layout;
+TrackUser.Layout = Layout
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {token,permissions} = getAuthCredentials(ctx);
-  const locale = ctx.locale || 'es';
+  const { token, permissions } = getAuthCredentials(ctx)
+  const locale = ctx.locale || 'es'
   if (
-    !isAuthenticated({token,permissions}) ||
-    !hasAccess(allowedRoles,permissions)
+    !isAuthenticated({ token, permissions }) ||
+    !hasAccess(allowedRoles, permissions)
   ) {
     return {
       redirect: {
         destination: Routes.login,
         permanent: false,
       },
-    };
+    }
   }
   return {
     props: {
       userPermissions: permissions,
-      ...(await serverSideTranslations(locale,['table','common','form'])),
+      ...(await serverSideTranslations(locale, ['table', 'common', 'form'])),
     },
-  };
-};
+  }
+}

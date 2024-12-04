@@ -118,7 +118,7 @@ export default function Attendances() {
         ...rest
       }) => ({
         Usuario: capitalizeWords(user.firstName + ' ' + user.lastName),
-        Ubicación: capitalizeWords(user.sector.name),
+        Ubicación: capitalizeWords(user?.sector?.name),
         Entrada: checkIn
           ? format(
               new Date(checkIn),
@@ -180,7 +180,18 @@ export default function Attendances() {
               placeholderText="Selecciona una fecha"
             />
 
-            <div className="border-2 py-2 pl-3 pr-2 rounded-full flex items-center">
+           
+          </div>
+          {permission ? (
+            <LinkButton
+              href={`${Routes.shifts.create}`}
+              className="h-12 w-full md:w-auto rounded-md"
+            >
+              <span>+ {t('form:create-shifts-label')}</span>
+            </LinkButton>
+          ) : null}
+
+<div className="border-2 py-2 pl-3 pr-2 rounded-full flex items-center">
               <CSVLink
                 data={exportDocument}
                 filename={`Reporte-asistencia.csv`}
@@ -188,15 +199,6 @@ export default function Attendances() {
                 <CsvIcon width={30} />
               </CSVLink>
             </div>
-          </div>
-          {permission ? (
-            <LinkButton
-              href={`${Routes.shifts.create}`}
-              className="h-12 w-full md:w-auto md:ms-6"
-            >
-              <span>+ {t('form:create-shifts-label')}</span>
-            </LinkButton>
-          ) : null}
         </div>
       </Card>
       <AttendanceList

@@ -8,14 +8,17 @@ export type IProps = {
   latitude: number
   longitude: number
   userOnline: any
+  sectores:any
 }
-const MapTrack = ({className,latitude,longitude,userOnline}: IProps) => {
+const MapTrack = ({className,latitude,longitude,userOnline, sectores}: IProps) => {
+
   return (
     <div className={cn('overflow-hidden rounded-lg bg-white p-6 md:p-7',className)}>
       <MapTrackComponent
         defaultLat={latitude}
         defaultLng={longitude}
         users={userOnline?.filter((user: any) => user.location?.latitude && user.location?.longitude)}
+        sectores={sectores}
       />
     </div>
   );
