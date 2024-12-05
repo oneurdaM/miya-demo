@@ -64,6 +64,7 @@ function MapTrackComponent({
   const imageSize = 0.001
 
   const [polygon, setPolygon] = useState<google.maps.Polygon | null>(null)
+  const [sectorMarker, setSectorMarker] = useState<google.maps.Marker | null>(null)
 
   //#endregion Funciones de carga
   const onLoad = useCallback(
@@ -83,7 +84,7 @@ function MapTrackComponent({
     [users]
   )
 
-  function prueba() {
+  function pruebaCuadrado() {
     const center = sectores.location 
 
     const displacement = 0.00022 
@@ -116,27 +117,61 @@ function MapTrackComponent({
 
     return rotatedSquareCoords
   }
+  
+  function generarCircunferencia() {
+    const center = sectores.location; // Centro de la circunferencia
+    const radius = 0.00022; // Radio de la circunferencia (en unidades de lat/lng)
+    const numPoints = 200; // Cantidad de puntos para aproximar la circunferencia (mayor = más suave)
+    const angleOffsetDegrees = sectores.rotation; // Ángulo inicial de rotación (en grados)
+  
+    // Convertir el ángulo de rotación a radianes
+    const angleOffsetRadians = angleOffsetDegrees * (Math.PI / 180);
+  
+    // Generar los puntos de la circunferencia
+    const circleCoords = [];
+    for (let i = 0; i < numPoints; i++) {
+      const angle = (i * (2 * Math.PI)) / numPoints + angleOffsetRadians; // Ángulo para cada punto
+      const lat = center.lat + radius * Math.cos(angle);
+      const lng = center.lng + radius * Math.sin(angle);
+  
+      circleCoords.push({ lat, lng });
+    }
+  
+    return circleCoords;
+  }
+
 
   const handleTogglePolygon = () => {
     if (polygon) {
-      polygon.setMap(null) 
-      setPolygon(null)
+      polygon.setMap(null); 
+      setPolygon(null);
+  
+      // Elimina el marcador asociado
+      if (sectorMarker) {
+        sectorMarker.setMap(null);
+        setSectorMarker(null);
+      }
     } else {
-      const pruena = prueba()
+      const circleCoords = generarCircunferencia();
 
+      console.log(circleCoords)
+  
       const newPolygon = new google.maps.Polygon({
-        paths: pruena, 
-        strokeColor: sectores.color, 
+        paths: circleCoords,
+        strokeColor: sectores.color,
         strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: sectores.color,
         fillOpacity: 0.3,
-      })
-      newPolygon.setMap(map) 
-      newPolygon.addListener('click', handlePolygonClick) 
-      setPolygon(newPolygon)
+      });
+  
+      newPolygon.setMap(map); 
+      setPolygon(newPolygon);
+  
+      // Crea el marcador asociado
+      createMarker(map, sectores.location);
     }
-  }
+  };
 
   //#endregion
 
@@ -218,10 +253,29 @@ function MapTrackComponent({
     setPolygon(null)
   }
 
+  const createMarker = (map: google.maps.Map, position: { lat: number; lng: number }) => {
+    // Elimina el marcador existente si hay uno
+    if (sectorMarker) {
+      sectorMarker.setMap(null); // Remueve el marcador del mapa
+    }
+  
+    const newMarker = new google.maps.Marker({
+      position,
+      map, // Asocia el marcador al mapa existente
+      title: 'Centro del Polígono',
+    });
+  
+    // Opcional: Agrega un evento al marcador
+    newMarker.addListener('click', handlePolygonClick);
+  
+    // Guarda el nuevo marcador en el estado
+    setSectorMarker(newMarker);
+  
+    return newMarker; // Devuelve el marcador si necesitas usarlo
+  };
+
   return isLoaded ? (
     <>
-      <button onClick={handleTogglePolygon}>erer</button>
-      <button onClick={removePolyline}>borrar</button>
       <Select
         className="w-full my-7"
         onChange={handleSelectChange}
@@ -339,7 +393,9 @@ function MapTrackComponent({
               </div>
          
               <p className='text-center text-lg font-bold'> Ubicación: {selectedSEctor.name}</p>
-              <p>Cantidad de usuaruos en la Ubicación: <strong>{sectores.userCont}</strong>  </p>
+              <p>Cantidad de usuarios en la Ubicación: <strong>{sectores.userCont}</strong>  </p>
+              <br />
+              <p>Con una expansión aproximada de <strong>48.14 metros</strong>  </p>
             </div>
           </InfoWindowF>
         )}

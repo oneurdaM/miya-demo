@@ -71,7 +71,7 @@ export default function TrackUser() {
       color: 'bg-blue-500/30',
       location: { lat: 23.16333, lng: -109.71756 },
       rotation: -27,
-      userCont: 10,
+      userCont: 11,
     },
 
     {

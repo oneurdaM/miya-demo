@@ -40,7 +40,7 @@ function UserCard({ user, onSelect, isSelected, isDisabled }: IUserCard) {
             >
               <div className="flex justify-between px-10">
                 <p>{user?.name}</p>
-                <p className="text-base">Usuarios en este sector: 10</p>
+                <p className="text-base">Usuarios en este sector: {user.userCont}</p>
               </div>
             </h4>
           </div>
