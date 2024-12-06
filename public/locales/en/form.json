@@ -510,6 +510,7 @@
   "form-button-jobposition": "Create Job position",
   "form-update-user-description": "Update user information from here",
   "form-update-sector-description": "Update sector information from here",
+  "form-update-sector-map-marker": "Dragging the Marker to Select Sector Position, the map feature allows users to drag a marker to specify the exact position of a sector. The draggable marker provides an intuitive way to select a location directly on the map.",
   "form-round-description": "To create a new round, fill out the form with the required information, including the name and description of the round. Make sure to set the appropriate dates and participants. Once all the information is correct, confirm the creation of the round. This process is essential for organizing and managing participation effectively.",
   "form-update-sector": "Update Sector",
   "form-update-user-round": "Update round information from here",

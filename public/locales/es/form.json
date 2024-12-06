@@ -455,6 +455,7 @@
   "form-update-sector": "Actualizar Sector",
   "form-update-user-description": "Actualizar la información de su usuario desde aquí",
   "form-update-sector-description": "Actualizar la informacón del sector aquí",
+  "form-update-sector-map-marker": "La funcionalidad del mapa permite a los usuarios arrastrar un marcador para especificar la posición exacta de un sector.",
   "form-round-description": "Para crear una nueva ronda, completa el formulario con la información requerida, incluyendo el nombre y la descripción de la ronda. Asegúrate de establecer las fechas y los participantes adecuados. Una vez que toda la información esté correcta, confirma la creación de la ronda. Este proceso es fundamental para organizar y gestionar eficientemente la participación.",
   "form-update-user-round": "Actualizar la información de los rondines",
   "form-validate-document-description": "Información sobre la validez del documento",

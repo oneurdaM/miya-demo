@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import { SectorReponse } from '@/types/sector'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SectoreSchema } from './schema-validation-sector'
+import SectorMap from './sectorMap'
 
 type IProps = {
   initialValues?: SectorReponse
@@ -31,6 +32,11 @@ export default function SectorCreate({ initialValues }: IProps) {
   const { mutate: create, isLoading: createLoading } = useCreateSectorMutation()
   const { mutate: update, isLoading: updateLoading } = useUpdateSector()
 
+
+  const [latLng, setLatLng] = useState({
+    lat: initialValues?.lat || 23.163248731482224, 
+    lng: initialValues?.lng || -109.71761883295441, 
+  })
   const {
     register,
     control,
@@ -57,6 +63,8 @@ export default function SectorCreate({ initialValues }: IProps) {
       id: initialValues?.id,
       input: {
         ...pick(values, ['name']),
+        ...pick(values, ['lat']),
+        ...pick(values, ['lng']),
       },
     }
 
@@ -69,9 +77,14 @@ export default function SectorCreate({ initialValues }: IProps) {
     } else {
       const createData = {
         ...input.input,
+        ...latLng
       }
       create({ ...createData })
     }
+  }
+
+  const handleLatLngChange = (newLatLng: { lat: number; lng: number }) => {
+    setLatLng(newLatLng)
   }
 
   return (
@@ -92,6 +105,15 @@ export default function SectorCreate({ initialValues }: IProps) {
               required
               error={errors.name?.message}
             />
+          </Card>
+          <Description
+            title="Ubicación del sector"
+            details={t('form:form-update-sector-map-marker') as string}
+            className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5"
+          />
+
+          <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
+          <SectorMap onLatLngChange={handleLatLngChange} />
           </Card>
 
           <div className="w-full text-end">

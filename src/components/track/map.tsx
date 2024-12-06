@@ -40,6 +40,16 @@ type MapTrackProps = {
   }>
 }
 
+
+const circleOptions: google.maps.CircleOptions = {
+  radius: 30, 
+  fillColor: 'black', 
+  fillOpacity: 0.20, 
+  strokeColor: 'black',
+  strokeOpacity: 0.2, 
+  strokeWeight: 2, 
+};
+
 function MapTrackComponent({
   defaultLat,
   defaultLng,
@@ -65,8 +75,9 @@ function MapTrackComponent({
 
   const [polygon, setPolygon] = useState<google.maps.Polygon | null>(null)
   const [sectorMarker, setSectorMarker] = useState<google.maps.Marker | null>(null)
+  const [sectorCircle, setSectorCircle] = useState<google.maps.Circle | null>(null)
 
-  //#endregion Funciones de carga
+
   const onLoad = useCallback(
     (map: any) => {
       setMap(map)
@@ -84,96 +95,17 @@ function MapTrackComponent({
     [users]
   )
 
-  function pruebaCuadrado() {
-    const center = sectores.location 
-
-    const displacement = 0.00022 
-
-    const angleDegrees = sectores.rotation
-    const angleRadians = angleDegrees * (Math.PI / 180) // Convertimos a radianes
-
-    const squareCoords = [
-      { lat: center.lat + displacement, lng: center.lng - displacement }, // Vértice 1: Noreste
-      { lat: center.lat + displacement, lng: center.lng + displacement }, // Vértice 2: Noroeste
-      { lat: center.lat - displacement, lng: center.lng + displacement }, // Vértice 3: Suroeste
-      { lat: center.lat - displacement, lng: center.lng - displacement }, // Vértice 4: Sureste
-    ]
-
-    function rotatePoint(point: any, center: any, angleRadians: any) {
-      const dx = point.lng - center.lng // Diferencia en longitud
-      const dy = point.lat - center.lat // Diferencia en latitud
-
-      const newLng =
-        center.lng + (dx * Math.cos(angleRadians) - dy * Math.sin(angleRadians))
-      const newLat =
-        center.lat + (dx * Math.sin(angleRadians) + dy * Math.cos(angleRadians))
-
-      return { lat: newLat, lng: newLng }
-    }
-
-    const rotatedSquareCoords = squareCoords.map((vertex) =>
-      rotatePoint(vertex, center, angleRadians)
-    )
-
-    return rotatedSquareCoords
-  }
-  
-  function generarCircunferencia() {
-    const center = sectores.location; // Centro de la circunferencia
-    const radius = 0.00022; // Radio de la circunferencia (en unidades de lat/lng)
-    const numPoints = 200; // Cantidad de puntos para aproximar la circunferencia (mayor = más suave)
-    const angleOffsetDegrees = sectores.rotation; // Ángulo inicial de rotación (en grados)
-  
-    // Convertir el ángulo de rotación a radianes
-    const angleOffsetRadians = angleOffsetDegrees * (Math.PI / 180);
-  
-    // Generar los puntos de la circunferencia
-    const circleCoords = [];
-    for (let i = 0; i < numPoints; i++) {
-      const angle = (i * (2 * Math.PI)) / numPoints + angleOffsetRadians; // Ángulo para cada punto
-      const lat = center.lat + radius * Math.cos(angle);
-      const lng = center.lng + radius * Math.sin(angle);
-  
-      circleCoords.push({ lat, lng });
-    }
-  
-    return circleCoords;
-  }
-
-
   const handleTogglePolygon = () => {
-    if (polygon) {
-      polygon.setMap(null); 
-      setPolygon(null);
-  
-      // Elimina el marcador asociado
-      if (sectorMarker) {
+      if (sectorMarker && sectorCircle) {
         sectorMarker.setMap(null);
         setSectorMarker(null);
-      }
+        sectorCircle.setMap(null);
+        setSectorCircle(null);
+      
     } else {
-      const circleCoords = generarCircunferencia();
-
-      console.log(circleCoords)
-  
-      const newPolygon = new google.maps.Polygon({
-        paths: circleCoords,
-        strokeColor: sectores.color,
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: sectores.color,
-        fillOpacity: 0.3,
-      });
-  
-      newPolygon.setMap(map); 
-      setPolygon(newPolygon);
-  
-      // Crea el marcador asociado
-      createMarker(map, sectores.location);
+      createMarkerWithCircle(map, sectores.location, circleOptions);
     }
   };
-
-  //#endregion
 
   useEffect(() => {
     if (sectores) {
@@ -252,27 +184,40 @@ function MapTrackComponent({
     }
     setPolygon(null)
   }
+  const createMarkerWithCircle = (
+    map: google.maps.Map, 
+    position: { lat: number; lng: number },
+    circleOptions: google.maps.CircleOptions
+  ) => {
 
-  const createMarker = (map: google.maps.Map, position: { lat: number; lng: number }) => {
-    // Elimina el marcador existente si hay uno
     if (sectorMarker) {
-      sectorMarker.setMap(null); // Remueve el marcador del mapa
+      sectorMarker.setMap(null); 
+    }
+  
+    if (sectorCircle) {
+      sectorCircle.setMap(null); 
     }
   
     const newMarker = new google.maps.Marker({
       position,
-      map, // Asocia el marcador al mapa existente
+      map, 
       title: 'Centro del Polígono',
     });
-  
-    // Opcional: Agrega un evento al marcador
+
     newMarker.addListener('click', handlePolygonClick);
+
+    const newCircle = new google.maps.Circle({
+      ...circleOptions, 
+      map, 
+      center: position, 
+    });
   
-    // Guarda el nuevo marcador en el estado
     setSectorMarker(newMarker);
+    setSectorCircle(newCircle);
   
-    return newMarker; // Devuelve el marcador si necesitas usarlo
+    return { marker: newMarker, circle: newCircle }; 
   };
+  
 
   return isLoaded ? (
     <>
@@ -395,7 +340,7 @@ function MapTrackComponent({
               <p className='text-center text-lg font-bold'> Ubicación: {selectedSEctor.name}</p>
               <p>Cantidad de usuarios en la Ubicación: <strong>{sectores.userCont}</strong>  </p>
               <br />
-              <p>Con una expansión aproximada de <strong>48.14 metros</strong>  </p>
+              <p>Con una expansión aproximada de <strong>30 metros</strong>  </p>
             </div>
           </InfoWindowF>
         )}

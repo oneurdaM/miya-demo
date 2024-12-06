@@ -6,14 +6,14 @@ type IProps = {
   className?: string
   title: React.ReactNode
   users?: any
-  onSelect?: (user: any) => void // Callback para notificar selección
+  onSelect?: (user: any) => void
 }
 
 type IUserCard = {
   user: any
-  onSelect?: (user: any) => void // Callback recibido para seleccionar usuario
-  isSelected: boolean // Indica si este usuario está seleccionado
-  isDisabled: boolean // Indica si este usuario está deshabilitado
+  onSelect?: (user: any) => void 
+  isSelected: boolean 
+  isDisabled: boolean 
 }
 
 function UserCard({ user, onSelect, isSelected, isDisabled }: IUserCard) {
@@ -23,14 +23,14 @@ function UserCard({ user, onSelect, isSelected, isDisabled }: IUserCard) {
         className={cn(
           'flex flex-wrap items-center p-4 rounded-md',
           {
-            'bg-teal-900': isSelected, // Color si está seleccionado
-            'pointer-events-none opacity-50': isDisabled, // Estilo si está deshabilitado
-            'hover:cursor-pointer': !isDisabled // Habilitar cursor solo si está activo
+            'bg-teal-900': isSelected, 
+            'pointer-events-none opacity-50': isDisabled, 
+            'hover:cursor-pointer': !isDisabled 
           },
-          user?.color // Color predeterminado
+          user?.color
         )}
         onClick={() => {
-          if (!isDisabled && onSelect) onSelect(user) // Enviar todo el objeto usuario
+          if (!isDisabled && onSelect) onSelect(user)
         }}
       >
         <div className="flex w-full items-center pe-2">
@@ -51,17 +51,16 @@ function UserCard({ user, onSelect, isSelected, isDisabled }: IUserCard) {
 }
 
 function SectorListTrack({ className, title, users, onSelect }: IProps) {
-  const [selectedUser, setSelectedUser] = useState<any | null>(null) // Estado global de selección
+  const [selectedUser, setSelectedUser] = useState<any | null>(null) 
 
   const handleSelectUser = (user: any) => {
-    // Si el usuario ya está seleccionado, lo deseleccionamos
     if (selectedUser?.id === user.id) {
       setSelectedUser(null)
     } else {
-      setSelectedUser(user) // Selecciona el nuevo usuario
+      setSelectedUser(user) 
     }
 
-    if (onSelect) onSelect(user) // Notifica al componente padre con el objeto completo
+    if (onSelect) onSelect(user) 
   }
 
   return (
@@ -82,11 +81,11 @@ function SectorListTrack({ className, title, users, onSelect }: IProps) {
           <div className="border-2 rounded-md">
             {users?.map((user: any) => (
               <UserCard
-                key={user.id} // Usa `user.id` como clave
+                key={user.id} 
                 user={user}
                 onSelect={handleSelectUser}
-                isSelected={selectedUser?.id === user.id} // Determina si está seleccionado
-                isDisabled={selectedUser !== null && selectedUser.id !== user.id} // Desactiva si no es el seleccionado
+                isSelected={selectedUser?.id === user.id} 
+                isDisabled={selectedUser !== null && selectedUser.id !== user.id} 
               />
             ))}
           </div>

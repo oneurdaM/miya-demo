@@ -41,11 +41,11 @@ export default function TrackUser() {
   const router = useRouter()
   const [searchJob, setSearchJob] = useState<string | null>(null)
   const [userFilter, setUserFilter] = useState<UsersResponse[]>([])
-  const { all_users, online_users } = useSocketContext() // Nuevos datos del contexto
+  const { all_users, online_users } = useSocketContext() 
   const { t } = useTranslation()
   const [formattedJobposition, setFormattedJobposition] = useState([])
   const { jobposition } = useJobPositionQuery()
-  const [selectedSector, setSelectedSector] = useState<any | null>(null) // Estado para almacenar el sector seleccionado
+  const [selectedSector, setSelectedSector] = useState<any | null>(null) 
 
   const sector = [
     {
@@ -53,8 +53,6 @@ export default function TrackUser() {
       name: 'Sector 1',
       color: 'bg-blue-500/30',
       location: { lat: 23.16333, lng: -109.71756 },
-      rotation: -27,
-      userCont: 10,
     },
 
     {
@@ -62,16 +60,14 @@ export default function TrackUser() {
       name: 'Sector 2',
       color: 'bg-green-500/40',
       location: { lat: 23.16319, lng: -109.71756 },
-      rotation: -27,
-      userCont: 10,
+    
     },
     {
       id: 3,
       name: 'Sector 3',
       color: 'bg-blue-500/30',
       location: { lat: 23.16333, lng: -109.71756 },
-      rotation: -27,
-      userCont: 11,
+  
     },
 
     {
@@ -79,16 +75,14 @@ export default function TrackUser() {
       name: 'Sector 4',
       color: 'bg-green-500/40',
       location: { lat: 23.16319, lng: -109.71756 },
-      rotation: -27,
-      userCont: 10,
+    
     },
     {
       id: 5,
       name: 'Sector 5',
       color: 'bg-blue-500/30',
       location: { lat: 23.16333, lng: -109.71756 },
-      rotation: -27,
-      userCont: 10,
+    
     },
 
     {
@@ -96,8 +90,7 @@ export default function TrackUser() {
       name: 'Sector 6',
       color: 'bg-green-500/40',
       location: { lat: 23.16319, lng: -109.71756 },
-      rotation: -27,
-      userCont: 10,
+    
     },
   ]
 

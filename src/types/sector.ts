@@ -14,6 +14,8 @@ export type SectorRegistration = {
     export interface SectorReponse {
       id: number
       name: string
+      lat:any,
+      lng: any,
       createdAt: string,
       updateAt: string,
 

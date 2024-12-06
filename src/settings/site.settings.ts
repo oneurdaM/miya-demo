@@ -163,6 +163,16 @@ export const siteSettings = {
             ]
           },
           {
+            href: Routes.Rondines.list,
+            label: 'text-Round',
+            icon: 'WithdrawIcon',
+          },
+          {
+            href: Routes.sectores.list,
+            label: 'text-Sectors',
+            icon: 'MaintenanceIcon',
+          },
+          {
             href: Routes.suggestions.list,
             label: 'text-suggestions',
             icon: 'TermsIcon',
