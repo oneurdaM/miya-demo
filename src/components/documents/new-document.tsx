@@ -30,6 +30,8 @@ export default function CreateOrUpdateDocumentForm() {
 		data?.record?.requiredDocuments ?? documentTypes ?? []
 	);
 
+
+	console.log(data)
 	const [selectedUser,setSelectedUser] = useState(() =>
 		data?.record
 			? {
@@ -69,6 +71,9 @@ export default function CreateOrUpdateDocumentForm() {
 			label: docType.name,
 			value: docType.id,
 		})) ?? [];
+
+
+		console.log(requiredDocuments)
 
 	const userOptions =
 		users?.map(user => ({

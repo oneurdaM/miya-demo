@@ -10,6 +10,8 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/assets/css/main.css'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
+import "react-multi-carousel/lib/styles.css";
+
 
 import { SettingsProvider } from '@/contexts/settings.context'
 import { UIProvider } from '@/contexts/ui.context'

@@ -90,7 +90,7 @@ export default function UserPage() {
         {
           <DocumentTable
             title="Documentos"
-            documentos={searchTerm.length === 0 ? documents : filteredDocuments}
+            documents={searchTerm.length === 0 ? documents : filteredDocuments}
             paginatorInfo={paginatorInfo}
             onPagination={handlePagination}
           />

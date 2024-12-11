@@ -11,9 +11,10 @@ import AdvancePopover from '@/components/ui/advance-popover';
 
 import {useUI} from '@/contexts/ui.context';
 import {getIcon} from '@/utils/get-icon';
-import {RESPONSIVE_WIDTH} from '@/utils/constants';
+import {miniSidebarInitialValue, RESPONSIVE_WIDTH} from '@/utils/constants';
 import {useWindowSize} from '@/utils/use-window-size';
 import {getAuthCredentials,hasAccess} from '@/utils/auth-utils';
+import { useAtom } from 'jotai';
 
 function SidebarShortItem({
   childMenu,
@@ -110,6 +111,7 @@ const SidebarItem = ({
   const {t} = useTranslation();
   const router = useRouter();
   const {width} = useWindowSize();
+  const [, setMiniSidebar] = useAtom(miniSidebarInitialValue);
 
   const {
     query: {shop},
@@ -270,6 +272,10 @@ const SidebarItem = ({
     )
   ) : (
     <Link
+    onClick={()=>{
+      if(label === 'Mapeo de usuarios')
+      setMiniSidebar(true)
+    }}
       href={href}
       className={cn(
         `group flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm text-gray-700 text-start focus:text-accent ${miniSidebar && width >= RESPONSIVE_WIDTH

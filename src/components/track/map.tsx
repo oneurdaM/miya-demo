@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 
 import {
   GoogleMap,
@@ -15,6 +15,10 @@ import Image from 'next/image'
 import { capitalizeWords } from '@/utils/functions'
 import Select from '../select/select'
 import Avatar from '../common/avatar'
+import { useTranslation } from 'react-i18next'
+import { useSocketContext } from '@/contexts/socket.context'
+import { UsersResponse } from '@/types/users'
+import { useJobPositionQuery } from '@/data/job-position'
 
 const containerStyle = {
   width: '100%',
@@ -24,6 +28,7 @@ const containerStyle = {
 
 type MapTrackProps = {
   sectores: any
+  jobpositionFilter: any
   defaultLat: number
   defaultLng: number
   users: Array<{
@@ -40,25 +45,32 @@ type MapTrackProps = {
   }>
 }
 
-
 const circleOptions: google.maps.CircleOptions = {
-  radius: 30, 
-  fillColor: 'black', 
-  fillOpacity: 0.20, 
+  radius: 30,
+  fillColor: 'black',
+  fillOpacity: 0.2,
   strokeColor: 'black',
-  strokeOpacity: 0.2, 
-  strokeWeight: 2, 
-};
+  strokeOpacity: 0.2,
+  strokeWeight: 2,
+}
 
 function MapTrackComponent({
   defaultLat,
   defaultLng,
   users,
   sectores,
+  jobpositionFilter,
 }: MapTrackProps) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY || '',
   })
+  const router = useRouter()
+  const { t } = useTranslation()
+  const [userFilter, setUserFilter] = useState<UsersResponse[]>([])
+  const [formattedJobposition, setFormattedJobposition] = useState([])
+  const [searchJob, setSearchJob] = useState<string | null>(null)
+  const { all_users, online_users } = useSocketContext()
+  const { jobposition } = useJobPositionQuery()
 
   const [map, setMap] = useState<any>(null)
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
@@ -66,7 +78,6 @@ function MapTrackComponent({
     lng: defaultLng,
   })
   const [selectedSEctor, setSelectedUSector] = useState<any>(null)
-
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [historicalOverlay, setHistoricalOverlay] =
     useState<google.maps.GroundOverlay | null>(null)
@@ -74,9 +85,38 @@ function MapTrackComponent({
   const imageSize = 0.001
 
   const [polygon, setPolygon] = useState<google.maps.Polygon | null>(null)
-  const [sectorMarker, setSectorMarker] = useState<google.maps.Marker | null>(null)
-  const [sectorCircle, setSectorCircle] = useState<google.maps.Circle | null>(null)
+  const [sectorMarker, setSectorMarker] = useState<google.maps.Marker | null>(
+    null
+  )
+  const [sectorCircle, setSectorCircle] = useState<google.maps.Circle | null>(
+    null
+  )
 
+  useEffect(() => {
+    if (searchJob) {
+      const filteredUsers = all_users?.filter((user) => {
+        return user?.jobPosition?.name === searchJob
+      })
+
+      if (filteredUsers) setUserFilter(filteredUsers)
+    } else {
+      setUserFilter([])
+    }
+  }, [searchJob, all_users])
+
+  function handleSelect(value: any) {
+    jobpositionFilter(value ? value.label : '')
+  }
+
+  useEffect(() => {
+    if (Array.isArray(jobposition)) {
+      const formatted: any = jobposition.map((doc: any) => ({
+        label: capitalizeWords(doc.name),
+        value: doc.id,
+      }))
+      setFormattedJobposition(formatted)
+    }
+  }, [jobposition])
 
   const onLoad = useCallback(
     (map: any) => {
@@ -96,16 +136,15 @@ function MapTrackComponent({
   )
 
   const handleTogglePolygon = () => {
-      if (sectorMarker && sectorCircle) {
-        sectorMarker.setMap(null);
-        setSectorMarker(null);
-        sectorCircle.setMap(null);
-        setSectorCircle(null);
-      
+    if (sectorMarker && sectorCircle) {
+      sectorMarker.setMap(null)
+      setSectorMarker(null)
+      sectorCircle.setMap(null)
+      setSectorCircle(null)
     } else {
-      createMarkerWithCircle(map, sectores.location, circleOptions);
+      createMarkerWithCircle(map, sectores.location, circleOptions)
     }
-  };
+  }
 
   useEffect(() => {
     if (sectores) {
@@ -185,55 +224,88 @@ function MapTrackComponent({
     setPolygon(null)
   }
   const createMarkerWithCircle = (
-    map: google.maps.Map, 
+    map: google.maps.Map,
     position: { lat: number; lng: number },
     circleOptions: google.maps.CircleOptions
   ) => {
-
     if (sectorMarker) {
-      sectorMarker.setMap(null); 
+      sectorMarker.setMap(null)
     }
-  
+
     if (sectorCircle) {
-      sectorCircle.setMap(null); 
+      sectorCircle.setMap(null)
     }
-  
+
     const newMarker = new google.maps.Marker({
       position,
-      map, 
+      map,
       title: 'Centro del Polígono',
-    });
+    })
 
-    newMarker.addListener('click', handlePolygonClick);
+    newMarker.addListener('click', handlePolygonClick)
 
     const newCircle = new google.maps.Circle({
-      ...circleOptions, 
-      map, 
-      center: position, 
-    });
-  
-    setSectorMarker(newMarker);
-    setSectorCircle(newCircle);
-  
-    return { marker: newMarker, circle: newCircle }; 
-  };
-  
+      ...circleOptions,
+      map,
+      center: position,
+    })
+
+    setSectorMarker(newMarker)
+    setSectorCircle(newCircle)
+
+    return { marker: newMarker, circle: newCircle }
+  }
+
+  const selectUser = () => {
+    router.push({
+      pathname: '/track',
+    })
+  }
 
   return isLoaded ? (
     <>
-      <Select
-        className="w-full my-7"
-        onChange={handleSelectChange}
-        isClearable
-        options={[
-          { id: 1, label: 'Terminal 1', value: '/terminal_1.jpeg' },
-          { id: 2, label: 'Terminal 2 Piso 1', value: '/terminal_2_1.jpeg' },
-          { id: 3, label: 'Terminal 2 Piso 2', value: '/terminal_2_2.jpeg' },
-        ]}
-        getOptionLabel={(option: any) => option.label}
-        getOptionValue={(option: any) => option.value}
-        name={'selectOption'}
-      />
+      <div className="flex w-full justify-between items-center mb-4 gap-2">
+        {/* Primer Select: Selector de planos */}
+        <div className="w-1/2">
+          <label className="text-stone-600">Planos del aeropuerto</label>
+          <Select
+            className="flex-1"
+            onChange={handleSelectChange}
+            isClearable
+            options={[
+              { id: 1, label: 'Terminal 1', value: '/terminal_1.jpeg' },
+              {
+                id: 2,
+                label: 'Terminal 2 Piso 1',
+                value: '/terminal_2_1.jpeg',
+              },
+              {
+                id: 3,
+                label: 'Terminal 2 Piso 2',
+                value: '/terminal_2_2.jpeg',
+              },
+            ]}
+            getOptionLabel={(option: any) => option.label}
+            getOptionValue={(option: any) => option.value}
+            name={'selectOption'}
+            placeholder="Selecciona el plano"
+          />
+        </div>
+        {/* Segundo Select: Selector de posiciones */}
+        <div className="w-1/2">
+          <label className="text-stone-600">Posiciones de trabajo</label>
+          <Select
+            getOptionValue={(option: any) => option.value}
+            getOptionLabel={(option: any) => option.label}
+            options={formattedJobposition ?? []}
+            isMulti={false}
+            className="flex-1"
+            isClearable
+            placeholder="Selecciona la posición"
+            onChange={handleSelect}
+          />
+        </div>
+      </div>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={mapCenter}
@@ -332,15 +404,20 @@ function MapTrackComponent({
             onCloseClick={() => setSelectedUSector(null)}
           >
             <div className="w-[20em] ">
+              <div className={` ${sectores.color} p-5 rounded-md`}></div>
 
-              <div className={` ${sectores.color} p-5 rounded-md`}>
-
-              </div>
-         
-              <p className='text-center text-lg font-bold'> Ubicación: {selectedSEctor.name}</p>
-              <p>Cantidad de usuarios en la Ubicación: <strong>{sectores.userCont}</strong>  </p>
+              <p className="text-center text-lg font-bold">
+                {' '}
+                Ubicación: {selectedSEctor.name}
+              </p>
+              <p>
+                Cantidad de usuarios en la Ubicación:{' '}
+                <strong>{sectores.userCont}</strong>{' '}
+              </p>
               <br />
-              <p>Con una expansión aproximada de <strong>30 metros</strong>  </p>
+              <p>
+                Con una expansión aproximada de <strong>30 metros</strong>{' '}
+              </p>
             </div>
           </InfoWindowF>
         )}
