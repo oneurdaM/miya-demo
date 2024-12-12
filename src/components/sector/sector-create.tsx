@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import React,{useEffect,useState} from 'react'
+import {useTranslation} from 'react-i18next'
 import pick from 'lodash/pick'
-import { useForm } from 'react-hook-form'
+import {useForm} from 'react-hook-form'
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
-import { useCreateSectorMutation, useUpdateSector } from '@/data/analytics'
-import { useRouter } from 'next/router'
-import { SectorReponse } from '@/types/sector'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { SectoreSchema } from './schema-validation-sector'
+import {useCreateSectorMutation,useUpdateSector} from '@/data/analytics'
+import {useRouter} from 'next/router'
+import {SectorReponse} from '@/types/sector'
+import {yupResolver} from '@hookform/resolvers/yup'
+import {SectoreSchema} from './schema-validation-sector'
 import SectorMap from './sectorMap'
 
 type IProps = {
@@ -21,28 +21,26 @@ type FormValue = {
   name: string
 }
 
-export default function SectorCreate({ initialValues }: IProps) {
-  const { t } = useTranslation()
+export default function SectorCreate({initialValues}: IProps) {
+  const {t} = useTranslation()
 
   const router = useRouter()
   const {
-    query: { id },
+    query: {id},
   } = router
 
-  const { mutate: create, isLoading: createLoading } = useCreateSectorMutation()
-  const { mutate: update, isLoading: updateLoading } = useUpdateSector()
+  const {mutate: create,isLoading: createLoading} = useCreateSectorMutation()
+  const {mutate: update,isLoading: updateLoading} = useUpdateSector()
 
 
-  const [latLng, setLatLng] = useState({
-    lat: initialValues?.lat || 23.163248731482224, 
-    lng: initialValues?.lng || -109.71761883295441, 
-  })
+  const [latLng,setLatLng] = useState<any>()
+
+
   const {
     register,
-    control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<FormValue>({
     resolver: yupResolver(SectoreSchema),
     ...(Boolean(initialValues) && {
@@ -56,15 +54,15 @@ export default function SectorCreate({ initialValues }: IProps) {
     reset({
       name: initialValues?.name,
     })
-  }, [initialValues])
+  },[initialValues])
 
   async function onSubmit(values: any) {
     const input: any = {
       id: initialValues?.id,
       input: {
-        ...pick(values, ['name']),
-        ...pick(values, ['lat']),
-        ...pick(values, ['lng']),
+        ...pick(values,['name']),
+        ...pick(values,['lat']),
+        ...pick(values,['lng']),
       },
     }
 
@@ -79,13 +77,13 @@ export default function SectorCreate({ initialValues }: IProps) {
         ...input.input,
         ...latLng
       }
-      create({ ...createData })
+      create({...createData})
     }
   }
 
-  const handleLatLngChange = (newLatLng: { lat: number; lng: number }) => {
-    setLatLng(newLatLng)
-  }
+  const handleCoordinatesChange = (coordinates: {lat: number; lng: number}[]) => {
+    setLatLng(coordinates);
+  };
 
   return (
     <>
@@ -113,7 +111,7 @@ export default function SectorCreate({ initialValues }: IProps) {
           />
 
           <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
-          <SectorMap onLatLngChange={handleLatLngChange} />
+            <SectorMap onCoordinatesChange={handleCoordinatesChange} />
           </Card>
 
           <div className="w-full text-end">

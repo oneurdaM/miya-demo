@@ -1,91 +1,86 @@
-import React, { useState } from 'react'
+import React from 'react';
 import {
-  CircleF,
   GoogleMap,
-  Marker,
-  MarkerF,
   useLoadScript,
-} from '@react-google-maps/api'
-import Input from '../ui/input'
-
+  DrawingManager,
+} from '@react-google-maps/api';
+import {LATITUDE,LONGITUDE} from '@/utils/constants';
 
 type SectorMapProps = {
-    onLatLngChange: (latLng: { lat: number; lng: number }) => void; 
-  };
+  onCoordinatesChange: (coordinates: {lat: number; lng: number}[]) => void;
+};
 
-const SectorMap: React.FC<SectorMapProps> = ({ onLatLngChange }) => {
-    const [latLng, setLatLng] = useState({
-    lat: 23.163248731482224,
-    lng: -109.71761883295441,
-  })
+const SectorMap: React.FC<SectorMapProps> = ({onCoordinatesChange}) => {
 
-  const { isLoaded } = useLoadScript({
+
+  const {isLoaded} = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY || '',
-  })
+    libraries: ['drawing'], // Incluye la biblioteca de dibujo
+  });
 
   if (!isLoaded) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
-  const onDragEnd = (e: any) => {
-    const newLatLng = {
-      lat: e.latLng.lat(),
-      lng: e.latLng.lng(),
+  const handlePolygonComplete = (polygon: google.maps.Polygon) => {
+    const path = polygon.getPath();
+    const coordinates: {lat: number; lng: number}[] = [];
+    for (let i = 0; i < path.getLength(); i++) {
+      const point = path.getAt(i);
+      coordinates.push({lat: point.lat(),lng: point.lng()});
     }
-    setLatLng(newLatLng) 
-    onLatLngChange(newLatLng);
-
-  }
+    onCoordinatesChange(coordinates);
+    polygon.setMap(null);
+    console.log('=========> coordinates',coordinates);
+  };
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row w-full">
-        <div className="w-full md:w-1/2 pr-2 mb-5">
-          <Input
-            label="Latitud"
-            name="latitude"
-            variant="outline"
-            className="mb-5"
-            disabled
-            value={latLng.lat}
-
-          />
-        </div>
-
-        <div className="w-full md:w-1/2 pl-2 mb-5">
-          <Input
-            label="Longitud"
-            name="longitude"
-            variant="outline"
-            className="mb-5"
-            disabled
-            value={latLng.lng}
-          />
-        </div>
-      </div>
+    <div className='rounded-lg border border-border-base overflow-hidden'>
 
       <GoogleMap
-        center={latLng}
+        center={{
+          lat: LONGITUDE,
+          lng: LATITUDE,
+        }}
         zoom={12}
-        mapContainerStyle={{ width: '100%', height: '500px' }}
-      >
-        <MarkerF position={latLng} draggable={true} onDragEnd={onDragEnd} />
-        {[30].map((radius, idx) => (
-          <CircleF
-            key={idx}
-            center={latLng}
-            radius={radius}
-            options={{
-              fillColor: 'black',
-              strokeColor: 'black',
-              strokeOpacity: 0.2,
-              fillOpacity: 0.2,
-            }}
-          />
-        ))}
-      </GoogleMap>
-    </>
-  )
-}
+        mapContainerStyle={{width: '100%',height: '500px'}}
+        onLoad={(map) => {
+          map.setOptions({
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: true,
+            rotateControl: false,
+            scaleControl: false,
+            zoomControl: true,
+            panControl: false,
+            gestureHandling: 'greedy',
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+          });
+        }}
+        children={
+          <>
+            <DrawingManager
+              onPolygonComplete={handlePolygonComplete}
+              options={{
+                drawingControl: true,
+                drawingControlOptions: {
+                  position: google.maps.ControlPosition.TOP_CENTER,
+                  drawingModes: [google.maps.drawing.OverlayType.POLYGON],
+                },
+                polygonOptions: {
+                  fillColor: 'rgba(0, 123, 255, 0.2)',
+                  strokeColor: '#007bff',
+                  strokeOpacity: 0.6,
+                  strokeWeight: 2,
+                  editable: true,
+                },
+              }}
+            />
+          </>
+        }
+      />
+    </div>
+  );
+};
 
-export default SectorMap
+export default SectorMap;
