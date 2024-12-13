@@ -100,7 +100,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
 
   async function onSubmit(values: any) {
     values.username = values.email
-    values.shift = values.shift.id
+    // values.shift = values.shift.id
     values.Sector = values.Sector?.id
     values.shiftId = values.shift?.id
 
@@ -122,11 +122,12 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
           'jobPosition',
           'middleName',
           'sector',
+          'shift',
         ]),
       },
     }
 
-    const icon = addIcon(input.input.jobPosition.value)
+    const icon = addIcon(input.input.jobPosition.label)
     input.input.icon = icon
 
 
@@ -134,10 +135,9 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
       const updateData = {
         ...input.input,
         id: initialValues?.id,
-        shiftId: values?.shift,
+        shiftId: values?.shift.id,
         sectorId: values.Sector,
         jobPositionId: values?.jobPosition.value,
-
         registrationDate: initialValues?.registrationDate ?? new Date(),
       }
       updateUser({
@@ -146,10 +146,13 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
     } else {
       const createData = {
         ...input.input,
-        shiftId: values?.shift.id,
-        jobPosition: values?.jobPosition.value,
+        shift: values?.shift.id,
+        Sector: values?.sector.id,
+        jobPositionId: values?.jobPosition.value,
       }
       create({...createData})
+
+      console.log(createData)
     }
   }
 
