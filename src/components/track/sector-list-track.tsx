@@ -1,31 +1,32 @@
 import { useState } from 'react'
 import cn from 'classnames'
 import Scrollbar from '@/components/ui/scrollbar'
+import { capitalizeWords } from '@/utils/functions'
 
 type IProps = {
   className?: string
   title: React.ReactNode
-  users?: any
-  onSelect?: (user: any) => void
+  sectors?: any
+  onSelect?: (sector: any) => void
 }
 
-type IUserCard = {
-  user: any
-  onSelect?: (user: any) => void
+type IsectorCard = {
+  sector: any
+  onSelect?: (sector: any) => void
   isSelected: boolean
   isDisabled: boolean
   showDetails: boolean
   toggleDetails: () => void
 }
 
-function UserCard({
-  user,
+function SectorCard({
+  sector,
   onSelect,
   isSelected,
   isDisabled,
   showDetails,
   toggleDetails,
-}: IUserCard) {
+}: IsectorCard) {
   return (
     <div className="my-3">
       <div
@@ -37,16 +38,16 @@ function UserCard({
           }
         )}
         onClick={() => {
-          if (!isDisabled && onSelect) onSelect(user)
+          if (!isDisabled && onSelect) onSelect(sector)
         }}
       >
         <div className="flex items-center space-x-3">
           <div className="h-10 w-10 bg-green-400 text-white flex items-center justify-center rounded-full shadow-sm">
-            <span className="text-sm font-semibold">{user?.name?.[0]}</span>
+            <span className="text-sm font-semibold">{sector?.name?.[0]}</span>
           </div>
           <div>
             <h4 className="text-lg font-semibold text-gray-800 truncate">
-              {user?.name}
+              {sector?.name}
             </h4>
             <p className="text-sm text-gray-500 truncate">Sector activo</p>
           </div>
@@ -68,24 +69,24 @@ function UserCard({
         <div className="p-3 mt-1 mx-4 bg-gray-100 border-t border-gray-300 text-sm text-gray-700 rounded-b-md">
           <div className="flex justify-between font-bold">
             <p>Usuarios en el sector</p>
-            <p className="font-bold">{user.userCount || 0}</p>
+            <p className="font-bold">{sector?.user.length|| 0}</p>
           </div>
 
-          {user.users && user.users.length > 0 ? (
+          {sector?.user && sector?.user.length > 0 ? (
             <ul className="mt-2 space-y-2">
-              {user.users.map((sectorUser: any, index: number) => (
+              {sector?.user?.map((user: any, index: number) => (
                 <li
                   key={index}
                   className="flex items-center space-x-3 border-b last:border-none pb-2"
                 >
                   <div className="h-8 w-8 bg-blue-200 text-white flex items-center justify-center rounded-full shadow-sm">
-                    <span className="text-xs font-semibold">
-                      {sectorUser.name?.[0]}
+                    <span className="text-xl  font-mono">
+                      {user.firstName?.[0]}
                     </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-gray-800 text-sm font-medium">
-                      {sectorUser.name}
+                    <span className="text-gray-800 text-lg font-medium">
+                      {capitalizeWords(user?.firstName)}
                     </span>
                    
                   </div>
@@ -103,22 +104,24 @@ function UserCard({
   )
 }
 
-function SectorListTrack({ className, title, users, onSelect }: IProps) {
-  const [selectedUser, setSelectedUser] = useState<any | null>(null) 
+function SectorListTrack({ className, title, sectors, onSelect }: IProps) {
+  const [selectedsector, setSelectedsector] = useState<any | null>(null) 
   const [showDetailsId, setShowDetailsId] = useState<string | null>(null)
 
-  const handleSelectUser = (user: any) => {
-    if (selectedUser?.id === user.id) {
-      setSelectedUser(null)
-    } else {
-      setSelectedUser(user)
+  const handleSelectsector = (sector: any) => {
+    if (selectedsector?.id === sector.id) {
+      setSelectedsector(null)
+      if (onSelect) onSelect(null)    
+      } else {
+      setSelectedsector(sector)
+    if (onSelect) onSelect(sector)
+
     }
 
-    if (onSelect) onSelect(user)
   }
 
-  const toggleDetails = (userId: string) => {
-    setShowDetailsId((prevId) => (prevId === userId ? null : userId)) 
+  const toggleDetails = (sectorId: string) => {
+    setShowDetailsId((prevId) => (prevId === sectorId ? null : sectorId)) 
   }
 
   return (
@@ -126,23 +129,23 @@ function SectorListTrack({ className, title, users, onSelect }: IProps) {
       <h3 className="relative mb-6 text-lg font-semibold text-heading">
         {title}
       </h3>
-      <div className="user-track-scrollbar max-h-[500px] w-full overflow-x-hidden">
+      <div className="sector-track-scrollbar max-h-[500px] w-full overflow-x-hidden">
         <Scrollbar
           className="h-full w-full"
           options={{ scrollbars: { autoHide: 'never' } }}
         >
           <div className="rounded-md">
-            {users?.map((user: any) => (
-              <div key={user.id}>
-                <UserCard
-                  user={user}
-                  onSelect={() => handleSelectUser(user)}
-                  isSelected={selectedUser?.id === user.id}
+            {sectors?.map((sector: any) => (
+              <div key={sector.id}>
+                <SectorCard
+                  sector={sector}
+                  onSelect={() => handleSelectsector(sector)}
+                  isSelected={selectedsector?.id === sector.id}
                   isDisabled={
-                    selectedUser !== null && selectedUser.id !== user.id
+                    selectedsector !== null && selectedsector.id !== sector.id
                   }
-                  showDetails={showDetailsId === user.id}
-                  toggleDetails={() => toggleDetails(user.id)}
+                  showDetails={showDetailsId === sector.id}
+                  toggleDetails={() => toggleDetails(sector.id)}
                 />
               </div>
             ))}

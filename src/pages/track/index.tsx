@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import dynamic from 'next/dynamic'
 
-import Select from '@/components/ui/select/select'
 import { UsersResponse } from '@/types/users'
 
 import Layout from '@/components/layout/admin'
@@ -11,7 +10,6 @@ import PageHeading from '@/components/common/page-heading'
 
 import { useSocketContext } from '@/contexts/socket.context'
 import { LATITUDE, LONGITUDE, miniSidebarInitialValue } from '@/utils/constants'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { capitalizeWords } from '@/utils/functions'
 import { useJobPositionQuery } from '@/data/job-position'
@@ -25,14 +23,12 @@ import {
 import { GetServerSideProps } from 'next'
 import CarouselComponent from '@/utils/carousel'
 import { useAtom } from 'jotai'
+import { userSectorListQuery } from '@/data/analytics'
 
 const MapTrack = dynamic(() => import('@/components/track/map-track'), {
   ssr: false,
 })
-const UsersListTrack = dynamic(
-  () => import('@/components/track/user-list-track'),
-  { ssr: false }
-)
+
 
 const SectorListTrack = dynamic(
   () => import('@/components/track/sector-list-track'),
@@ -40,7 +36,6 @@ const SectorListTrack = dynamic(
 )
 
 export default function TrackUser() {
-  const router = useRouter()
   const [searchJob, setSearchJob] = useState<string | null>(null)
   const [userFilter, setUserFilter] = useState<UsersResponse[]>([])
   const { all_users, online_users } = useSocketContext()
@@ -49,89 +44,14 @@ export default function TrackUser() {
   const { jobposition } = useJobPositionQuery()
   const [selectedSector, setSelectedSector] = useState<any | null>(null)
 
-  const [jobpositionFilter, setjobpositionFilter] = useState<string | null>('') // Define el estado del prop
+  const [jobpositionFilter, setjobpositionFilter] = useState<string | null>('') 
   const [, setMiniSidebar] = useAtom(miniSidebarInitialValue);
-
-  const sector = [
-    {
-      id: 1,
-      name: 'Sector 1',
-      color: 'bg-blue-500/30',
-      location: { lat: 23.16333, lng: -109.71756 },
-      userCount: 10,
-      users:[
-        {
-          name:"Sebas"
-        },
-        {
-          name:"Sebas"
-        },
-        {
-          name:"Sebas"
-        },
-        {
-          name:"Sebas"
-        }
-      ]
-    },
-
-    {
-      id: 2,
-      name: 'Sector 2',
-      color: 'bg-green-500/40',
-      userCount: 10,
-      location: { lat: 23.16319, lng: -109.71756 },
-    },
-    {
-      id: 3,
-      name: 'Sector 3',
-      color: 'bg-blue-500/30',
-      userCount: 10,
-      location: { lat: 23.16333, lng: -109.71756 },
-    },
-
-    {
-      id: 4,
-      name: 'Sector 4',
-      color: 'bg-green-500/40',
-      userCount: 10,
-      location: { lat: 23.16319, lng: -109.71756 },
-    },
-    {
-      id: 5,
-      name: 'Sector 5',
-      color: 'bg-blue-500/30',
-      userCount: 10,
-      location: { lat: 23.16333, lng: -109.71756 },
-    },
-
-    {
-      id: 6,
-      name: 'Sector 6',
-      color: 'bg-green-500/40',
-      location: { lat: 23.16319, lng: -109.71756 },
-      userCount: 10,
-
-    },
-
-    {
-      id: 6,
-      name: 'Sector 6',
-      color: 'bg-green-500/40',
-      location: { lat: 23.16319, lng: -109.71756 },
-      userCount: 10,
-
-    },
-
-    {
-      id: 6,
-      name: 'Sector 6',
-      color: 'bg-green-500/40',
-      location: { lat: 23.16319, lng: -109.71756 },
-      userCount: 10,
-
-    },
-  ]
+  
+  const { sector, loading, error, paginatorInfo } = userSectorListQuery({
+    limit: 10,
+    page:1,
+    search: '',
+  })
 
   useEffect(() => {
     if (Array.isArray(jobposition)) {
@@ -154,16 +74,6 @@ export default function TrackUser() {
       setUserFilter([])
     }
   }, [searchJob, all_users])
-
-  const selectUser = () => {
-    router.push({
-      pathname: '/track',
-    })
-  }
-
-  function handleSelect(value: any) {
-    setSearchJob(value ? value.label : null)
-  }
 
   useEffect(() => {
     setMiniSidebar(true )
@@ -204,7 +114,7 @@ export default function TrackUser() {
                 </div>
               }
               className="lg:col-span-1 lg:col-start-2 lg:row-start-2 w-full 2xl:col-span-4 2xl:col-start-auto 2xl:row-start-auto"
-              users={sector}
+              sectors={sector}
               onSelect={(sector) => {
                 setSelectedSector(sector)
               }}

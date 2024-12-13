@@ -14,8 +14,7 @@ export type sectorPargination = {
 export interface SectorReponse {
   id: number
   name: string
-  lat: any,
-  lng: any,
+  coordinates: any
   createdAt: string,
   updateAt: string
 }

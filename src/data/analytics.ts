@@ -96,10 +96,8 @@ const {t} = useTranslation()
   const queryClient = useQueryClient()
   const router = useRouter();
   return useMutation((data: any) => {
-    const dataName = {
-      name: data.name
-    }
-    return analyticsClient.updateSector(data.id ,dataName); 
+
+    return analyticsClient.updateSector(data.id ,data); 
   },{
     onSuccess() {
       toast.success(t('common:successfully-updated'))

@@ -45,13 +45,12 @@ type MapTrackProps = {
   }>
 }
 
-const circleOptions: google.maps.CircleOptions = {
-  radius: 30,
-  fillColor: 'black',
-  fillOpacity: 0.2,
-  strokeColor: 'black',
-  strokeOpacity: 0.2,
+const polygonOptions = {
+  fillColor: '#FF0000',
+  fillOpacity: 0.5,
+  strokeColor: '#FF0000',
   strokeWeight: 2,
+  editable: false,
 }
 
 function MapTrackComponent({
@@ -88,9 +87,11 @@ function MapTrackComponent({
   const [sectorMarker, setSectorMarker] = useState<google.maps.Marker | null>(
     null
   )
-  const [sectorCircle, setSectorCircle] = useState<google.maps.Circle | null>(
-    null
-  )
+
+  const [centerPolygon, setCenterPolygon] = useState<{ lat: number; lng: number }>({
+    lat: defaultLat,
+    lng: defaultLng,
+  })
 
   useEffect(() => {
     if (searchJob) {
@@ -136,18 +137,27 @@ function MapTrackComponent({
   )
 
   const handleTogglePolygon = () => {
-    if (sectorMarker && sectorCircle) {
-      sectorMarker.setMap(null)
-      setSectorMarker(null)
-      sectorCircle.setMap(null)
-      setSectorCircle(null)
-    } else {
-      createMarkerWithCircle(map, sectores.location, circleOptions)
-    }
+    const polygonCoordinates = Object.values(sectores.coordinates)
+    createPolygon(map, polygonCoordinates, polygonOptions)
+  }
+
+  const calculatePolygonCenter = (
+    coordinates: { lat: number; lng: number }[]
+  ) => {
+    const totalPoints = coordinates.length
+    const sumLat = coordinates.reduce((sum, coord) => sum + coord.lat, 0)
+    const sumLng = coordinates.reduce((sum, coord) => sum + coord.lng, 0)
+
+    const centerLat = sumLat / totalPoints
+    const centerLng = sumLng / totalPoints
+
+    return { lat: centerLat, lng: centerLng }
   }
 
   useEffect(() => {
-    if (sectores) {
+    if (sectores === null) {
+      removePolyline()
+    } else {
       handleTogglePolygon()
     }
   }, [sectores])
@@ -218,48 +228,46 @@ function MapTrackComponent({
   }
 
   const removePolyline = () => {
-    if (polygon) {
+    if (polygon && sectorMarker) {
       polygon.setMap(null)
+      sectorMarker.setMap(null);
+      setPolygon(null)
     }
-    setPolygon(null)
   }
-  const createMarkerWithCircle = (
+
+  const createPolygon = (
     map: google.maps.Map,
-    position: { lat: number; lng: number },
-    circleOptions: google.maps.CircleOptions
+    coordinates: any,
+    polygonOptions: google.maps.PolygonOptions
   ) => {
     if (sectorMarker) {
-      sectorMarker.setMap(null)
+      sectorMarker.setMap(null);
     }
 
-    if (sectorCircle) {
-      sectorCircle.setMap(null)
-    }
+    const center = calculatePolygonCenter(coordinates);
+    setCenterPolygon(center)
 
     const newMarker = new google.maps.Marker({
-      position,
+      position: center,
       map,
       title: 'Centro del Polígono',
     })
 
+    const newPolygon = new google.maps.Polygon({
+      ...polygonOptions,
+      paths: coordinates,
+      map,
+    })
+
     newMarker.addListener('click', handlePolygonClick)
 
-    const newCircle = new google.maps.Circle({
-      ...circleOptions,
-      map,
-      center: position,
-    })
-
+    // newPolygon.addListener('click', handlePolygonClick)
+  
+    setPolygon(newPolygon)
     setSectorMarker(newMarker)
-    setSectorCircle(newCircle)
 
-    return { marker: newMarker, circle: newCircle }
-  }
 
-  const selectUser = () => {
-    router.push({
-      pathname: '/track',
-    })
+    return { polygon: newPolygon, newMarker };
   }
 
   return isLoaded ? (
@@ -350,7 +358,7 @@ function MapTrackComponent({
                   <p>{selectedUser?.jobposition}</p>
                   <div>
                     <p>
-                      <strong>Documentos:</strong>{' '}
+                      <strong>Documentos:</strong>
                       {selectedUser?.documents?.length}
                     </p>
                   </div>
@@ -397,27 +405,18 @@ function MapTrackComponent({
 
         {selectedSEctor && (
           <InfoWindowF
-            position={{
-              lat: Number(selectedSEctor.location.lat),
-              lng: Number(selectedSEctor.location.lng),
-            }}
+            position={centerPolygon}
             onCloseClick={() => setSelectedUSector(null)}
           >
             <div className="w-[20em] ">
-              <div className={` ${sectores.color} p-5 rounded-md`}></div>
-
               <p className="text-center text-lg font-bold">
-                {' '}
                 Ubicación: {selectedSEctor.name}
               </p>
               <p>
-                Cantidad de usuarios en la Ubicación:{' '}
-                <strong>{sectores.userCont}</strong>{' '}
+                Cantidad de usuarios en la Ubicación:
+                <strong>{sectores?.user.length}</strong>
               </p>
-              <br />
-              <p>
-                Con una expansión aproximada de <strong>30 metros</strong>{' '}
-              </p>
+
             </div>
           </InfoWindowF>
         )}

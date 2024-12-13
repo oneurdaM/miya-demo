@@ -21,20 +21,19 @@ type FormValue = {
   name: string
 }
 
+
 export default function SectorCreate({initialValues}: IProps) {
   const {t} = useTranslation()
-
   const router = useRouter()
+
   const {
     query: {id},
   } = router
 
-  const {mutate: create,isLoading: createLoading} = useCreateSectorMutation()
-  const {mutate: update,isLoading: updateLoading} = useUpdateSector()
+  const {mutate: create, isLoading: createLoading} = useCreateSectorMutation()
+  const {mutate: update, isLoading: updateLoading} = useUpdateSector()
 
-
-  const [latLng,setLatLng] = useState<any>()
-
+  const [latLng, setLatLng] = useState<any>()
 
   const {
     register,
@@ -54,15 +53,13 @@ export default function SectorCreate({initialValues}: IProps) {
     reset({
       name: initialValues?.name,
     })
-  },[initialValues])
+  }, [initialValues])
 
   async function onSubmit(values: any) {
     const input: any = {
       id: initialValues?.id,
       input: {
-        ...pick(values,['name']),
-        ...pick(values,['lat']),
-        ...pick(values,['lng']),
+        ...pick(values, ['name']),
       },
     }
 
@@ -70,20 +67,23 @@ export default function SectorCreate({initialValues}: IProps) {
       const updateData = {
         id: id,
         name: values?.name,
+        coordinates: {...latLng},
       }
       update(updateData)
     } else {
       const createData = {
         ...input.input,
-        ...latLng
+        coordinates: {...latLng},
       }
       create({...createData})
     }
   }
 
   const handleCoordinatesChange = (coordinates: {lat: number; lng: number}[]) => {
-    setLatLng(coordinates);
-  };
+    setLatLng(coordinates)
+  }
+
+  const isCoordinatesValid = () => latLng && latLng.length > 0
 
   return (
     <>
@@ -111,7 +111,10 @@ export default function SectorCreate({initialValues}: IProps) {
           />
 
           <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
-            <SectorMap onCoordinatesChange={handleCoordinatesChange} />
+            <SectorMap
+              onCoordinatesChange={handleCoordinatesChange}
+              coordinates={initialValues?.coordinates}
+            />
           </Card>
 
           <div className="w-full text-end">
@@ -122,7 +125,10 @@ export default function SectorCreate({initialValues}: IProps) {
             >
               {t('form:form-button-back')}
             </Button>
-            <Button loading={createLoading} disabled={createLoading}>
+            <Button
+              loading={createLoading || updateLoading}
+              disabled={!isCoordinatesValid()}
+            >
               {initialValues
                 ? t('form:form-update-sector')
                 : t('form:form-create-sector')}

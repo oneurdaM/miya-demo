@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Carousel from 'react-multi-carousel'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useJobPositionQuery } from '@/data/job-position'
 import { capitalizeWords } from './functions'
 import { UsersResponse } from '@/types/users'
 import { useSocketContext } from '@/contexts/socket.context'
@@ -94,7 +93,7 @@ const CarouselComponent = ({ users, jobPositionFilter }: any) => {
             <p>{element.lastName}</p>
           </h3>
           <p className="text-xs text-gray-600 line-clamp-1 overflow-hidden">
-            {element.jobPosition.name}
+            {element?.jobPosition?.name}
           </p>
         </div>
       </div>
