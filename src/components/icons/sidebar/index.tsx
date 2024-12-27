@@ -1,3 +1,4 @@
+export { QuoteIcon } from '@/components/icons/quote'
 export { AttributeIcon } from '@/components/icons/sidebar/attribute'
 export { FaqIcon } from '@/components/icons/sidebar/faq'
 export { AuthorIcon } from '@/components/icons/sidebar/author'

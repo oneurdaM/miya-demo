@@ -24,5 +24,8 @@ export const documentClient = {
 	getRequiredDocuments: (userId: string) => {
 		// documents/required/:id
 		return HttpClient.get<any>(`${API_ENDPOINTS.REQUIREDDOCUMENTS}/${userId}`)
+	},
+	deleteDocumentType: (id: string) => {
+		return HttpClient.delete<any>(`${API_ENDPOINTS.DOCUMENTTYPES}/${id}`)
 	}
 }

@@ -71,9 +71,11 @@ export const Routes = {
   terms: {
     ...routesFactory('/terms'),
   },
-
   checkpoint: {
     ...routesFactory('/checkpoint'),
+  },
+  documentsType: {
+    ...routesFactory('/documents-type'),
   },
 }
 

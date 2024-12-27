@@ -1,50 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any  */
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
-import pick from 'lodash/pick'
 import { Controller, useForm } from 'react-hook-form'
-import { Switch } from '@headlessui/react'
-import { nanoid } from 'nanoid'
-import { addIcon } from '@/utils/addicon'
-import ValidationError from '../ui/form-validation-error'
-
-import {
-  useCreateUserMutation,
-  useUpdateUserMutation,
-  useUsersQuery,
-} from '@/data/users'
-import { useShiftQuery } from '@/data/shift'
-
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
-import FileInput from '@/components/ui/file-input'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 import Label from '@/components/ui/label'
 import SelectInput from '@/components/ui/select-input'
-import WebcamComponent from '@/components/ui/webcam'
-import { CloseIcon } from '@/components/icons/close-icon'
-
-import { JobPosition, userJobPosition, UsersResponse } from '@/types/users'
-import { Shift } from '@/types/suggestions'
-import { ROLES } from '@/utils/constants'
-import { formatDate, jobPosition } from '@/utils/format-date'
-import { useUploadMutation } from '@/data/upload'
 import { DatePicker } from '../ui/date-picker'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { roundRegisterMutation } from '@/data/round'
-import Select from '../select/select'
-import Table from 'rc-table'
 import { AlignType } from 'rc-table/lib/interface'
 import Avatar from '../common/avatar'
 import { MinusIcon } from '../icons/minus-icon'
 import { PlusIcon } from '../icons/plus-icon'
-import { Router, useRouter } from 'next/router'
+import {  useRouter } from 'next/router'
 import { RoundsReponse } from '@/types/rounds'
-import { toast } from 'react-toastify'
 import { daysWeek, statusOptions } from '@/types/select'
+import { UsersResponse } from '@/types/users'
 
 type FormValue = {
   id: number

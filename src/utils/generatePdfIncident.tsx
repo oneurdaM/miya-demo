@@ -1,21 +1,28 @@
 //@ts-nocheck
 import FolderIcon from '@/components/icons/folder-solid'
 import PDFIcon from '@/components/icons/pdf-solid'
-import { useAlertsPdfQuery } from '@/data/alert'
+import { useAlertsPdfQuery, useAlertsQuery } from '@/data/alert'
 import { format, addDays, subDays } from 'date-fns'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 import { formatDateCabos } from './format-date'
 import { capitalizeWords } from './functions'
+import { LIMIT } from './constants'
 
-export const GeneratePdf = ({ date }: any) => {
-  const { alerts, loading, error, paginatorInfo } = useAlertsPdfQuery({
-    dateFilter: date,
+export const GeneratePdf = ({ date, selectedDateString, searchTerm, page }: any) => {
+
+   const { alerts, loading, error, paginatorInfo } = useAlertsQuery({
+    limit: LIMIT,
+    page:page,
+    search: searchTerm,
+    dateFilter: selectedDateString,
     status: 'SOLVED',
   })
 
+  console.log(alerts)
+
   const dataSheet =
-    alerts?.map((element) => ({
+    alerts?.map((element:any) => ({
       title:
         'Incidencia de ' +
         element.user?.firstName +

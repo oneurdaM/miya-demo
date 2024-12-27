@@ -37,7 +37,6 @@ export const useDocumentTypeQuery = (options: Partial<QueryOptionsType>) => {
       return useMutation(DocumentTypeClient.create, {
         onSuccess: () => {
           toast.success(t('common:successfully-created'))
-          router.back()
         },
         onSettled: () => {
           queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS+"/type/doc")

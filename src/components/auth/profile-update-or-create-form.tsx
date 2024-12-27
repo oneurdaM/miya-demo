@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useState} from 'react'
-import {useTranslation} from 'react-i18next'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 import pick from 'lodash/pick'
-import {useForm} from 'react-hook-form'
-import {Switch} from '@headlessui/react'
-import {nanoid} from 'nanoid'
-import {addIcon} from '@/utils/addicon'
+import { useForm } from 'react-hook-form'
+import { Switch } from '@headlessui/react'
+import { nanoid } from 'nanoid'
 
-import {useCreateUserMutation,useJobPositionsQuery,useUpdateUserMutation} from '@/data/users'
-import {useShiftQuery} from '@/data/shift'
+import {
+  useCreateUserMutation,
+  useJobPositionsQuery,
+  useUpdateUserMutation,
+} from '@/data/users'
+import { useShiftQuery } from '@/data/shift'
 
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
@@ -19,16 +22,14 @@ import Button from '@/components/ui/button'
 import Label from '@/components/ui/label'
 import SelectInput from '@/components/ui/select-input'
 import WebcamComponent from '@/components/ui/webcam'
-import {CloseIcon} from '@/components/icons/close-icon'
+import { CloseIcon } from '@/components/icons/close-icon'
 
-import {UsersResponse} from '@/types/users'
-import {Sector,Shift} from '@/types/suggestions'
-import {ROLES} from '@/utils/constants'
-import {formatDate,jobPosition} from '@/utils/format-date'
-import {useUploadMutation} from '@/data/upload'
-import {
-  userSectorListQuery,
-} from '@/data/analytics'
+import { UsersResponse } from '@/types/users'
+import { Sector, Shift } from '@/types/suggestions'
+import { ROLES } from '@/utils/constants'
+import { formatDate, jobPosition } from '@/utils/format-date'
+import { useUploadMutation } from '@/data/upload'
+import { userSectorListQuery } from '@/data/analytics'
 import { capitalizeWords } from '@/utils/functions'
 
 type IProps = {
@@ -50,38 +51,42 @@ type FormValue = {
   password: string
   middleName: string
   sector?: Sector | null
+  icon?: string
 }
 
-export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
-  const {t} = useTranslation()
-  const {mutate: updateUser,isLoading: loading} = useUpdateUserMutation()
-
-  const [showCam,setShowCam] = useState(false)
-  const {mutate: upload,isLoading: uploadLoading} = useUploadMutation()
-  const {jobPositions} = useJobPositionsQuery()
-
+export default function ProfileUpdateOrCreateForm({ initialValues }: IProps) {
+  const { t } = useTranslation()
+  const { mutate: updateUser, isLoading: loading } = useUpdateUserMutation()
+  const [showCam, setShowCam] = useState(false)
+  const { mutate: upload, isLoading: uploadLoading } = useUploadMutation()
+  const { jobPositions } = useJobPositionsQuery()
 
   const jobPositionOptions = Array.isArray(jobPositions)
-  ? jobPositions.map((doc: any) => ({
-      label: capitalizeWords(doc.name),
-      value: doc.id,
-    }))
-  : [];
-  
+    ? jobPositions.map((doc: any) => ({
+        label: capitalizeWords(doc.name),
+        value: doc.id,
+        icon: doc.icon,
+      }))
+    : []
 
-  const {sector} = userSectorListQuery({
+  const { sector } = userSectorListQuery({
     limit: 100000,
     page: 1,
   })
+  const [icon, setIcon] = useState<any>({
+    label: initialValues?.jobPosition?.name ?? '',
+    icon: initialValues?.icon ?? '',
+    value: initialValues?.jobPosition?.id ?? '',
+  })
 
-  const {mutate: create,isLoading: createLoading} = useCreateUserMutation()
+  const { mutate: create, isLoading: createLoading } = useCreateUserMutation()
 
-  const {shifts,loading: loadingShifts} = useShiftQuery({
+  const { shifts, loading: loadingShifts } = useShiftQuery({
     limit: 20,
     page: 1,
   })
 
-  const {register,control,handleSubmit} = useForm<FormValue>({
+  const { register, control, handleSubmit, reset } = useForm<FormValue>({
     ...(Boolean(initialValues) && {
       defaultValues: {
         ...initialValues,
@@ -98,6 +103,34 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
     }),
   })
 
+  useEffect(() => {
+    if (initialValues) {
+      reset({
+        ...initialValues,
+        registrationDate: formatDate(initialValues?.registrationDate ?? ''),
+        //@ts-ignore
+        role: {
+          label: initialValues?.role,
+          value: initialValues?.role,
+        },
+        jobPosition: {
+          label: initialValues?.jobPosition?.name,
+          value: initialValues?.jobPosition?.id,
+        },
+      })
+    }
+  }, [initialValues, reset])
+
+  useEffect(() => {
+    if (initialValues?.icon) {
+      setIcon({
+        label: initialValues?.jobPosition?.name,
+        icon: initialValues?.icon,
+        value: initialValues?.jobPosition?.id,
+      })
+    }
+  }, [initialValues])
+
   async function onSubmit(values: any) {
     values.username = values.email
     // values.shift = values.shift.id
@@ -108,7 +141,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
       id: initialValues?.id,
       input: {
         role: values.role?.value,
-        ...pick(values,[
+        ...pick(values, [
           'email',
           'firstName',
           'lastName',
@@ -127,9 +160,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
       },
     }
 
-    const icon = addIcon(input.input.jobPosition.label)
-    input.input.icon = icon
-
+    input.input.icon = icon.icon
 
     if (initialValues?.id !== undefined) {
       const updateData = {
@@ -150,9 +181,7 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
         Sector: values?.sector.id,
         jobPositionId: values?.jobPosition.value,
       }
-      create({...createData})
-
-      console.log(createData)
+      create({ ...createData })
     }
   }
 
@@ -174,10 +203,10 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
     }
 
     const nameImage = 'image' + id + '.jpg'
-    const blob = new Blob([arrayBuffer],{type: 'image/jpeg'})
-    formData.append('file',blob,nameImage)
-    upload(formData,{
-      onSuccess(data,_variables,_context) {
+    const blob = new Blob([arrayBuffer], { type: 'image/jpeg' })
+    formData.append('file', blob, nameImage)
+    upload(formData, {
+      onSuccess(data, _variables, _context) {
         const dataUrl = {
           target: {
             name: 'image',
@@ -187,6 +216,11 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
         register('image').onChange(dataUrl)
       },
     })
+  }
+
+  function handleJobposition(icon: any) {
+    console.log(icon)
+    setIcon(icon)
   }
 
   return (
@@ -230,12 +264,14 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               checked={showCam}
               onChange={(value) => changeStatus(value)}
               disabled={false}
-              className={`${showCam ? 'bg-accent' : 'bg-gray-300'
-                } relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none mt-5`}
+              className={`${
+                showCam ? 'bg-accent' : 'bg-gray-300'
+              } relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none mt-5`}
             >
               <span
-                className={`${showCam ? 'translate-x-6' : 'translate-x-1'
-                  } inline-block h-4 w-4 transform rounded-full bg-light`}
+                className={`${
+                  showCam ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-light`}
               />
             </Switch>
 
@@ -303,6 +339,9 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
                 getOptionLabel={(option: any) => option.label}
                 getOptionValue={(option: any) => option.value}
                 options={ROLES}
+                onChange={() => {
+                  console.log('test')
+                }}
               />
             </div>
 
@@ -316,6 +355,9 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               getOptionValue={(option: any) => option.id}
               options={shifts ?? []}
               isMulti={false}
+              onChange={() => {
+                console.log('test')
+              }}
             />
 
             <Label className="mb-4 mt-5">{`${t(
@@ -328,6 +370,9 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               getOptionValue={(option: any) => option.id}
               options={sector ?? []}
               isMulti={false}
+              onChange={() => {
+                console.log('test')
+              }}
             />
 
             <Label className="mb-4 mt-5">
@@ -341,7 +386,26 @@ export default function ProfileUpdateOrCreateForm({initialValues}: IProps) {
               options={jobPositionOptions}
               isMulti={false}
               isLoading={jobPositionOptions.length > 0 ? false : true}
+              onChange={(value: any) => {
+                handleJobposition(value)
+              }}
             />
+
+            <div className="border-2 rounded-b-md flex justify-center">
+              {icon.icon ? (
+                <Image
+                  src={icon.icon}
+                  alt="Profile"
+                  className="w-20 h-20 rounded-md"
+                  width={50}
+                  height={50}
+                />
+              ) : (
+                <span className="text-center py-3 text-gray-400 ">
+                  Selecciona una posición
+                </span>
+              )}
+            </div>
           </Card>
 
           <div className="w-full text-end">

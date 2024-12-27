@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useEffect} from 'react'
-import {useTranslation} from 'react-i18next'
-import {useForm} from 'react-hook-form'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useForm } from 'react-hook-form'
 
 import Card from '@/components/common/card'
 import Description from '@/components/ui/description'
 import Input from '@/components/ui/input'
 import Button from '@/components/ui/button'
 
-
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 
 import {
   useCreateDocumentTypeMutation,
   useUpdateDocumentTypeMutation,
 } from '@/data/documents_type'
+import { useModalAction } from '../ui/modal/modal.context'
 
 type DocumentTypeFormProps = {
   name: string
@@ -24,18 +24,27 @@ type IProps = {
   initialValues?: DocumentTypeFormProps
 }
 
-export default function CreateDocument({initialValues}: IProps) {
-  const {t} = useTranslation()
+export default function CreateDocument({ initialValues }: IProps) {
+  const { t } = useTranslation()
+  const { closeModal } = useModalAction()
+  const [name, setName] = useState<string>(initialValues?.name || '')
+
+  // Actualiza el estado cuando el valor inicial cambia
+  useEffect(() => {
+    if (initialValues) {
+      setName(initialValues.name || '')
+    }
+  }, [initialValues])
 
   const router = useRouter()
   const {
-    query: {id},
+    query: { id },
   } = router
 
-  const {mutate: create,isLoading: createLoading} =
+  const { mutate: create, isLoading: createLoading } =
     useCreateDocumentTypeMutation()
 
-  const {mutate: update,isLoading: updateLoading} =
+  const { mutate: update, isLoading: updateLoading } =
     useUpdateDocumentTypeMutation()
 
   const {
@@ -43,7 +52,7 @@ export default function CreateDocument({initialValues}: IProps) {
     control,
     handleSubmit,
     reset,
-    formState: {errors},
+    formState: { errors },
   } = useForm<any>({
     defaultValues: {
       ...initialValues,
@@ -55,21 +64,26 @@ export default function CreateDocument({initialValues}: IProps) {
     if (initialValues) {
       reset(initialValues)
     }
-  },[initialValues,reset])
+  }, [initialValues, reset])
 
   async function onSubmit(values: any) {
     if (initialValues !== undefined) {
       update(values)
     } else {
       const input = {
-        name: values.name,
+        name: name,
       }
       create(input)
+      closeModal()
     }
   }
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+  }
+
   return (
-    <>
+    <Card>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="my-5 flex flex-wrap border-b border-dashed border-border-base pb-8 sm:my-8">
           <Description
@@ -80,7 +94,9 @@ export default function CreateDocument({initialValues}: IProps) {
           <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
             <Input
               label="Nombre"
-              {...register('name')}
+              name="name"
+              value={name}
+              onChange={handleNameChange}
               variant="outline"
               className="mx-2 mb-4"
               required
@@ -90,13 +106,9 @@ export default function CreateDocument({initialValues}: IProps) {
 
           <div className="w-full text-end">
             <Button
-              type="button"
-              onClick={() => router.back()}
-              className="bg-zinc-600 mx-3"
+              loading={createLoading}
+              disabled={createLoading || updateLoading || name.trim() === ''}
             >
-              {t('form:form-button-back')}
-            </Button>
-            <Button loading={createLoading} disabled={createLoading}>
               {initialValues
                 ? 'Actualizar tipo documento'
                 : t('Crear tipo documento')}
@@ -104,6 +116,6 @@ export default function CreateDocument({initialValues}: IProps) {
           </div>
         </div>
       </form>
-    </>
+    </Card>
   )
 }

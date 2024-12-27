@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import { MODAL_VIEWS, useModalAction, useModalState } from './modal.context'
 import ComposeMessageGroupModal from '@/components/message/compose-message-group'
 import JobPositionByDocumentDelete from '@/components/roles/delete-document-by-job'
+import JobPositionDelete from '@/components/roles/role-delete'
 
 const BanCustomerView = dynamic(() => import('@/components/user/user-ban-view'))
 const CategoryDeleteView = dynamic(
@@ -44,6 +45,9 @@ const DeleteDocument = dynamic(
 const CreateDocument = dynamic(
   () => import('@/components/documents/new-document')
 )
+const CreateDocumentType = dynamic(
+  () => import('@/components/documents/create-document')
+)
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   switch (view) {
@@ -53,7 +57,6 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <MakeAdminView />
     case 'COMPOSE_MESSAGE':
       return <ComposerMessage />
-
     case 'COMPOSE_MESSAGE_GROUP':
       return <ComposeMessageGroupModal />
     case 'LOCATE_USER':
@@ -82,8 +85,12 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <DeleteDocument />
     case 'CREATE_DOCUMENT':
       return <CreateDocument />
+    case 'CREATE_DOCUMENT_TYPE':
+      return <CreateDocumentType />
     case 'DELETE_DOCUMENT_BY_JOBPOSITION':
       return <JobPositionByDocumentDelete />
+    case 'DELETE_JOBPOSITION':
+      return <JobPositionDelete />
     default:
       return null
   }

@@ -79,7 +79,6 @@ export default function TrackUser() {
     setMiniSidebar(true )
   }, [setMiniSidebar]); 
 
-
   return (
     <>
       <Card className="mb-flex flex-col relative">

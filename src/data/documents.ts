@@ -7,6 +7,7 @@ import {toast} from "react-toastify"
 import {Routes} from "@/config/routes"
 import {Config} from "@/config"
 import {API_ENDPOINTS} from "./client/api-endpoints"
+import { mapPaginatorData } from "@/utils/data-mappers"
 
 export const useUpdateDocumentatMutation = () => {
 	const queryClient = useQueryClient()
@@ -27,17 +28,23 @@ export const useUpdateDocumentatMutation = () => {
 
 export const useDeleteDocumentMutation = () => {
 	const queryClient = useQueryClient()
-	const {t} = useTranslation()
-
-	return useMutation(documentClient.delete,{
+	const { t } = useTranslation()
+  
+	return useMutation(
+	  (id: string) => documentClient.deleteDocumentType(id),
+	  {
 		onSuccess: () => {
-			toast.success(t('common:successfully-deleted'))
+		  toast.success(t('common:successfully-deleted'))
 		},
+		onError:() => {
+			toast.warning('El Documento cuenta con una posicion asignada.')
+		  },
 		onSettled: () => {
-			queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS)
+		  queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTTYPES)
 		},
-	})
-}
+	  }
+	)
+  }
 
 
 export const useCreateDocumentMutation = () => {
@@ -69,6 +76,7 @@ export const useDocumentTypesQuery = () => {
 	return {
 		documentTypes: data?.data,
 		loading: isLoading,
+		paginatorInfo: mapPaginatorData(data as any),
 		error,
 	}
 }

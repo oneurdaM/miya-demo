@@ -4,31 +4,34 @@ export function addIcon(jobPosition: any) {
     case 'Guardia':
       icon = 'iconos/guardia.png'
       break
-    case 'Guardia de estacionamiento':
-      icon = 'iconos/parking.png'
+    case 'guardia':
+      icon = 'iconos/guardia.png'
       break
-    case 'Inspector PIPEM AC':
+      case 'Guardia De Estacionamiento':
+        icon = 'iconos/parking.png'
+        break
+    case 'Inspector Pipem Ac':
       icon = 'iconos/inspector.png'
       break
-    case 'Inspector HBS':
+    case 'Inspector Hbs':
       icon = 'iconos/inspector.png'
       break
-    case 'Inspector SOC':
+    case 'Inspector Soc':
       icon = 'iconos/inspector.png'
       break
-    case 'Asistente de facilitación':
+    case 'Asistente De Facilitación':
       icon = 'iconos/asistente.png'
       break
-    case 'SUPERVISOR':
+    case 'Supervisor':
       icon = 'iconos/jefe.png'
       break
-    case 'Jefe de servicio':
+    case 'Jefe De Servicio':
       icon = 'iconos/jefe.png'
       break
     case 'Binomio Canino':
       icon = 'iconos/canino.png'
       break
-    case 'Guardia SSU':
+    case 'Guardia Ssu':
       icon = 'iconos/guardia.png'
       break
   }

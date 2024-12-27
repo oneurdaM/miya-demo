@@ -1,45 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
-import pick from 'lodash/pick'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Switch } from '@headlessui/react'
-import { nanoid } from 'nanoid'
-import { addIcon } from '@/utils/addicon'
-
-import { useCreateUserMutation, useUpdateUserMutation } from '@/data/users'
-import { useShiftQuery } from '@/data/shift'
-
-import Card from '@/components/common/card'
-import Description from '@/components/ui/description'
-import FileInput from '@/components/ui/file-input'
-import Input from '@/components/ui/input'
-import Button from '@/components/ui/button'
-import Label from '@/components/ui/label'
-import SelectInput from '@/components/ui/select-input'
-import WebcamComponent from '@/components/ui/webcam'
-import { CloseIcon } from '@/components/icons/close-icon'
-
-import { JobPosition, UsersResponse } from '@/types/users'
-import { Shift } from '@/types/suggestions'
-import { ROLES } from '@/utils/constants'
-import { formatDate, jobPosition } from '@/utils/format-date'
-import { useUploadMutation } from '@/data/upload'
-import router, { useRouter } from 'next/router'
-import { SectorReponse } from '@/types/sector'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  checkpointRegisterMutation,
-  useUpateCheckpointMutation,
-} from '@/data/round'
+import { useTranslation } from 'react-i18next'
 import {
   useCreateJobPositionMutation,
   useUpdateJobPositionMutation,
 } from '@/data/job-position'
+import { useRouter } from 'next/router'
+import Button from '@/components/ui/button'
+import Input from '@/components/ui/input'
+import FileInput from '@/components/ui/file-input'
+import Card from '@/components/common/card'
+import Description from '@/components/ui/description'
 
 type CheckpointFormProps = {
   name: string
+  icon: string
+  id: string
 }
 
 type IProps = {
@@ -48,15 +24,10 @@ type IProps = {
 
 export default function CreateRol({ initialValues }: IProps) {
   const { t } = useTranslation()
-
   const router = useRouter()
-  const {
-    query: { id },
-  } = router
 
   const { mutate: create, isLoading: createLoading } =
     useCreateJobPositionMutation()
-
   const { mutate: update, isLoading: updateLoading } =
     useUpdateJobPositionMutation()
 
@@ -64,21 +35,38 @@ export default function CreateRol({ initialValues }: IProps) {
     register,
     control,
     handleSubmit,
-    reset,
+    reset, // Usamos reset para establecer los valores iniciales del formulario
     formState: { errors },
   } = useForm<any>({
     defaultValues: {
-      ...initialValues,
-      name: initialValues?.name,
+      name: initialValues?.name || '', // Establecemos valores predeterminados si ya existen
+      icon: initialValues?.icon || '',
     },
   })
 
-  async function onSubmit(values: any) {
+  // Esto se ejecutará cuando `initialValues` cambien
+  useEffect(() => {
+    if (initialValues) {
+      reset({
+        name: initialValues.name,
+        icon: initialValues.icon,
+        id: initialValues.id,
+      })
+    }
+  }, [initialValues, reset])
+
+  const onSubmit = (values: any) => {
     if (initialValues !== undefined) {
-      update(values)
+      const inputUpdate = {
+        name: values.name,
+        icon: values.icon,
+        id: values.id,
+      }
+      update(inputUpdate)
     } else {
       const input = {
         name: values.name,
+        icon: values.icon,
       }
       create(input)
     }
@@ -90,10 +78,30 @@ export default function CreateRol({ initialValues }: IProps) {
         <div className="my-5 flex flex-wrap border-b border-dashed border-border-base pb-8 sm:my-8">
           <Description
             title="Posición de trabajo"
-            details="Escribe el nombre de la posición de trabajo."
+            details={
+              <>
+                Escribe el nombre de la posición de trabajo y asigna un icono el
+                cual se mostrara en el tracking del usuario. <br />
+                <strong>
+                  {' '}
+                  La imagen debera ser en formato png y con tamaño de 48 x 48.
+                </strong>
+              </>
+            }
             className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5"
           />
           <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
+            <div className="mb-10">
+              <FileInput
+                name="icon"
+                label="Icono de la posición"
+                control={control}
+                multiple={false}
+                required={true}
+              />
+             
+            </div>
+
             <Input
               label="Nombre"
               {...register('name')}

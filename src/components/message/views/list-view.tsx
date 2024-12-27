@@ -13,6 +13,8 @@ import CameraIconChat from '@/components/icons/camera-icon';
 import PDFIcon from '@/components/icons/pdf-solid';
 import {capitalizeWords} from '@/utils/functions';
 import {useSocketContext} from '@/contexts/socket.context';
+import Avatar from '@/components/common/avatar';
+import { siteSettings } from '@/settings/site.settings';
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -61,13 +63,28 @@ const UserListView = ({conversation,className,...rest}: Props) => {
       )}
       <div className="flex w-full gap-x-3 p-3 sm:p-6">
         <div className="relative h-8 w-8 overflow-hidden rounded-full 2xl:h-10 2xl:w-10">
-          <Image
+          { participant?.user?.image ? (
+
+             <Image
             src={isGroup ? '/logo.png' : participant?.user?.image || '/default-avatar.png'}
             alt="Avatar"
             fill
             sizes="(max-width: 768px) 100vw"
             className="product-image object-contain"
           />
+          ): 
+          
+          (
+            <Avatar
+            src={siteSettings?.avatar?.placeholder}
+         
+            name={ participant?.user?.firstName as string}
+    
+           
+          />
+
+          )}
+         
         </div>
         <div className="block w-10/12">
           <div className="flex items-center justify-between">

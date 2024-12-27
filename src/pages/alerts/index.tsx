@@ -114,6 +114,9 @@ export default function Alerts() {
             </CSVLink> */}
             <GeneratePdf
               date={selectedDateString ? selectedDateString : todayCabosDate}
+              selectedDateString={selectedDateString}
+              searchTerm={searchTerm}
+              page={page}
             />
           </div>
         </div>

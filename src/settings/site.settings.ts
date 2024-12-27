@@ -163,6 +163,11 @@ export const siteSettings = {
             ]
           },
           {
+            href: Routes.documentsType.list,
+            label: 'Tipo Documentos',
+            icon: 'QuoteIcon',
+          },
+          {
             href: Routes.Rondines.list,
             label: 'text-Round',
             icon: 'WithdrawIcon',
@@ -180,7 +185,7 @@ export const siteSettings = {
           {
             href: Routes.shifts.list,
             label: 'sidebar-text-shifts',
-            icon: 'InventoryIcon',
+            icon: 'ManufacturersIcon',
           },
           {
             href: Routes.track,
@@ -197,7 +202,7 @@ export const siteSettings = {
           {
             href: Routes.blog.list,
             label: 'sidebar-nav-item-articles',
-            icon: 'InventoryIcon',
+            icon: 'FlashDealsIcon',
           },
           {
             href: Routes.categories.list,

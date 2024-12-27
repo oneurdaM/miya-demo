@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import { capitalizeWords } from './functions'
 import { UsersResponse } from '@/types/users'
 import { useSocketContext } from '@/contexts/socket.context'
+import Avatar from '@/components/common/avatar'
+import { siteSettings } from '@/settings/site.settings'
 
 const CarouselComponent = ({ users, jobPositionFilter }: any) => {
   const router = useRouter()
@@ -64,13 +66,28 @@ const CarouselComponent = ({ users, jobPositionFilter }: any) => {
 
         <div className="flex items-center justify-center pl-1 h-14  rounded-full">
           <div className="relative w-10 h-10">
-            <Image
+
+            {element.image ? (
+
+               <Image
               src={element.image}
               alt={`Imagen de ${element.name}`}
               layout="fill"
               objectFit="cover"
               className="rounded-full"
             />
+            ) :
+            
+            (
+              <Avatar
+              src={siteSettings?.avatar?.placeholder}
+           
+              name={element?.firstName as string}
+             
+            />
+
+            )}
+           
           </div>
         </div>
         <div className="flex flex-col flex-grow  rounded-md mx-1 border-2 p-0.5">

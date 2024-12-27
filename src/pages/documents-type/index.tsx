@@ -15,6 +15,8 @@ import {ArrowUp} from '@/components/icons/arrow-up'
 import { Routes } from '@/config/routes'
 import { useRouter } from 'next/router'
 import { ArrowDown } from '@/components/icons/arrow-down'
+import DocumentTableType from '@/components/ui/document-type-table'
+import { useDocumentTypesQuery } from '@/data/documents'
 
 export default function UserPage() {
   const {t} = useTranslation()
@@ -23,13 +25,9 @@ export default function UserPage() {
   const [searchTerm,setSearchTerm] = useState('')
 
   const router = useRouter()
-  const {documents,loading,error,paginatorInfo} = userDocumentsQuery({
-    limit: 5,
-    page: page,
-    search: searchTerm,
-  })
+  const { documentTypes, paginatorInfo, loading, error} = useDocumentTypesQuery();
 
-  console.log('Documents extracted from userDocumentsQuery:',documents)
+
 
   function handlePagination(current: number) {
     setPage(current)
@@ -64,16 +62,16 @@ export default function UserPage() {
         <div className="flex w-full flex-col items-center space-y-4 md:w-3/4 md:flex-row md:space-y-0 md:ms-auto xl:w-3/4">
           <Search onSearch={handleSearch} />
 
-          <Button onClick={handleCreateDocument} size="medium" className='ml-2 bg-primaryColor text-white rounded-[7px] p-2 px-4 text-sm font-medium'>
-            Documento nuevo
-            <ArrowUp className='ml-2' />
+          <Button onClick={create} size="medium" className='ml-2 bg-primaryColor text-white rounded-[7px] p-2 px-4 text-sm font-medium'>
+            Tipo de documento
+            <ArrowDown className='ml-2' />
           </Button>
         </div>
 
         <div className="w-full">
-          <DocumentTable
+          <DocumentTableType
             title="Documentos"
-            documents={documents}
+            documents={documentTypes}
             paginatorInfo={paginatorInfo}
             onPagination={handlePagination}
           />

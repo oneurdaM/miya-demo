@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 export interface UsersResponse {
   sector: any,
-
-
+  icon:string,
   user: {
     name:string
   }

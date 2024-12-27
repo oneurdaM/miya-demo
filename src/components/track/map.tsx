@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { useSocketContext } from '@/contexts/socket.context'
 import { UsersResponse } from '@/types/users'
 import { useJobPositionQuery } from '@/data/job-position'
+import { siteSettings } from '@/settings/site.settings'
 
 const containerStyle = {
   width: '100%',
@@ -88,7 +89,10 @@ function MapTrackComponent({
     null
   )
 
-  const [centerPolygon, setCenterPolygon] = useState<{ lat: number; lng: number }>({
+  const [centerPolygon, setCenterPolygon] = useState<{
+    lat: number
+    lng: number
+  }>({
     lat: defaultLat,
     lng: defaultLng,
   })
@@ -181,7 +185,7 @@ function MapTrackComponent({
     east: lng + size / 2 + padding,
     west: lng - size / 2 - padding,
   })
-
+  console.log(users)
   const userDetails = (id: any) => {
     Router.push('/users/' + id)
   }
@@ -230,7 +234,7 @@ function MapTrackComponent({
   const removePolyline = () => {
     if (polygon && sectorMarker) {
       polygon.setMap(null)
-      sectorMarker.setMap(null);
+      sectorMarker.setMap(null)
       setPolygon(null)
     }
   }
@@ -241,10 +245,10 @@ function MapTrackComponent({
     polygonOptions: google.maps.PolygonOptions
   ) => {
     if (sectorMarker) {
-      sectorMarker.setMap(null);
+      sectorMarker.setMap(null)
     }
 
-    const center = calculatePolygonCenter(coordinates);
+    const center = calculatePolygonCenter(coordinates)
     setCenterPolygon(center)
 
     const newMarker = new google.maps.Marker({
@@ -262,12 +266,11 @@ function MapTrackComponent({
     newMarker.addListener('click', handlePolygonClick)
 
     // newPolygon.addListener('click', handlePolygonClick)
-  
+
     setPolygon(newPolygon)
     setSectorMarker(newMarker)
 
-
-    return { polygon: newPolygon, newMarker };
+    return { polygon: newPolygon, newMarker }
   }
 
   return isLoaded ? (
@@ -344,22 +347,32 @@ function MapTrackComponent({
           >
             <div className="w-[20em] ">
               <div className={`flex p-3 rounded-md bg-green-100 text-gray-800`}>
-                <Image
-                  className="rounded-full"
-                  src={selectedUser?.image}
-                  alt={'Imagen'}
-                  width={50}
-                  height={30}
-                />
+                {selectedUser?.image ? (
+                  <Image
+                    className="rounded-full"
+                    src={selectedUser?.image}
+                    alt={'Imagen'}
+                    width={50}
+                    height={30}
+                  />
+                ) : (
+                  <Avatar
+                    src={siteSettings?.avatar?.placeholder}
+                    name={selectedUser?.firstName as string}
+                  />
+                )}
                 <div className="block ml-3">
                   <p className="font-bold">
-                    {capitalizeWords(selectedUser.user?.name)}
+                    {capitalizeWords(
+                      selectedUser?.firstName + ' ' + selectedUser?.lastName
+                    )}
                   </p>
                   <p>{selectedUser?.jobposition}</p>
                   <div>
                     <p>
-                      <strong>Documentos:</strong>
-                      {selectedUser?.documents?.length}
+                      <strong>Documentos: </strong>
+                      {selectedUser?.expiredDocuments?.length +
+                        selectedUser?.expiringDocuments?.length}
                     </p>
                   </div>
 
@@ -416,7 +429,6 @@ function MapTrackComponent({
                 Cantidad de usuarios en la Ubicación:
                 <strong>{sectores?.user.length}</strong>
               </p>
-
             </div>
           </InfoWindowF>
         )}

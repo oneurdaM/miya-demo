@@ -15,6 +15,7 @@ interface SelectInputProps {
   isLoading?: boolean;
   [key: string]: unknown;
   placeholder?: string;
+  onChange?: (value: any) => void;  // Añadimos un onChange adicional
 }
 
 const SelectInput = ({
@@ -29,6 +30,7 @@ const SelectInput = ({
   isClearable,
   isLoading,
   placeholder,
+  onChange,  // Recibimos el nuevo onChange desde las props
   ...rest
 }: SelectInputProps) => {
   return (
@@ -48,6 +50,13 @@ const SelectInput = ({
           isLoading={isLoading}
           options={options}
           isDisabled={disabled as boolean}
+          onChange={(selectedOption: any) => {
+            // Si tienes un onChange personalizado, lo llamas aquí
+            if (onChange) onChange(selectedOption);
+
+            // Actualizar el valor en react-hook-form
+            field.onChange(selectedOption);
+          }}
         />
       )}
     />
