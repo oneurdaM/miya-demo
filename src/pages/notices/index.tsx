@@ -65,7 +65,7 @@ export default function Notices() {
           {permission ? (
             <LinkButton
               href={Routes.storeNotice.create}
-              className="h-12 w-full md:w-auto md:ms-6"
+              className="h-12 w-full md:w-auto md:ms-6  rounded-md"
             >
               <span className="hidden xl:block">
                 + {t('form:button-label-add-store-notice')}

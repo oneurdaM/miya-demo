@@ -28,7 +28,7 @@ export default function Conferences() {
         <div className="flex w-full justify-end  items-center space-y-4 ms-auto md:w-2/3 md:flex-row md:space-y-0 xl:w-3/4 2xl:w-1/2">
           <LinkButton
             href={Routes.conferences.create}
-            className="h-12 w-full md:w-auto md:ms-6"
+            className="h-12 w-full md:w-auto md:ms-6  rounded-md"
           >
             <span className="hidden xl:block">
               + {t('form:button-label-host-conference')}

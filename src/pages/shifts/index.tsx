@@ -56,7 +56,7 @@ export default function Shifts() {
           {permission ? (
             <LinkButton
               href={`${Routes.shifts.create}`}
-              className="h-12 w-full md:w-auto md:ms-6"
+              className="h-12 w-full md:w-auto md:ms-6 rounded-md"
             >
               <span>+ {t('form:button-label-add-shift')}</span>
             </LinkButton>

@@ -113,11 +113,6 @@ export default function Users() {
               //@ts-ignore
               onChange={handlefilter}
             ></Select>
-            <div className="border-2 py-2 px-3 rounded-full mb-4 md:mb-0 flex justify-center">
-              <CSVLink data={rounds} filename={`export-${today}.csv`}>
-                <CsvIcon width={30} />
-              </CSVLink>
-            </div>
           </div>
 
           {/* <Search onSearch={handleSearch} /> */}
@@ -125,11 +120,17 @@ export default function Users() {
           {permission ? (
             <LinkButton
               href={`${Routes.Rondines.create}`}
-              className="h-12 w-full md:w-auto"
+              className="h-12 w-full rounded-md md:w-auto"
             >
               <span>+ {t('form:button-label-add-round')}</span>
             </LinkButton>
           ) : null}
+
+          <div className="border-2 py-2 px-3 rounded-full mb-4 md:mb-0 flex justify-center">
+            <CSVLink data={rounds} filename={`export-${today}.csv`}>
+              <CsvIcon width={30} />
+            </CSVLink>
+          </div>
         </div>
       </Card>
 

@@ -103,7 +103,7 @@ export default function Dashboard() {
 
           <div className="w-full lg:w-1/2 flex items-center gap-4 lg:gap-2">
             <Select
-              isDisabled={data.attendances?.length <= 0}
+              // isDisabled={data.attendances?.length <= 0}
               isClearable={true}
               options={shifts?.map((e: Shift) => ({
                 label: e.name,

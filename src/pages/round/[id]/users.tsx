@@ -50,7 +50,7 @@ export default function UserPage() {
             <PageHeading title="Usuarios en esta ronda" />
             <LinkButton
               href={router.asPath + '/../add'}
-              className="mt-4 md:mt-0 lg:ml-auto"
+              className="mt-4 md:mt-0 lg:ml-auto rounded-md"
             >
               Agregar usuario
             </LinkButton>

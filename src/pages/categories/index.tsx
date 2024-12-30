@@ -55,7 +55,7 @@ export default function Categories() {
           {permission ? (
             <LinkButton
               href={`${Routes.categories.create}`}
-              className="h-12 ms-4 md:ms-6"
+              className="h-12 ms-4 md:ms-6 rounded-md"
             >
               <span>+ Crear</span>
             </LinkButton>
