@@ -1,87 +1,84 @@
 # Kali Connect App - Frontend
+This is an administration project developed with **Next.js**, which allows real-time tracking of devices, interaction with **Google Maps**, and managing messaging between users. Additionally, it includes functionalities for user registration, document management, and other administrative tasks.
 
-Este es un proyecto de administración desarrollado con **Next.js**, que permite realizar el seguimiento en tiempo real de dispositivos, interactuar con mapas de **Google Maps** y gestionar la mensajería entre usuarios. Además, cuenta con funcionalidades para el registro de usuarios, documentos y otras funciones de administración.
-
-| Imagen 1 | Imagen 2 |
+| Image 1 | Image 2 |
 | -------- | -------- |
 | ![Captura 1](src/screenshots/login.png) | ![Captura 2](src/screenshots/captura_2.png) |
 
-### Tecnologías utilizadas:
+### Technologies Used:
+- **Next.js**: React framework for building high-performance, scalable web applications.
+- **React**: Library for building interactive user interfaces.
+- **Google Maps API**: For tracking and visualizing devices on an interactive map.
+- **Tailwind CSS**: CSS framework for fast and responsive design.
+- **Jest**: For unit and integration testing.
+- **TypeScript**: To improve code safety and maintainability.
+- **Axios**: For making HTTP requests.
 
-- **Next.js**: Framework para React que permite la creación de aplicaciones web de alto rendimiento y escalabilidad.
-- **React**: Biblioteca para construir interfaces de usuario interactivas.
-- **Google Maps API**: Para el seguimiento y visualización de dispositivos en un mapa interactivo.
-- **Tailwind CSS**: Framework de CSS para un diseño rápido y responsivo.
-- **Jest**: Para pruebas unitarias y de integración.
-- **TypeScript**: Para mejorar la seguridad y mantenimiento del código.
-- **Axios**: Para las solicitudes HTTP.
+### Project Features
 
-### Características del Proyecto
+- **Real-time tracking**: Monitoring of devices on a Google Maps map with live updates of coordinates.
+- **Admin Interface**: Intuitive dashboard with interactive charts.
+- **Real-time messaging**: Users can send messages to each other.
+- **User Management**: Registration, authentication, and tracking of user actions.
+- **Alert Management**: Tracking of incidents.
+- **Role Management**: Registration of job roles.
+- **Document Type Management**: Registration of documents assigned to job roles.
+- **Round Management**: Registration and tracking of rounds.
+- **Sector Management**: Registration and management of sectors.
+- **Documents**: Registration and validation of document handling associated with each user.
+- **Categories and Notes**: Registration and tracking of note categories and the notes to be published.
+- **Settings**: Registration and tracking of general system settings.
+- **Terms and Conditions**: Registration and tracking of the system's terms and conditions.
 
-- **Seguimiento en tiempo real**: Monitoreo de dispositivos en un mapa de **Google Maps** con actualizaciones en vivo de las coordenadas.
-- **Interfaz de administración**: Dashboard intuitivo con gráficos interactivos usando.
-- **Mensajería en tiempo real**: Los usuarios pueden enviarse mensajes entre sí.
-- **Gestión de usuarios**: Registro, autenticación y seguimiento de acciones de los usuarios.
-- **Gestión de alertas**: Seguimiento de incidencias.
-- **Gestión de roles**: Registro de roles de trabajo.
-- **Gestión de tipos de documentos**: Registro de documentos que se asignaran al rol de trabajo.
-- **Gestión de rondas**: Registro y seguimiento de rondas.
-- **Gestión de sectores**: Registro y gestion de sectores.
-- **Documentos**: Registro y validación del manejo de documentos asociados a cada usuario.
-- **Categorias y notas**: Registro y seguimiento de las categorias de notas y las mismas notas a publicar.
-- **Ajustes**: Registro y seguimiento de los ajustes generales del sistema.
-- **Terminos y condiciones**: Registro y seguimiento de los terminos y condiciones del sistema.
+## Requirements
 
----
+Make sure you have the following tools installed:
 
-## Requisitos
+- **Node.js** version **>=20.0.0** (but this project is optimized for Node 22)
+- **npm** version **>=10.8.3**
 
-Asegúrate de tener las siguientes herramientas instaladas:
+## Installation
 
-- **Node.js** versión **>=20.0.0** (pero este proyecto está optimizado para Node 22)
-- **npm** versión **>=10.8.3**
 
-## Instalación
-
-1. **Clonar el repositorio**:
+1. **Clone the repository**:
 
    ```bash
-   git clone <url-del-repositorio>
-   cd <nombre-del-repositorio>
+   git clone <repository-url>
+   cd <repository-name>
 
-2. **Instalar dependencias**:
+2. **Install dependencies**:
 
-Instala todas las dependencias necesarias para el proyecto:
+Install all the necessary dependencies for the project:
 
     npm install 
 
-Si prefieres usar Yarn:
+If you prefer to use **Yarn**:
 
     yarn install
 
-3. **Configuración de variables de entorno**
+3. **Set up environment variables**
 
-Crea un archivo .env.local en el directorio raíz del proyecto y agrega las siguientes variables de entorno (por ejemplo, la clave API de Google Maps:
+Create a .env.local file in the root directory of the project and add the following environment variables (for example, the Google Maps API key):
 
-    
     GOOGLE_MAPS_API_KEY=tu_api_key_de_google_maps
 
-## Scripts de Desarrollo
+## Development Scripts
 
-Una vez instaladas las dependencias y configuradas las variables de entorno, puedes utilizar los siguientes comandos para el desarrollo y la ejecución del proyecto:
+Once the dependencies are installed and the environment variables are configured, you can use the following commands for development and running the project:
 
-1. **Iniciar el servidor de desarrollo**
+1. **Start the development server**
 
-Para iniciar el servidor en modo desarrollo en el puerto 3009:
+To start the server in development mode on port 3009:
 
     npm run dev
     
     yarn dev
 
-Este comando abrirá la aplicación en http://localhost:3009 para que puedas probarla en tu entorno local.
+This command will open the application at http://localhost:3009 so you can test it in your local environment.
 
-## Construcción del Proyecto
-Para construir el proyecto para producción:
+## Build the Project
+
+To build the project for production:
 
     npm run build
 
