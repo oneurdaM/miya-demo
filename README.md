@@ -2,8 +2,14 @@
 
 Este es un proyecto de administración desarrollado con **Next.js**, que permite realizar el seguimiento en tiempo real de dispositivos, interactuar con mapas de **Google Maps** y gestionar la mensajería entre usuarios. Además, cuenta con funcionalidades para el registro de usuarios, documentos y otras funciones de administración.
 
-![Captura 2](src/screenshots/captura_2.png)
-![Captura 2](src/screenshots/login.png)
+<div style="display: flex; justify-content: space-between;">
+  <div style="flex: 1; padding-right: 10px;">
+    ![Captura 1](src/screenshots/captura_1.png)
+  </div>
+  <div style="flex: 1; padding-left: 10px;">
+    ![Captura 2](src/screenshots/captura_2.png)
+  </div>
+</div>
 
 ### Tecnologías utilizadas:
 
