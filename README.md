@@ -4,7 +4,7 @@ Este es un proyecto de administración desarrollado con **Next.js**, que permite
 
 | Imagen 1 | Imagen 2 |
 | -------- | -------- |
-| ![Captura 1](src/screenshots/captura_1.png) | ![Captura 2](src/screenshots/captura_2.png) |
+| ![Captura 1](src/screenshots/login.png) | ![Captura 2](src/screenshots/captura_2.png) |
 
 ### Tecnologías utilizadas:
 
