@@ -427,7 +427,7 @@ export default function UserRound() {
                 }}
                 containerClassName="!max-w-3xl  !shadow-2xl "
               >
-                <div className="bg-white p-8 rounded shadow-lg h-full ">
+                <div className="bg-white p-8 rounded shadow-lg h-[350px]  overflow-y-auto ">
                   <div className="flex justify-between items-center mb-5 z-50">
                     <h2 className="font-semibold mb-2 text-center text-2xl text-gray-700">
                       Checkpoint logs
@@ -448,6 +448,7 @@ export default function UserRound() {
                         // disabled={disabledDateEnd}
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Selecciona una fecha"
+                        className="w-full"
                       />
                     </div>
                   </div>
