@@ -1,11 +1,13 @@
-# Kali Connect App - Frontend
+# Miyaa Admin - Frontend
+
 This is an administration project developed with **Next.js**, which allows real-time tracking of devices, interaction with **Google Maps**, and managing messaging between users. Additionally, it includes functionalities for user registration, document management, and other administrative tasks.
 
 | Image 1 | Image 2 |
 | -------- | -------- |
 | ![Captura 1](src/screenshots/login.png) | ![Captura 2](src/screenshots/captura_2.png) |
 
-### Technologies Used:
+### Technologies Used
+
 - **Next.js**: React framework for building high-performance, scalable web applications.
 - **React**: Library for building interactive user interfaces.
 - **Google Maps API**: For tracking and visualizing devices on an interactive map.
@@ -38,7 +40,6 @@ Make sure you have the following tools installed:
 - **npm** version **>=10.8.3**
 
 ## Installation
-
 
 1. **Clone the repository**:
 
@@ -74,7 +75,7 @@ To start the server in development mode on port 3009:
     
     yarn dev
 
-This command will open the application at http://localhost:3009 so you can test it in your local environment.
+This command will open the application at <http://localhost:3009> so you can test it in your local environment.
 
 ## Build the Project
 
