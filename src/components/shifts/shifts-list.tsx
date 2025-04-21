@@ -16,6 +16,7 @@ type ShiftsListProps = {
   paginatorInfo: MappedPaginatorInfo | null
   onPagination: (current: number) => void
 }
+
 const ShiftsList = ({
   shifts,
   paginatorInfo,
