@@ -44,21 +44,21 @@ export default function CreateOrUpdateShiftForm({ initialValues }: IProps) {
     }),
   })
 
+
+  const buildISODate = (date: Date, time: string) => {
+    const [hour, minute] = time.split(':').map(Number);
+    const fullDate = new Date(date);
+    fullDate.setHours(hour, minute, 0, 0); // hora, minuto, segundo, ms
+    return fullDate.toISOString();
+  };
+  
+
+
   const onSubmit = async (values: FormValues) => {
     if (!initialValues) {
       const currentDate = new Date() // Obtiene la fecha actual
-      const formattedDate = currentDate.toISOString().split('T')[0] // Solo la parte de la fecha
-
-      const combinedDateTime = `${formattedDate}T${
-        values.start.split(':')[0]
-      }:${values.start.split(':')[1]}:00.000Z`
-
-      const combinedDateTimeEnd = `${formattedDate}T${
-        values.end.split(':')[0]
-      }:${values.end.split(':')[1]}:00.000Z`
-
-      values.start = combinedDateTime
-      values.end = combinedDateTimeEnd
+      values.start = buildISODate(currentDate, values.start);
+      values.end = buildISODate(currentDate, values.end);
 
       create({
         ...values,

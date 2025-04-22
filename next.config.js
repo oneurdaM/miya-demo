@@ -26,7 +26,8 @@ const nextConfig = {
       'cedreo.com',
       'encrypted-tbn2.gstatic.com',
       's10.s3c.es',
-      'trablisa-assets.s3.eu-south-2.amazonaws.com'
+      'trablisa-assets.s3.eu-south-2.amazonaws.com',
+      'objectstorage.mx-queretaro-1.oraclecloud.com'
     ],
   },
   ...(process.env.APPLICATION_MODE === 'production' && {

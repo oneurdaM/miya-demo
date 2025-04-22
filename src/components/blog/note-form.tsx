@@ -47,7 +47,7 @@ export default function CreateOrUpdateNoteForm({ initialValues }: IProps) {
 
   const router = useRouter()
   const { data } = useMeQuery()
-
+  
   const {
     register,
     handleSubmit,
