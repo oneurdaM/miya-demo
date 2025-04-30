@@ -25,6 +25,8 @@ import {useSocketContext} from '@/contexts/socket.context'
 
 export default function UserPage() {
   const {trackUser,user_track} = useSocketContext(); // Agrega el método y estado del contexto
+  const { all_users, online_users } = useSocketContext()
+
   const {t} = useTranslation();
   const router = useRouter();
   const {
@@ -34,7 +36,6 @@ export default function UserPage() {
   const {user,loading,error} = useUserQuery({
     id: Number(id),
   });
-  console.log('user_track',user_track)
 
 
   const jobPosition = user?.jobPosition?.name;
@@ -49,6 +50,13 @@ export default function UserPage() {
 
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error.message} />;
+
+// Buscar al usuario online correspondiente
+const onlineUser = online_users?.find((u) => String(u.id) === id);
+
+// Extraer coordenadas si existen
+const latitude = onlineUser?.location?.latitude ?? LATITUDE;
+const longitude = onlineUser?.location?.longitude ?? LONGITUDE;
 
   return (
     <Card className="mb-8 flex flex-col">
@@ -71,8 +79,8 @@ export default function UserPage() {
       <div className="flex gap-7 justify-center md:gap-8 lg:grid-cols-2 2xl:grid-cols-12">
         <MapTrackUserId
           title={'Users'}
-          latitude={user_track.location?.latitude || LATITUDE}
-          longitude={user_track.location?.longitude || LONGITUDE}
+          latitude={latitude || LATITUDE}
+          longitude={longitude || LONGITUDE}
           userId={id}
         />
       </div>

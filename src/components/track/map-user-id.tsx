@@ -73,6 +73,8 @@ function MapTrackComponentUserId({latitud,longitud,userId}: IProps) {
     initialMapCenter
   )
 
+
+
   const [filteredItems,setFilteredItems] = useState([])
 
   useEffect(() => {
@@ -564,11 +566,10 @@ function MapTrackComponentUserId({latitud,longitud,userId}: IProps) {
         {userId !== 0 ? (
           <>
             <MarkerF
-              icon={{
-                //@ts-ignore
-                url: '/' + user?.icon,
-                scaledSize: new window.google.maps.Size(48,48),
-              }}
+                icon={{
+                  url: user?.icon || '/default-marker.png',
+                  scaledSize: new window.google.maps.Size(40, 40),
+                }}
               //@ts-ignore
               onClick={() => handleMarkerClick(user)}
               position={{lat: latitud,lng: longitud}}

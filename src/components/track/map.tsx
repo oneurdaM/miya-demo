@@ -185,7 +185,6 @@ function MapTrackComponent({
     east: lng + size / 2 + padding,
     west: lng - size / 2 - padding,
   })
-  console.log(users)
   const userDetails = (id: any) => {
     Router.push('/users/' + id)
   }
@@ -371,8 +370,7 @@ function MapTrackComponent({
                   <div>
                     <p>
                       <strong>Documentos: </strong>
-                      {selectedUser?.expiredDocuments?.length +
-                        selectedUser?.expiringDocuments?.length}
+                      {selectedUser?.documents?.length }
                     </p>
                   </div>
 

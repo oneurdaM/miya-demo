@@ -16,9 +16,12 @@ const DocumentStatusView = () => {
 			...info,
 			valid: !info.valid,
 		}
+		delete data.documentType;
 		update({id: info.id,data})
+
 		closeModal()
 	}
+
 
 	return (
 		<ConfirmationCard
