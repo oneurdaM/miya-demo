@@ -127,7 +127,7 @@ export const userClient = {
   },
   documentByIdUpdate: (id: any,data: any) => {
     return HttpClient.put(
-      `${API_ENDPOINTS.DOCUMENTS}/documents/${id}`,
+      `${API_ENDPOINTS.DOCUMENTS}/date/${id}`,
       data
     )
   },

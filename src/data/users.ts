@@ -95,7 +95,7 @@ export const useModifyDocumentMutation = () => {
       toast.success(t("common:successfully-validate-document"))
     },
     onSettled: () => {
-      queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS + "/documents")
+      queryClient.invalidateQueries(API_ENDPOINTS.DOCUMENTS + "/date")
     },
   });
 }

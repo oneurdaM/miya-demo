@@ -38,8 +38,9 @@ export default function ValidateDocument() {
       </div>
       {permission ? (
         <ValidateDocumentForm
+        onClose={()=>{}}
           initialValues={document}
-          valid={document?.valid}
+          // valid={document?.valid}
           id={idDocument}
         />
       ) : null}

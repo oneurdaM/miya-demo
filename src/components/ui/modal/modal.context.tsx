@@ -34,6 +34,7 @@ export type MODAL_VIEWS =
   | 'BAN_CUSTOMER_ADMIN'
   | 'DELETE_JOBPOSITION'
   | 'SHOW_CHECKPOINT'
+  | 'VALID_DATE_DOCUMENT'
 
 interface State {
   view?: MODAL_VIEWS

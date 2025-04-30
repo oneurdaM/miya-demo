@@ -5,6 +5,7 @@ import {CloseIcon} from '../icons/close-icon';
 import {useModalAction} from '../ui/modal/modal.context';
 import {TrashIcon} from '../icons/trash';
 import MetricInfo from './metric';
+import { CalendarGhostIcon } from '../icons/calendar';
 
 const ExpandedContentDocuments = ({record}: any) => {
 	const {openModal} = useModalAction();
@@ -26,6 +27,10 @@ const ExpandedContentDocuments = ({record}: any) => {
 
 	const handleDeleteDocument = (doc: any) => {
 		openModal('DELETE_DOCUMENT',doc);
+	};
+
+	const handleDateValid = (doc: any) => {
+		openModal('VALID_DATE_DOCUMENT',doc);
 	};
 
 	return (
@@ -59,8 +64,12 @@ const ExpandedContentDocuments = ({record}: any) => {
 									<button onClick={() => openFile(doc.filePath)} className="text-blue-500 underline text-sm">
 										Abrir archivo
 									</button>
+									
 									<button onClick={() => handleDeleteDocument(doc)} className="text-red-500 hover:text-red-700">
 										<TrashIcon className="w-5 h-5" />
+									</button>
+									<button onClick={() => handleDateValid(doc)} className="text-blue-500 hover:text-blue-700">
+										<CalendarGhostIcon className="w-5 h-5" />
 									</button>
 									{doc.valid ? (
 										<div className='flex items-center gap-2 cursor-pointer' onClick={() => openModal('CHANGE_STATUS_DOCUMENT',doc)}>

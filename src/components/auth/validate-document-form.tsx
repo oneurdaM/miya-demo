@@ -15,23 +15,21 @@ import Label from '@/components/ui/label'
 import PDFViewer from '../documents/PDFViewPage'
 import { Checkbox } from 'rizzui'
 import { Router, useRouter } from 'next/router'
+import Input from '../ui/input'
 
 type IProps = {
   initialValues?: any
-  valid: boolean
+  // valid: boolean
+  onClose: () => void
   id: any
 }
 
-export default function ValidateDocumentForm({
-  initialValues,
-  valid,
-  id,
-}: IProps) {
+export default function ValidateDocumentForm({ initialValues , id, onClose}: IProps) {
   const { t } = useTranslation()
 
   const router = useRouter()
   const [documentsShow, setdocumentsShow] = useState(false)
-  const [validNew, setValidNew] = useState(valid)
+  // const [validNew, setValidNew] = useState(valid)
 
   const handleShowPDF = () => {
     setdocumentsShow(!documentsShow)
@@ -43,41 +41,46 @@ export default function ValidateDocumentForm({
   const {
     handleSubmit,
     control,
+    register,
     reset,
     formState: { errors },
   } = useForm<any>({
     defaultValues: {
-      valid: initialValues?.valid ?? false,
       validUntil: initialValues?.validUntil
         ? new Date(initialValues?.validUntil)
         : new Date(),
     },
   })
 
-  useEffect(() => {
-    setValidNew(valid)
+  // useEffect(() => {
+  //   setValidNew(valid)
 
-    reset({
-      valid: initialValues?.valid ?? false,
-      validUntil: initialValues?.validUntil
-        ? new Date(initialValues?.validUntil)
-        : new Date(),
-    })
-  }, [valid, initialValues])
+  //   reset({
+  //     valid: initialValues?.valid ?? false,
+  //     validUntil: initialValues?.validUntil
+  //       ? new Date(initialValues?.validUntil)
+  //       : new Date(),
+  //   })
+  // }, [valid, initialValues])
 
   async function onSubmit(values: any) {
+
     const body = {
       id: id,
       validUntil: new Date(convertDate(values.validUntil)),
-      valid: validNew ? validNew : false,
     }
 
-    validateDocument({ ...body })
+
+    validateDocument(body, {
+      onSuccess: () => {
+        onClose() 
+      },
+    })
   }
 
-  const handleCheck = (value: any) => {
-    setValidNew(value)
-  }
+  // const handleCheck = (value: any) => {
+  //   setValidNew(value)
+  // }
 
   function convertDate(date: string) {
     return new Date(date).toISOString().slice(0, -5)
@@ -93,11 +96,10 @@ export default function ValidateDocumentForm({
             className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5"
           />
           <Card className="mb-5 w-full sm:w-8/12 md:w-2/3">
-            <div className="lg:flex justify-center ">
-              <div className="w-full p-0 sm:w-1/2 sm:ps-2 ">
-                <Label>{`Fecha de expiración *`}</Label>
+            {/* <div className="w-full p-0 sm:w-1/2 sm:ps-2 "> */}
+              {/* <Label>{`Fecha de expiración *`}</Label> */}
 
-                <Controller
+              {/* <Controller
                   control={control}
                   name="validUntil"
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -113,13 +115,22 @@ export default function ValidateDocumentForm({
                       className="flex h-12 w-full appearance-none items-center rounded-md px-4 text-sm text-heading transition duration-300 ease-in-out focus:border-accent focus:outline-none"
                     />
                   )}
-                />
-                <ValidationError
-                  message={errors.expiredAt?.message?.toString() ?? ''}
-                />
-              </div>
+                /> */}
 
-              <div className="w-full p-0 sm:w-1/2 sm:ps-2 ">
+              <Input
+                variant="outline"
+                label="Fecha de Expiración"
+                type="date"
+                {...register('validUntil')}
+                // error={errors.validUntil?.message}
+                className="mb-2"
+              />
+              <ValidationError
+                message={errors.expiredAt?.message?.toString() ?? ''}
+              />
+            {/* </div> */}
+
+            {/* <div className="w-full p-0 sm:w-1/2 sm:ps-2 ">
                 <Label className="mb-6">{`Validez del documento`}</Label>
                 <Checkbox
                   name="valid"
@@ -129,11 +140,10 @@ export default function ValidateDocumentForm({
                     handleCheck(e.target.checked)
                   }}
                 />
-              </div>
-            </div>
+              </div> */}
           </Card>
           <div className="w-full text-end">
-            <Button>Guardar Documento</Button>
+            <Button>Validar</Button>
             {/* 
             <Button
               type="button"
@@ -142,22 +152,22 @@ export default function ValidateDocumentForm({
             >
               {!documentsShow ? 'Visualizar documento' : 'Cerrar documento'}
             </Button> */}
-            <a
+            {/* <a
               className="bg-gray-500 text-white font-bold py-4 px-7 rounded-md mx-3 hover:bg-gray-800"
               href={initialValues?.filePath}
               target="_blank"
               rel="noopener noreferrer"
             >
               Ver PDF
-            </a>
+            </a> */}
 
-            <Button
+            {/* <Button
               type="button"
               onClick={() => router.back()}
               className="bg-zinc-600 mx-3"
             >
               {t('form:form-button-back')}
-            </Button>
+            </Button> */}
           </div>
         </div>
       </form>

@@ -5,6 +5,7 @@ import ComposeMessageGroupModal from '@/components/message/compose-message-group
 import JobPositionByDocumentDelete from '@/components/roles/delete-document-by-job'
 import JobPositionDelete from '@/components/roles/role-delete'
 import ShowCheckpointModal from '@/components/checkpoint/show-checkpoint-modal'
+import ValidDateDocument from '@/components/documents/valid-document-date'
 
 const BanCustomerView = dynamic(() => import('@/components/user/user-ban-view'))
 const CategoryDeleteView = dynamic(
@@ -94,6 +95,8 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <JobPositionDelete />
     case 'SHOW_CHECKPOINT':
       return <ShowCheckpointModal />
+      case 'VALID_DATE_DOCUMENT':
+        return <ValidDateDocument />
     default:
       return null
   }
